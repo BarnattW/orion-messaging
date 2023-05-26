@@ -1,0 +1,21 @@
+apiVersion: skaffold/v4beta5
+kind: Config
+metadata: 
+  name: orion-messaging
+build:
+  local:
+    push: false
+artifacts:
+  - image: barnattw/orion-client
+    context: client
+    docker:
+      dockerfile: Dockerfile
+    sync:
+      manual:
+        - src: 'src/**/*/.ts'
+          dest: .
+        - src: 'src/**/*/.tsx'
+          dest: .
+manifests:
+  rawYaml:
+    - infra/k8s/*
