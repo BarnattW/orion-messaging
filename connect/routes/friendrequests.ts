@@ -87,4 +87,29 @@ router.put('/api/acceptRequest/:requestID', async (req, res)=>{
     }
 })
 
+router.get('/api/:userID/friendReqs', async(req, res) =>{
+    try{
+        const {userID} = req.params;
+
+        const user = await User.findById(userID);
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        const outgoingfriendreqs = await User.find({ _id: { $in: user.outgoingrequests } });
+        const incomingfriendreqs = await User.find({ _id: { $in: user.incomingrequests } });
+
+        return res.status(200).json(
+            { 
+                outgoing: outgoingfriendreqs ,
+                incoming: incomingfriendreqs
+            }
+        );
+    } catch(error){
+        console.error('Error fetching friend requests:', error);
+        return res.status(500).json({message: 'Server error'});
+    }
+})
+
 export const friendRequests = router;
