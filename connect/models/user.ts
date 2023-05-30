@@ -1,14 +1,14 @@
 import mongoose, {Schema, model} from 'mongoose';
 
 interface IUser{
-    id: string
+    ID: string
     friends: Array<mongoose.Types.ObjectId>
     outgoingrequests: Array<mongoose.Types.ObjectId>
     incomingrequests: Array<mongoose.Types.ObjectId>
 }
 
 const UserSchema = new Schema<IUser>({
-    id: {
+    ID: {
         type: String,
         required: true
     },
@@ -24,6 +24,8 @@ const UserSchema = new Schema<IUser>({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Request'
     }],
+},{
+    id: false
 });
 
 export const User = model<IUser>('User', UserSchema);
