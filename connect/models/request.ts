@@ -1,21 +1,30 @@
-import {Schema, model} from 'mongoose';
+import mongoose, {Schema, model} from 'mongoose';
 
 interface IRequest{
-    friend: Boolean
-    group: Boolean
-    accepted: Boolean
+    sender: Schema.Types.ObjectId;
+    receiver: Schema.Types.ObjectId;
+    type: 'friend' | 'group' 
+    status: 'pending' | 'accepted' | 'rejected';
 }
 
 const RequestSchema = new Schema<IRequest>({
-    friend: { 
-        type: Boolean 
+    sender: {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
     },
-    group: {
-        type: Boolean
+    receiver: {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
     },
-    accepted: {
-        type: Boolean
+    status: { 
+        type: String, 
+        enum: ['pending', 'accepted', 'rejected'], 
+        default: 'pending' 
+    },
+    type: {
+        type: String,
+        enum: ['friend | group'],
     }
 });
 
-export const User = model<IRequest>('Request', RequestSchema);
+export const request = model<IRequest>('Request', RequestSchema);

@@ -1,19 +1,17 @@
-import {Schema, model} from 'mongoose';
-import mongoose from 'mongoose';
+import mongoose, {Schema, model} from 'mongoose';
 
 interface IUser{
-    friends: Array<mongoose.Schema.Types.ObjectId>
-    requests: Array<mongoose.Schema.Types.ObjectId>
-    conversations: Array<mongoose.Schema.Types.ObjectId>
+    friends: Array<Schema.Types.ObjectId>
+    requests: Array<Schema.Types.ObjectId>
 }
 
 const UserSchema = new Schema<IUser>({
     friends: [{ 
-        type: mongoose.Schema.Types.ObjectId, 
+        type: Schema.Types.ObjectId, 
         ref: 'User' 
     }],
     requests: [{
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: 'Request'
     }],
 });
