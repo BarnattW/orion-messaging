@@ -2,7 +2,8 @@ import mongoose, {Schema, model} from 'mongoose';
 
 interface IUser{
     friends: Array<Schema.Types.ObjectId>
-    requests: Array<Schema.Types.ObjectId>
+    outgoingrequests: Array<Schema.Types.ObjectId>
+    incomingrequests: Array<Schema.Types.ObjectId>
 }
 
 const UserSchema = new Schema<IUser>({
@@ -10,7 +11,11 @@ const UserSchema = new Schema<IUser>({
         type: Schema.Types.ObjectId, 
         ref: 'User' 
     }],
-    requests: [{
+    incomingrequests: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Request'
+    }],
+    outgoingrequests: [{
         type: Schema.Types.ObjectId,
         ref: 'Request'
     }],
