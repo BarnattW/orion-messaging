@@ -23,16 +23,16 @@ function AuthForm(props: props) {
 					<div className="flex flex-col gap-3 mb-12 w-2/3">
 						<button
 							type="button"
-							className="py-2 px-4 flex justify-center items-center  bg-blue-600 hover:bg-blue-700 w-full transition ease-in duration-200 text-center text-base font-semibold rounded-lg "
+							className="py-2 px-4 flex justify-center items-center  bg-blue-600 hover:bg-blue-700 w-full transition ease-in duration-200 text-center text-base font-semibold rounded-lg"
 						>
 							<Image
 								src="/fb-icon.svg"
 								width={20}
 								height={20}
-								alt="Sign in with Facebook"
+								alt="Authenticate with Facebook"
 								className="ml-4 mr-2"
 							/>
-							Sign in with Facebook
+							{isLogin ? "Sign in with Facebook? " : "Sign Up with Facebook "}
 						</button>
 
 						<button
@@ -43,10 +43,10 @@ function AuthForm(props: props) {
 								src="/google-icon.svg"
 								width={20}
 								height={20}
-								alt="Sign in with Google"
+								alt="Authenticate with Google"
 								className="mr-2"
 							/>
-							Sign in with Google
+							{isLogin ? "Sign in with Google " : "Sign Up with Google "}
 						</button>
 
 						<button
@@ -57,10 +57,10 @@ function AuthForm(props: props) {
 								src="/github-icon.svg"
 								width={20}
 								height={20}
-								alt="Sign in with Github"
+								alt="Authenticate with Github"
 								className="mr-2"
 							/>
-							Sign in with GitHub
+							{isLogin ? "Sign in with Github " : "Sign Up with Github "}
 						</button>
 					</div>
 					<div className="mb-6">
