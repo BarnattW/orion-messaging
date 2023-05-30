@@ -1,5 +1,6 @@
 import passport from 'passport';
 import { User } from '../models/User';
+import { providers } from '../enum/providers';
 import { Strategy as JwtStrategy } from 'passport-jwt'
 import { Strategy as GoogleStrategy } from 'passport-google-oauth2';
 import { Strategy as FacebookStrategy } from 'passport-facebook';
@@ -11,7 +12,7 @@ async function authenticateUser(req : Express.Request, token : string, tokenSecr
     console.log("Trying to get profile");
     console.log(profile);
     try {
-        const providerId = profile.provider + 'Id';
+        const providerId = providers[profile.provider as keyof typeof providers];
         console.log(providerId);
         if (req.user){ // Is there a user currently logged in?
             console.log('hi');
@@ -21,8 +22,9 @@ async function authenticateUser(req : Express.Request, token : string, tokenSecr
                 const user = await User.findById(req.user._id);
                 if (!user) return done(undefined);
                 user[providerId] = profile.id;
+                console.log(user.githubId);
                 user.save();
-                return done(null, user);
+                return done(undefined, user);
             } catch (err) {
                 done(err);
             }
@@ -44,6 +46,7 @@ async function authenticateUser(req : Express.Request, token : string, tokenSecr
 }
 
 export const PassportConfig = (passport : PassportType) => {
+
     passport.use(new GoogleStrategy({
         clientID: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
@@ -51,4 +54,16 @@ export const PassportConfig = (passport : PassportType) => {
         passReqToCallback: true
     }, authenticateUser))
 
+    passport.serializeUser(function (user : Express.User, done: Function) {
+        done(undefined, user._id);
+    })
+
+    passport.deserializeUser(async function (id : String, done: Function) {
+        try {
+            const user = await User.findById(id);
+            done(undefined, user);
+        } catch (err) {
+            done(err);
+        }
+    })
 }
