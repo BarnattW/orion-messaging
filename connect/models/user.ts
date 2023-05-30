@@ -1,22 +1,22 @@
 import mongoose, {Schema, model} from 'mongoose';
 
 interface IUser{
-    friends: Array<Schema.Types.ObjectId>
-    outgoingrequests: Array<Schema.Types.ObjectId>
-    incomingrequests: Array<Schema.Types.ObjectId>
+    friends: Array<mongoose.Types.ObjectId>
+    outgoingrequests: Array<mongoose.Types.ObjectId>
+    incomingrequests: Array<mongoose.Types.ObjectId>
 }
 
 const UserSchema = new Schema<IUser>({
     friends: [{ 
-        type: Schema.Types.ObjectId, 
+        type: mongoose.Schema.Types.ObjectId, 
         ref: 'User' 
     }],
     incomingrequests: [{
-        type: Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'Request'
     }],
     outgoingrequests: [{
-        type: Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'Request'
     }],
 });

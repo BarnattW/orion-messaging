@@ -1,19 +1,19 @@
 import mongoose, {Schema, model} from 'mongoose';
 
 interface IRequest{
-    sender: Schema.Types.ObjectId;
-    receiver: Schema.Types.ObjectId;
+    sender: mongoose.Types.ObjectId;
+    receiver: mongoose.Types.ObjectId;
     type: 'friend' | 'group' 
     status: 'pending' | 'accepted' | 'rejected';
 }
 
 const RequestSchema = new Schema<IRequest>({
     sender: {
-        type: Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     },
     receiver: {
-        type: Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     },
     status: { 
