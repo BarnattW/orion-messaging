@@ -1,18 +1,18 @@
 import mongoose, {Schema, model} from 'mongoose';
 
 interface IRequest{
-    sender: mongoose.Types.ObjectId;
-    receiver: mongoose.Types.ObjectId;
-    type: 'friend' | 'group' 
+    senderID: mongoose.Types.ObjectId;
+    receiverID: mongoose.Types.ObjectId;
+    requestType: 'friend' | 'group' 
     status: 'pending' | 'accepted' | 'rejected';
 }
 
 const RequestSchema = new Schema<IRequest>({
-    sender: {
+    senderID: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     },
-    receiver: {
+    receiverID: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     },
@@ -21,9 +21,9 @@ const RequestSchema = new Schema<IRequest>({
         enum: ['pending', 'accepted', 'rejected'], 
         default: 'pending' 
     },
-    type: {
+    requestType: {
         type: String,
-        enum: ['friend | group'],
+        enum: ['friend', 'group'],
     }
 });
 
