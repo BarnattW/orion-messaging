@@ -97,8 +97,26 @@ router.get('/api/:userID/friendReqs', async(req, res) =>{
             return res.status(404).json({ message: 'User not found' });
         }
 
-        const outgoingfriendreqs = await User.find({ _id: { $in: user.outgoingrequests } });
-        const incomingfriendreqs = await User.find({ _id: { $in: user.incomingrequests } });
+        const outgoingfriendreqs = await User.find(
+            { 
+                _id: { $in: user.outgoingrequests } , 
+                outgoingrequests: {
+                    $elemMatch: {
+                        requestType: 'friend'
+                    }
+                }
+            }
+        );
+        const incomingfriendreqs = await User.find(
+            { 
+                _id: { $in: user.incomingrequests } , 
+                incomingrequests: {
+                    $elemMatch: {
+                        requestType: 'friend'
+                    }
+                }
+            }
+        );
 
         return res.status(200).json(
             { 
