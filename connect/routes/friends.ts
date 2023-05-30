@@ -5,18 +5,18 @@ import express, {Request, Response} from 'express';
 
 const router = express.Router();
 
-router.delete('/api/removeFriend', async (req, res) =>{
+router.delete('/api/removeFriend', async (req: Request, res: Response) =>{
     try{
-        const{userID, friendID} = req.body;
+        const{userId, friendId} = req.body;
 
-        const user = await User.findOne({ ID: userID });
-        const friend = await User.findOne({ ID: friendID });
+        const user = await User.findOne({ Id: userId });
+        const friend = await User.findOne({ Id: friendId });
 
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        const friendIndex = user.friends.findIndex((friend) => friend.toString() === friendID);
+        const friendIndex = user.friends.findIndex((friend) => friend.toString() === friendId);
 
         if (friendIndex === -1) {
             return res.status(404).json({ message: 'Friend not found in ${user}\'s friends list' });
@@ -34,14 +34,14 @@ router.delete('/api/removeFriend', async (req, res) =>{
 })
 
 
-router.get('/api/getFriends/:userID', async (req, res) =>{
+router.get('/api/getFriends/:userId', async (req: Request, res: Response) =>{
     try{
-        const {userID} = req.params;
-        const user = await User.findOne({ Id: userID });
+        const {userId} = req.params;
+        const user = await User.findOne({ Id: userId });
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
-        const friends = await User.find({ ID: { $in: user.friends } });
+        const friends = await User.find({ Id: { $in: user.friends } });
 
         return res.status(200).json({ friends });
     } catch (error) {

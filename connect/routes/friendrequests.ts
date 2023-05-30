@@ -5,7 +5,7 @@ import express, {Request, Response} from 'express';
 
 const router = express.Router();
 
-router.post('/api/sendFriendRequest', async (req, res) =>{
+router.post('/api/sendFriendRequest', async (req: Request,  res: Response) =>{
     try {
         const {senderId, receiverId} = req.body;
     
@@ -46,7 +46,7 @@ router.post('/api/sendFriendRequest', async (req, res) =>{
 
 })
 
-router.put('/api/acceptFriendRequest/:requestId', async (req, res)=>{
+router.put('/api/acceptFriendRequest/:requestId', async (req: Request,  res: Response)=>{
     try{
         const {requestId} = req.params;
         const friendReq = await request.findById(requestId);
@@ -87,7 +87,7 @@ router.put('/api/acceptFriendRequest/:requestId', async (req, res)=>{
     }
 })
 
-router.get('/api/:userId/getFriendReqs', async(req, res) =>{
+router.get('/api/:userId/getFriendReqs', async(req: Request,  res: Response) =>{
     try{
         const {userId} = req.params;
 
