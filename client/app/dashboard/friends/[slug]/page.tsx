@@ -1,7 +1,7 @@
 import Sidebar from "@/app/components/Dashboard/Sidebar";
-import FriendList from "@/app/components/Dashboard/FriendList";
+import FriendList from "@/app/components/Dashboard/FriendList/FriendList";
 import { dummyFriends } from "@/app/dummy-data/dummy-friends";
-import ChatScreen from "@/app/components/Dashboard/ChatScreen";
+import ChatScreen from "@/app/components/Dashboard/ChatScreen/ChatScreen";
 
 interface friends {
 	online: string[];
@@ -9,7 +9,7 @@ interface friends {
 }
 
 async function getFriends() {
-	//const friends = await fetch(dummyFriends);
+	//dummyData
 	const friends: friends = dummyFriends;
 	return friends;
 }
