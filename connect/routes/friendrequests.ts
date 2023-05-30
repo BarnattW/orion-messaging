@@ -4,8 +4,7 @@ import { request } from "../models/request";
 import express, {Request, Response} from 'express';
 
 const router = express.Router();
-
-router.post('/api/sendFriendRequest', async (req: Request,  res: Response) =>{
+export const sendRequest = async (req: Request,  res: Response, requestType: String) =>{
     try {
         const {senderId, receiverId} = req.body;
     
@@ -19,7 +18,7 @@ router.post('/api/sendFriendRequest', async (req: Request,  res: Response) =>{
         const newRequest = new request({
             senderId: sender,
             receiverId: receiver,
-            requestType: 'friend',
+            requestType: requestType,
             status: 'pending'
         });
     
@@ -33,7 +32,7 @@ router.post('/api/sendFriendRequest', async (req: Request,  res: Response) =>{
     
         return res.status(201).json(
             { 
-                message: 'Friend request created' ,
+                message: '${requestType} request created' ,
                 data: newRequest
             }
             );
@@ -44,7 +43,11 @@ router.post('/api/sendFriendRequest', async (req: Request,  res: Response) =>{
         return res.status(500).json({ message: 'Server error' });
     }
 
-})
+}
+
+
+router.post('/api/sendFriendRequest', (req: Request, res: Response) =>
+  sendRequest(req, res, 'friend'));
 
 router.put('/api/acceptFriendRequest/:requestId', async (req: Request,  res: Response)=>{
     try{
@@ -87,7 +90,7 @@ router.put('/api/acceptFriendRequest/:requestId', async (req: Request,  res: Res
     }
 })
 
-router.get('/api/:userId/getFriendReqs', async(req: Request,  res: Response) =>{
+export const getRequest = async(req: Request,  res: Response, requestType: String) =>{
     try{
         const {userId} = req.params;
 
@@ -97,22 +100,22 @@ router.get('/api/:userId/getFriendReqs', async(req: Request,  res: Response) =>{
             return res.status(404).json({ message: 'User not found' });
         }
 
-        const outgoingfriendreqs = await User.find(
+        const outgoingreqs = await User.find(
             { 
                 Id: { $in: user.outgoingrequests } , 
                 outgoingrequests: {
                     $elemMatch: {
-                        requestType: 'friend'
+                        requestType: requestType
                     }
                 }
             }
         );
-        const incomingfriendreqs = await User.find(
+        const incomingreqs = await User.find(
             { 
                 Id: { $in: user.incomingrequests } , 
                 incomingrequests: {
                     $elemMatch: {
-                        requestType: 'friend'
+                        requestType: requestType
                     }
                 }
             }
@@ -120,8 +123,8 @@ router.get('/api/:userId/getFriendReqs', async(req: Request,  res: Response) =>{
 
         return res.status(200).json(
             { 
-                outgoing: outgoingfriendreqs ,
-                incoming: incomingfriendreqs
+                outgoing: outgoingreqs ,
+                incoming: incomingreqs
             }
         );
     } catch(error){
@@ -129,6 +132,8 @@ router.get('/api/:userId/getFriendReqs', async(req: Request,  res: Response) =>{
 
         return res.status(500).json({message: 'Server error'});
     }
-})
+}
+router.get('/api/:userId/getFriendReqs', (req: Request, res: Response) =>
+getRequest(req, res, 'friend'));
 
 export const friendRequests = router;
