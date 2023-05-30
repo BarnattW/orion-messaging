@@ -33,4 +33,25 @@ router.delete('/api/removeFriend/:userID/:friendID', async (req, res) =>{
     }
 })
 
+
+router.get('/api/getFriends/:userID', async (req, res) =>{
+    try{
+        const {userID} = req.params;
+        const user = await User.findById(userID);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        const friends = await User.find({ _id: { $in: user.friends } });
+
+        return res.status(200).json({ friends });
+    } catch (error) {
+        console.error('Error getting friends:', error);
+
+        return res.status(500).json({ message: 'Server error' });
+  }
+
+})
+
+
+
 export const friends = router;
