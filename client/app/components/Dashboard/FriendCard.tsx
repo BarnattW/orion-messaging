@@ -16,7 +16,7 @@ function FriendCard(friendCardProps: friendCardProps) {
 					altText={friendCardProps.altText}
 					onlineStatus={friendCardProps.onlineStatus}
 				/>
-				<div className="truncate text-sm max-w-[180px]">
+				<div className="truncate text-sm max-w-[250px]">
 					{friendCardProps.userId}
 				</div>
 			</div>

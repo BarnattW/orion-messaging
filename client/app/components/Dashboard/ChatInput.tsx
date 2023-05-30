@@ -1,8 +1,25 @@
+import EmojiIcon from "../Icons/EmojiIcon";
+import FileClipIcon from "../Icons/FileClipIcon";
+import SendIcon from "./SendIcon";
+
 function ChatInput() {
+	const iconClassNames: string = "fill-gray-100 h-6 w-6 hover:cursor-pointer";
+
 	return (
-		<div className="mt-auto mx-8 rounded-xl bg-zinc-700 flex mb-4">
-			<textarea className="w-full resize-none rounded-xl bg-zinc-700 focus:ring-0 focus:outline-none pt-1 px-2 overflow-auto max-h-96"></textarea>
-			<button>Send</button>
+		<div className="mt-auto mx-8 rounded-xl bg-zinc-700 mb-4 flex items-end ">
+			<div className="flex px-3 gap-3 pb-2">
+				<FileClipIcon className={iconClassNames} />
+				<EmojiIcon className={iconClassNames} />
+			</div>
+			<div
+				className="grow max-h-[50vh] overflow-y-auto bg-zinc-700 rounded-xl outline-none px-3 py-2 scrollbar-thin scrollbar-thumb-neutral-800"
+				contentEditable="true"
+				placeholder="Type your message..."
+				style={{ wordBreak: "break-word" }}
+			></div>
+			<button className="px-3 pb-2">
+				<SendIcon className={iconClassNames} />
+			</button>
 		</div>
 	);
 }

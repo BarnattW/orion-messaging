@@ -14,7 +14,7 @@ function Sidebar(props: props) {
 	const iconClassNames: string = "fill-gray-100 hover:fill-gray-400 h-6 w-6";
 
 	return (
-		<div className="h-full bg-zinc-900 w-16 flex flex-col gap-7 items-center pt-8">
+		<div className="h-full bg-zinc-900 w-16 flex flex-col gap-7 items-center pt-8 flex-shrink-0">
 			<Image
 				src="/orion-logo2.svg"
 				width={80}
