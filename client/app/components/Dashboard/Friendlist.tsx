@@ -7,7 +7,7 @@ interface props {
 
 function FriendList(friends: props) {
 	return (
-		<div className="h-full w-72 flex flex-col grow sm:grow-0  gap-6 border-r-2 border-neutral-700 overflow-auto text-neutral-200 scrollbar-thin">
+		<div className="h-full w-full md:w-72 flex flex-col grow gap-6 border-r-2 border-neutral-700 overflow-auto text-neutral-200 scrollbar-thin">
 			<div className="text-lg px-5 bg-zinc-800  sticky top-0 pt-8 pb-1 backdrop-blur-lg z-10">
 				Friends
 			</div>
