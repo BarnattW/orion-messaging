@@ -2,7 +2,6 @@ import mongoose from "mongoose";
 import {User} from './models/user'
 import { request } from "./models/request";
 import express, {Request, Response } from 'express';
-require('dotenv').config();
 
 const app = express();
 const PORT = 3000;
@@ -31,4 +30,4 @@ app.get('/api/users', async (req, res) => {
       console.error('Error retrieving users:', error);
       return res.status(500).json({ message: 'Server error' });
     }
-  });
+});

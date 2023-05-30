@@ -5,20 +5,20 @@ import express, {Request, Response} from 'express';
 
 const router = express.Router();
 
-router.post('/api/addFriend', async (req, res) =>{
+router.post('/api/sendFriendRequest', async (req, res) =>{
     try {
-        const {senderID, receiverID} = req.body;
+        const {senderId, receiverId} = req.body;
     
-        const sender = await User.findById(senderID);
-        const receiver = await User.findById(receiverID);
+        const sender = await User.findById(senderId);
+        const receiver = await User.findById(receiverId);
 
         if (!sender|| !receiver) {
             return res.status(404).json({ message: 'Sender or receiver not found' });
         }
     
         const newRequest = new request({
-            senderID: sender,
-            receiverID: receiver,
+            senderId: sender,
+            receiverId: receiver,
             requestType: 'friend',
             status: 'pending'
         });
@@ -46,17 +46,17 @@ router.post('/api/addFriend', async (req, res) =>{
 
 })
 
-router.put('/api/acceptRequest/:requestID', async (req, res)=>{
+router.put('/api/acceptFriendRequest/:requestId', async (req, res)=>{
     try{
-        const {requestID} = req.params;
-        const friendReq = await request.findById(requestID);
+        const {requestId} = req.params;
+        const friendReq = await request.findById(requestId);
 
         if (!friendReq){
             return res.status(404).json({ message: 'Friend request not found' });
         }
 
-        const sender = await User.findById(friendReq.senderID);
-        const receiver = await User.findById(friendReq.receiverID);
+        const sender = await User.findById(friendReq.senderId);
+        const receiver = await User.findById(friendReq.receiverId);
 
         if (!sender || !receiver) {
             return res.status(404).json({ message: 'Sender or receiver not found' });
@@ -68,14 +68,14 @@ router.put('/api/acceptRequest/:requestID', async (req, res)=>{
         await sender.save();
         await receiver.save();
 
-        await request.findByIdAndDelete(requestID);
+        await request.findByIdAndDelete(requestId);
 
         await User.findByIdAndUpdate(sender._id, {
-            $pull: { incomingrequests: requestID }
+            $pull: { incomingrequests: requestId }
         });
 
         await User.findByIdAndUpdate(receiver._id, {
-            $pull: { outgoingrequests: requestID }
+            $pull: { outgoingrequests: requestId }
         });
 
         return res.status(200).json({ message: 'Friend request accepted' });
@@ -87,11 +87,11 @@ router.put('/api/acceptRequest/:requestID', async (req, res)=>{
     }
 })
 
-router.get('/api/:userID/friendReqs', async(req, res) =>{
+router.get('/api/:userId/getFriendReqs', async(req, res) =>{
     try{
-        const {userID} = req.params;
+        const {userId} = req.params;
 
-        const user = await User.findOne({ ID: userID });
+        const user = await User.findOne({ Id: userId });
 
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
@@ -99,7 +99,7 @@ router.get('/api/:userID/friendReqs', async(req, res) =>{
 
         const outgoingfriendreqs = await User.find(
             { 
-                ID: { $in: user.outgoingrequests } , 
+                Id: { $in: user.outgoingrequests } , 
                 outgoingrequests: {
                     $elemMatch: {
                         requestType: 'friend'
@@ -109,7 +109,7 @@ router.get('/api/:userID/friendReqs', async(req, res) =>{
         );
         const incomingfriendreqs = await User.find(
             { 
-                ID: { $in: user.incomingrequests } , 
+                Id: { $in: user.incomingrequests } , 
                 incomingrequests: {
                     $elemMatch: {
                         requestType: 'friend'
@@ -126,6 +126,7 @@ router.get('/api/:userID/friendReqs', async(req, res) =>{
         );
     } catch(error){
         console.error('Error fetching friend requests:', error);
+
         return res.status(500).json({message: 'Server error'});
     }
 })

@@ -5,9 +5,9 @@ import express, {Request, Response} from 'express';
 
 const router = express.Router();
 
-router.delete('/api/removeFriend/:userID/:friendID', async (req, res) =>{
+router.delete('/api/removeFriend', async (req, res) =>{
     try{
-        const{userID, friendID} = req.params;
+        const{userID, friendID} = req.body;
 
         const user = await User.findOne({ ID: userID });
         const friend = await User.findOne({ ID: friendID });
@@ -37,7 +37,7 @@ router.delete('/api/removeFriend/:userID/:friendID', async (req, res) =>{
 router.get('/api/getFriends/:userID', async (req, res) =>{
     try{
         const {userID} = req.params;
-        const user = await User.findOne({ ID: userID });
+        const user = await User.findOne({ Id: userID });
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
