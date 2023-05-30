@@ -25,7 +25,7 @@ const UserSchema = new Schema<IUser>({
         ref: 'Request'
     }],
 },{
-    id: false
+    _id: false
 });
 
 export const User = model<IUser>('User', UserSchema);
