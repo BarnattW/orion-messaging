@@ -9,8 +9,8 @@ router.delete('/api/removeFriend/:userID/:friendID', async (req, res) =>{
     try{
         const{userID, friendID} = req.params;
 
-        const user = await User.findById(userID);
-        const friend = await User.findById(friendID);
+        const user = await User.findOne({ ID: userID });
+        const friend = await User.findOne({ ID: friendID });
 
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
@@ -37,11 +37,11 @@ router.delete('/api/removeFriend/:userID/:friendID', async (req, res) =>{
 router.get('/api/getFriends/:userID', async (req, res) =>{
     try{
         const {userID} = req.params;
-        const user = await User.findById(userID);
+        const user = await User.findOne({ ID: userID });
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
-        const friends = await User.find({ _id: { $in: user.friends } });
+        const friends = await User.find({ ID: { $in: user.friends } });
 
         return res.status(200).json({ friends });
     } catch (error) {

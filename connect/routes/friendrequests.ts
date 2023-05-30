@@ -91,7 +91,7 @@ router.get('/api/:userID/friendReqs', async(req, res) =>{
     try{
         const {userID} = req.params;
 
-        const user = await User.findById(userID);
+        const user = await User.findOne({ ID: userID });
 
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
@@ -99,7 +99,7 @@ router.get('/api/:userID/friendReqs', async(req, res) =>{
 
         const outgoingfriendreqs = await User.find(
             { 
-                _id: { $in: user.outgoingrequests } , 
+                ID: { $in: user.outgoingrequests } , 
                 outgoingrequests: {
                     $elemMatch: {
                         requestType: 'friend'
@@ -109,7 +109,7 @@ router.get('/api/:userID/friendReqs', async(req, res) =>{
         );
         const incomingfriendreqs = await User.find(
             { 
-                _id: { $in: user.incomingrequests } , 
+                ID: { $in: user.incomingrequests } , 
                 incomingrequests: {
                     $elemMatch: {
                         requestType: 'friend'
