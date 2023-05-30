@@ -16,6 +16,10 @@ router.delete('/api/removeFriend', async (req: Request, res: Response) =>{
             return res.status(404).json({ message: 'User not found' });
         }
 
+        if (!friend) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
         const friendIndex = user.friends.findIndex((friend) => friend.toString() === friendId);
 
         if (friendIndex === -1) {
@@ -50,6 +54,28 @@ router.get('/api/getFriends/:userId', async (req: Request, res: Response) =>{
         return res.status(500).json({ message: 'Server error' });
   }
 
+})
+
+router.get('/api/getFriend/:userId/:friendId', async (req: Request, res: Response) =>{
+    try{
+        const {userId, friendId} = req.params;
+        const user = await User.findOne({Id: userId});
+        const friend = await User.findOne({ Id: friendId });
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        if (!friend) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        const foundfriend = await User.find({ Id: { $in: user.friends } });
+        return res.status(200).json({foundfriend});
+    } catch (error){
+        console.error('Error getting friend:', error);
+        
+        return res.status(500).json({message: 'Server error'});
+    }
 })
 
 
