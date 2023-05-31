@@ -8,6 +8,7 @@ import { googleRouter } from './routes/google_router';
 import { PassportConfig } from './config/passport_config';
 import { facebookRouter } from './routes/facebook_router';
 import { githubRouter } from './routes/github_router';
+import { userRouter } from './routes/user_router';
 
 const app = express();
 require("dotenv").config();
@@ -37,7 +38,7 @@ app.get('/', (req, res) => {
     res.render('index')
 })
 
-app.use("/api/auth", googleRouter, facebookRouter, githubRouter);
+app.use("/api/auth", googleRouter, facebookRouter, githubRouter, userRouter);
 
 const server = app.listen(process.env.PORT, () => {
     console.log(`Server Started on Port ${process.env.PORT}`);
