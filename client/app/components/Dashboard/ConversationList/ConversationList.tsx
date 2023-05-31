@@ -21,6 +21,8 @@ function ConversationList({
 			<div>
 				{conversations.length > 0 &&
 					conversations.map((conversation) => {
+						//const isActive = conversation.conversationId === activeConversationId;
+
 						return (
 							<ConversationCard
 								altText={"Conversation"}

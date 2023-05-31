@@ -38,6 +38,7 @@ function ChatInput() {
 				onInput={handleInput}
 				onKeyDown={handleKeyDown}
 			></div>
+
 			<button className="px-3 pb-2">
 				<SendIcon className={iconClassNames} />
 			</button>
