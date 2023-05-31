@@ -1,17 +1,17 @@
 import passport from 'passport';
-import { Router, Request, Response } from 'express';
+import { Router, Request, Response} from 'express';
 
 var router = Router();
 
-router.get('/google', function(req: Request, res: Response, next: Function) {
-    passport.authenticate('google', { scope: ['profile'] }, function(req: Request, res: Response, err: Error){
+router.get('/github', function(req: Request, res: Response, next: Function) {
+    passport.authenticate('github', { scope: ['profile'] }, function(req: Request, res: Response, err: Error){
         if (err) {
             return next(err);
         }
 
         if (!req.user) {
             return res.status(401).json({
-                success : false,  message : 'Google Authentication Failed' });
+                success : false,  message : 'GitHub Authentication Failed' });
         }
 
         req.login(req.user, loginErr => {
@@ -20,13 +20,12 @@ router.get('/google', function(req: Request, res: Response, next: Function) {
             }
 
             return res.status(200).json({ 
-                success : true, message : 'Google Authenticated'});
+                success : true, message : 'GitHub Authenticated'});
         })
     }) (req, res, next);
 });
 
-
-router.get('/google/callback', passport.authenticate('google', 
+router.get('/github/callback', passport.authenticate('github', 
     {
         successRedirect: '/',
         failureRedirect: '/login'
@@ -39,4 +38,4 @@ router.get('/google/callback', passport.authenticate('google',
     }
 );
 
-export { router as googleRouter };
+export { router as githubRouter };
