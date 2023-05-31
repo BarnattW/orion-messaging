@@ -5,7 +5,7 @@ import express, {Request, Response} from 'express';
 import {Server, Socket} from 'socket.io';
 
 export const sendFriendRequest = (socket: Socket) =>{
-    socket.on('sendFriendRequest', async (senderUsername: string, receiverUsername: string, requestType: string) =>{
+    socket.on('sendFriendRequest', async (senderUsername: string, receiverUsername: string, receiverSocketId: string) =>{
         try {
         
             const sender = await User.findOne(
@@ -28,7 +28,7 @@ export const sendFriendRequest = (socket: Socket) =>{
             const newRequest = new request({
                 senderId: sender._id,
                 receiverId: receiver._id,
-                requestType: requestType,
+                requestType: "friend",
                 status: 'pending'
             });
         
@@ -46,6 +46,10 @@ export const sendFriendRequest = (socket: Socket) =>{
                     data: newRequest
                 }
             );
+
+            socket.to(receiverSocketId).emit('friendRequestReceived', {
+                senderSocketId: socketId,
+                message: 'You have received a friend request',
     
             
         } catch (error) {

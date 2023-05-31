@@ -8,8 +8,8 @@ import {sendFriendRequest, acceptFriendRequest} from './routes/sockets/friendreq
 
 const app = express();
 const PORT = 3000;
-const URI:string = process.env.DATABASE_URI!
-mongoose.connect('mongodb://localhost:27017/database').catch((error) => console.error('Connection error:', error));
+const URI:string = process.env.MONGO_URI!
+mongoose.connect(URI).catch((error) => console.error('Connection error:', error));
 
 app.use(express.json());
 
@@ -31,3 +31,11 @@ io.on('connection', (socket: Socket) =>{
     sendFriendRequest(socket);
     acceptFriendRequest(socket);
 })
+
+
+io.on('connection', (socket: Socket) => {
+    socket.on('ping', () => {
+      console.log('Received ping from client (${socket.id})');
+      socket.emit('pong');
+    });
+});
