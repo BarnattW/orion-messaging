@@ -27,10 +27,23 @@ app.use(friends)
 const server = http.createServer(app);
 const io = new Server(server);
 
+const connectedClients: Map<string, Socket> = new Map();
+
 io.on('connection', (socket: Socket) =>{
-    sendFriendRequest(socket);
-    acceptFriendRequest(socket);
-})
+    socket.on('userId', (userId) => {
+    //LISTEN TO FRONTEND AND GET USERID
+    connectedClients.set(userId, socket);
+    
+    socket.on('disconnect', ()=>
+        {
+            connectedClients.delete(userId);
+        }
+    );
+
+    sendFriendRequest(socket, connectedClients);
+    acceptFriendRequest(socket, connectedClients);
+    });
+});
 
 
 io.on('connection', (socket: Socket) => {
