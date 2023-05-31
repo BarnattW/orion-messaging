@@ -3,19 +3,35 @@ kind: Config
 metadata: 
   name: orion-messaging
 build:
-  local:
-    push: false
-artifacts:
-  - image: barnattw/orion-client
-    context: client
-    docker:
-      dockerfile: Dockerfile
-    sync:
-      manual:
-        - src: 'src/**/*/.ts'
-          dest: .
-        - src: 'src/**/*/.tsx'
-          dest: .
+  googleCloudBuild:
+    projectId: orion-messaging-388417
+  artifacts:
+    - image: us.gcr.io/orion-messaging-388417/client
+      context: client
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: 'src/**/*/.ts'
+            dest: .
+          - src: 'src/**/*/.tsx'
+            dest: .
+    - image: us.gcr.io/orion-messaging-388417/auth
+      context: auth
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: 'src/**/*/.ts'
+            dest: .
+    - image: us.gcr.io/orion-messaging-388417/connect
+      context: connect
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: 'src/**/*/.ts'
+            dest: .
 manifests:
   rawYaml:
     - infra/k8s/*
