@@ -6,7 +6,7 @@ function ChatInput() {
 	const iconClassNames: string = "fill-gray-100 h-6 w-6 hover:cursor-pointer";
 
 	return (
-		<div className="mt-auto mx-8 rounded-xl bg-zinc-700 mb-4 flex items-end ">
+		<div className="mx-5 rounded-xl bg-zinc-700 my-3 flex items-end ">
 			<div className="flex px-3 gap-3 pb-2">
 				<FileClipIcon className={iconClassNames} />
 				<EmojiIcon className={iconClassNames} />

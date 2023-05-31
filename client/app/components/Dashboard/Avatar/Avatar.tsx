@@ -9,7 +9,7 @@ interface avatarProps {
 function Avatar({ imageUrl, altText, size = 300 }: avatarProps) {
 	return (
 		<>
-			<div className="rounded-full ring-2 ring-white h-8 w-8">
+			<div className="rounded-full ring-2 ring-white h-8 w-8 flex-shrink-0">
 				<Image
 					src={imageUrl}
 					width={size}

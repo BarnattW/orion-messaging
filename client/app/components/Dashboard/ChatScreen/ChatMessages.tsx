@@ -24,7 +24,7 @@ function ChatMessages() {
 	}, []);
 
 	return (
-		<>
+		<div className="flex flex-col overflow-auto scrollbar-thin scrollbar-thumb-neutral-700">
 			{userMessages &&
 				userMessages.map((message) => {
 					return (
@@ -38,7 +38,7 @@ function ChatMessages() {
 						/>
 					);
 				})}
-		</>
+		</div>
 	);
 }
 
