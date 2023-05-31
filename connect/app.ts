@@ -4,7 +4,7 @@ import { request } from "./models/request";
 import express, {Request, Response } from 'express';
 import http from 'http';
 import {Server, Socket} from 'socket.io';
-import {sendFriendRequest} from './routes/sockets/friendrequests';
+import {sendFriendRequest, acceptFriendRequest} from './routes/sockets/friendrequests';
 
 const app = express();
 const PORT = 3000;
@@ -29,4 +29,5 @@ const io = new Server(server);
 
 io.on('connection', (socket: Socket) =>{
     sendFriendRequest(socket);
+    acceptFriendRequest(socket);
 })

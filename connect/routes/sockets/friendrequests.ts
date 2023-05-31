@@ -58,3 +58,51 @@ export const sendFriendRequest = (socket: Socket) =>{
 );
 
 };
+
+export const acceptFriendRequest = (socket: Socket) =>{
+    socket.on('acceptFriendRequest', async (requestId: string) => {
+        try {
+            const friendReq = await request.findById(requestId);
+        
+            if (!friendReq) {
+                socket.emit('requestError', { message: 'Friend request not found' });
+                return;
+            }
+        
+            const sender = await User.findById(friendReq.senderId);
+            const receiver = await User.findById(friendReq.receiverId);
+        
+            if (!sender || !receiver) {
+                socket.emit('requestError', { message: 'Sender or receiver not found' });
+                return;
+            }
+        
+            sender.friends.push(receiver._id);
+            receiver.friends.push(sender._id);
+        
+            await sender.save();
+            await receiver.save();
+        
+            await request.findByIdAndDelete(requestId);
+        
+            await User.findByIdAndUpdate(sender._id, 
+                {
+                    $pull: { incomingrequests: requestId },
+                }
+            );
+        
+            await User.findByIdAndUpdate(receiver._id, 
+                {
+                    $pull: { outgoingrequests: requestId },
+                }
+            );
+        
+            socket.emit('friendRequestAccepted', { message: 'Friend request accepted' });
+        } catch (error) {
+            console.error('Error accepting friend request:', error);
+
+            socket.emit('requestError', { message: 'Server error' });
+        }
+    }
+        );
+}
