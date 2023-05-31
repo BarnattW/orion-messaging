@@ -27,7 +27,7 @@ spec:
   selector:
     app: connect
   ports:
-    name: connect
+  - name: connect
     protocol: TCP
     port: 3000
     targetPort: 3000
