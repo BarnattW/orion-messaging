@@ -3,7 +3,7 @@
 import passport from 'passport';
 import { User } from '../models/User';
 import { providers } from '../enum/providers';
-import { Strategy as JwtStrategy } from 'passport-jwt'
+import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt'
 import { Strategy as GoogleStrategy } from 'passport-google-oauth2';
 import { Strategy as FacebookStrategy } from 'passport-facebook';
 import { Strategy as GitHubStrategy } from 'passport-github2';
@@ -69,6 +69,27 @@ async function authenticateUser(
 }
 
 export const PassportConfig = (passport: PassportType) => {
+
+    passport.use(new JwtStrategy({ 
+        jwtFromRequest: function(req) {
+            var token = null;
+            if (req && req.cookies)
+            {
+                token = req.cookies['jwt'];
+            }
+            return token;
+        },
+        secretOrKey: process.env.JWT_KEY,
+        algorithms: ['HS256']
+    }, async function(jwt_payload, done: Function) {
+        console.log("Jwt auth called");
+        console.log(jwt_payload);
+        if (await User.findById(jwt_payload.sub._id)) {
+            return done(null, jwt_payload.sub)
+        } else {
+            return done(null, false)
+        }
+    }));
 
     passport.use(new GoogleStrategy({
         clientID: process.env.GOOGLE_CLIENT_ID,

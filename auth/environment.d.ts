@@ -8,6 +8,7 @@ declare global {
         FACEBOOK_CLIENT_SECRET: string;
         GITHUB_CLIENT_ID: string;
         GITHUB_CLIENT_SECRET: string;
+        JWT_KEY: string;
       }
     }
     namespace Express {
