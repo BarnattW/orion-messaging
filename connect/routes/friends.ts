@@ -9,8 +9,8 @@ router.delete('/api/removeFriend', async (req: Request, res: Response) =>{
     try{
         const{userId, friendId} = req.body;
 
-        const user = await User.findOne({ Id: userId });
-        const friend = await User.findOne({ Id: friendId });
+        const user = await User.findById(userId);
+        const friend = await User.findById(friendId);
 
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
@@ -41,7 +41,7 @@ router.delete('/api/removeFriend', async (req: Request, res: Response) =>{
 router.get('/api/getFriends/:userId', async (req: Request, res: Response) =>{
     try{
         const {userId} = req.params;
-        const user = await User.findOne({ Id: userId });
+        const user = await User.findById(userId);
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
@@ -55,29 +55,5 @@ router.get('/api/getFriends/:userId', async (req: Request, res: Response) =>{
   }
 
 })
-
-router.get('/api/getFriend/:userId/:friendId', async (req: Request, res: Response) =>{
-    try{
-        const {userId, friendId} = req.params;
-        const user = await User.findOne({Id: userId});
-        const friend = await User.findOne({ Id: friendId });
-
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-        if (!friend) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-
-        const foundfriend = await User.find({ Id: { $in: user.friends } });
-        return res.status(200).json({foundfriend});
-    } catch (error){
-        console.error('Error getting friend:', error);
-        
-        return res.status(500).json({message: 'Server error'});
-    }
-})
-
-
 
 export const friends = router;

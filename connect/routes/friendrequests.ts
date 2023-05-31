@@ -6,18 +6,26 @@ import express, {Request, Response} from 'express';
 const router = express.Router();
 export const sendRequest = async (req: Request,  res: Response, requestType: String) =>{
     try {
-        const {senderId, receiverId} = req.body;
+        const {senderUsername, receiverUsername} = req.body;
     
-        const sender = await User.findById(senderId);
-        const receiver = await User.findById(receiverId);
+        const sender = await User.findOne(
+            {
+                username: senderUsername
+            }
+        );
+        const receiver = await User.findOne(
+            {
+                username: receiverUsername
+            }
+        );
 
         if (!sender|| !receiver) {
             return res.status(404).json({ message: 'Sender or receiver not found' });
         }
     
         const newRequest = new request({
-            senderId: sender,
-            receiverId: receiver,
+            senderId: sender._id,
+            receiverId: receiver._id,
             requestType: requestType,
             status: 'pending'
         });
@@ -94,7 +102,7 @@ export const getRequest = async(req: Request,  res: Response, requestType: Strin
     try{
         const {userId} = req.params;
 
-        const user = await User.findOne({ Id: userId });
+        const user = await User.findById(userId);
 
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
