@@ -1,6 +1,7 @@
 import {Schema, model} from 'mongoose'
 
 interface IUser{
+    username: String;
     googleId: String;
     facebookId: String;
     githubId: String;
