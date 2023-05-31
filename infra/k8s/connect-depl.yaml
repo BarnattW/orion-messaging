@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: connect-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels: 
+      app: connect
+  template:
+    metadata:
+      labels:
+        app: connect
+    spec:
+      containers:
+        - name: connect
+          image: barnattw/orion-connect
+          env: 
+            - name: MONGO_URI
+              value: "mongodb://connect-mongo-srv:27017/connect"
+---
+apiVersion: v1
+kind: Service
+metadata: 
+  name: connect-srv
+spec:
+  selector:
+    app: connect
+  ports:
+  - name: connect
+    protocol: TCP
+    port: 3000
+    targetPort: 3000
