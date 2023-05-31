@@ -1,8 +1,8 @@
-interface props {
+interface Props {
 	onlineStatus: string;
 }
 
-function OnlineStatus(onlineStatus: props) {
+function OnlineStatus(onlineStatus: Props) {
 	return (
 		<>
 			<span

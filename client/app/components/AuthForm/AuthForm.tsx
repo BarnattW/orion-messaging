@@ -1,11 +1,11 @@
 import Link from "next/link";
 import Image from "next/image";
 
-interface props {
+interface Props {
 	type: string;
 }
 
-function AuthForm(props: props) {
+function AuthForm(props: Props) {
 	const isLogin = props.type === "login" ? true : false;
 
 	return (

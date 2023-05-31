@@ -5,11 +5,11 @@ import MessageIcon from "../Icons/MessageIcon";
 import FriendAddIcon from "../Icons/FriendAddIcon";
 import NotificationBellIcon from "../Icons/NotificationBellIcon";
 
-interface props {
+interface Props {
 	userId: string;
 }
 
-function Sidebar(props: props) {
+function Sidebar(props: Props) {
 	const { userId } = props;
 	const iconClassNames: string = "fill-gray-100 hover:fill-gray-400 h-6 w-6";
 

@@ -1,6 +1,6 @@
 import Avatar from "../Avatar/Avatar";
 
-interface message {
+interface Message {
 	sender: string;
 	receiver: string;
 	message: string;
@@ -8,7 +8,7 @@ interface message {
 	timeStamp: Date;
 }
 
-function UserMessages(message: message) {
+function UserMessages(message: Message) {
 	return (
 		<div className="flex my-3 mx-5 gap-3 text-neutral-100">
 			<div className="mt-1">

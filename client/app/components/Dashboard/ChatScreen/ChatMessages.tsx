@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import UserMessage from "./UserMessage";
 import { dummyMessages } from "@/app/dummy-data/dummy-messages";
 
-interface message {
+interface Message {
 	sender: string;
 	receiver: string;
 	message: string;
@@ -13,31 +13,47 @@ interface message {
 }
 
 function ChatMessages() {
-	const [userMessages, setUserMessages] = useState<message[]>([]);
+	const [userMessages, setUserMessages] = useState<Message[]>([]);
+	const scrollRef = useRef<HTMLDivElement>(null);
+
 	useEffect(() => {
-		async function getMessages(userId: string) {
-			const response: message[] = await dummyMessages.messages;
-			setUserMessages(response);
-			return;
-		}
-		getMessages("121");
+		(async () => {
+			try {
+				const response: Message[] = await dummyMessages.messages;
+				setUserMessages(response);
+			} catch (error) {
+				console.error("Error retrieving messages:", error);
+			}
+		})();
 	}, []);
 
+	useEffect(() => {
+		if (scrollRef.current) {
+			scrollRef.current.scrollTo(0, scrollRef.current.scrollHeight);
+		}
+	}, [userMessages]);
+
 	return (
-		<div className="flex flex-col overflow-auto scrollbar-thin scrollbar-thumb-neutral-700">
-			{userMessages &&
-				userMessages.map((message) => {
-					return (
-						<UserMessage
-							sender={message.sender}
-							receiver={message.receiver}
-							message={message.message}
-							messageId={message.messageId}
-							timeStamp={message.timeStamp}
-							key={message.messageId}
-						/>
-					);
-				})}
+		<div
+			className="flex flex-col grow overflow-auto scrollbar-thin scrollbar-thumb-neutral-700"
+			ref={scrollRef}
+		>
+			{userMessages.length === 0 ? (
+				<div className="flex items-center justify-center">
+					<p>Loading messages...</p>
+				</div>
+			) : (
+				userMessages.map((message) => (
+					<UserMessage
+						sender={message.sender}
+						receiver={message.receiver}
+						message={message.message}
+						messageId={message.messageId}
+						timeStamp={message.timeStamp}
+						key={message.messageId}
+					/>
+				))
+			)}
 		</div>
 	);
 }
