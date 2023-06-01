@@ -36,22 +36,6 @@ const io = new Server(server, {
 
 const connectedClients: Map<string, Socket> = new Map();
 
-io.on('connection', (socket: Socket) =>{
-    socket.on('userId', (userId) => {
-    //LISTEN TO FRONTEND AND GET USERID
-    connectedClients.set(userId, socket);
-    
-    socket.on('disconnect', ()=>
-        {
-            connectedClients.delete(userId);
-        }
-    );
-
-    sendFriendRequest(socket, connectedClients);
-    acceptFriendRequest(socket, connectedClients);
-    });
-});
-
 io.on("connection", (socket: Socket) => {
 	console.log("A client connected: " + socket.id);
 
@@ -59,6 +43,18 @@ io.on("connection", (socket: Socket) => {
 
 	socket.on("ping", () => {
 		console.log("Received ping from client: " + socket.id);
+	});
+
+	socket.on("userId", (userId) => {
+		//LISTEN TO FRONTEND AND GET USERID
+		connectedClients.set(userId, socket);
+
+		socket.on("disconnect", () => {
+			connectedClients.delete(userId);
+		});
+
+		sendFriendRequest(socket, connectedClients);
+		acceptFriendRequest(socket, connectedClients);
 	});
 });
 
