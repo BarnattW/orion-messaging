@@ -16,7 +16,7 @@ router.get('/google/callback', passport.authenticate('google'), function(req: Re
             const token = issueJWT(req.user);      
             res.cookie('jwt', token.token, { maxAge : 7 * 24 * 60 * 60 * 1000 });
 
-            res.redirect('/');
+            res.redirect("/dashboard/friends/m");
         } catch (e) {
             return res.status(500).json({ success: false, message: 'Internal Server Error'});
         }

@@ -9,8 +9,7 @@ import {
 } from "react";
 import EmojiIcon from "../../Icons/EmojiIcon";
 import FileClipIcon from "../../Icons/FileClipIcon";
-import SendIcon from "../SendIcon";
-import socket from "@/app/socketService";
+import SendIcon from "../../Icons/SendIcon";
 
 function ChatInput() {
 	const inputRef = useRef<HTMLDivElement>(null);
@@ -19,12 +18,6 @@ function ChatInput() {
 
 	const maxCharacters: number = 2000;
 	//
-	const pingSocket = () => {
-		console.log("hi");
-		if (socket) {
-			socket.emit("ping");
-		}
-	};
 
 	const handleInput = () => {
 		//const inputValue = inputRef.current?.textContent || "";
@@ -53,7 +46,7 @@ function ChatInput() {
 				onKeyDown={handleKeyDown}
 			></div>
 
-			<button className="px-3 pb-2" onClick={pingSocket}>
+			<button className="px-3 pb-2">
 				<SendIcon className={iconClassNames} />
 			</button>
 		</div>
