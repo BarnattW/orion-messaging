@@ -14,7 +14,6 @@ import { userRouter } from './routes/user_router';
 import { logoutRouter } from './routes/logout_router';
 
 const app = express();
-require("dotenv").config();
 
 PassportConfig(passport);
 
@@ -22,11 +21,13 @@ app.use(express.json());
 app.use(cors());
 app.use(cookie());
 
-connect(process.env.MONGO_URL).then(() => {
-    console.log("Connected to DB");
-}).catch((err) => {
-    console.log(err.message);
-})
+connect(process.env.MONGO_URI)
+	.then(() => {
+		console.log("Connected to DB");
+	})
+	.catch((err) => {
+		console.log(err.message);
+	});
 
 app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(cookieSession({
@@ -40,6 +41,6 @@ app.use(passport.session());
 
 app.use("/api/auth", googleRouter, facebookRouter, githubRouter, userRouter, logoutRouter);
 
-const server = app.listen(process.env.PORT, () => {
-    console.log(`Server Started on Port ${process.env.PORT}`);
-})
+const server = app.listen(3000, () => {
+	console.log(`Server Started on Port 3000`);
+});
