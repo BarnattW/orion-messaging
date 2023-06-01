@@ -1,41 +1,25 @@
 import passport from 'passport';
 import { Router, Request, Response } from 'express';
+import { issueJWT } from '../lib/utils';
 
 var router = Router();
 
-router.get('/google', function(req: Request, res: Response, next: Function) {
-    passport.authenticate('google', { scope: ['profile'] }, function(req: Request, res: Response, err: Error){
-        if (err) {
-            return next(err);
-        }
+router.get('/google', passport.authenticate('google', { scope: ['profile'] }));
 
-        if (!req.user) {
-            return res.status(401).json({
-                success : false,  message : 'Google Authentication Failed' });
-        }
-
-        req.login(req.user, loginErr => {
-            if (loginErr){
-                return next(loginErr)
+router.get('/google/callback', passport.authenticate('google'), function(req: Request, res: Response){
+        try {
+            if (!req.user) {
+                return res.status(401).json({
+                    success: false, message: 'Google Authentication Failed' });
             }
-
-            return res.status(200).json({ 
-                success : true, message : 'Google Authenticated'});
-        })
-    }) (req, res, next);
-});
-
-
-router.get('/google/callback', passport.authenticate('google', 
-    {
-        successRedirect: '/',
-        failureRedirect: '/login'
-    }), 
     
-    (req: Request, res: Response) => {
-        res.status(200).json(
-            req.user
-        );
+            const token = issueJWT(req.user);      
+            res.cookie('jwt', token.token, { maxAge : 7 * 24 * 60 * 60 * 1000 });
+
+            res.redirect('/');
+        } catch (e) {
+            return res.status(500).json({ success: false, message: 'Internal Server Error'});
+        }
     }
 );
 
