@@ -1,3 +1,4 @@
+"use client";
 import { createContext, useEffect, useState } from "react";
 
 interface friend {
@@ -8,8 +9,8 @@ interface friend {
 }
 
 interface UserContextProps {
-	authId: string | null;
 	userId: string | null;
+	setUserId: (userId: string | null) => void;
 	username: string | null;
 	setUsername: (username: string | null) => void;
 	friends: friend[];
@@ -19,8 +20,8 @@ interface UserContextProps {
 }
 
 export const UserContext = createContext<UserContextProps>({
-	authId: null,
 	userId: null,
+	setUserId: () => {},
 	username: null,
 	setUsername: () => {},
 	friends: [], // will update to onlineFriends and offlineFriends
@@ -32,25 +33,16 @@ export const UserContext = createContext<UserContextProps>({
 });
 
 export function UserProvider({ children }: { children: React.ReactNode }) {
+	const [userId, setUserId] = useState<string | null>(null);
 	const [username, setUsername] = useState<string | null>(null);
 	const [friends, setFriends] = useState<friend[]>([]);
 	const [activeConversation, setActiveConversation] = useState<string | null>(
 		null
 	);
 
-	useEffect(() => {
-		const getAuthId = async () => {
-			try {
-			} catch (error) {
-				console.error("Error fetching data:", error);
-			}
-		};
-		getAuthId();
-	}, []);
-
 	const value = {
-		authId: null,
 		userId: null,
+		setUserId,
 		username,
 		setUsername,
 		friends,
