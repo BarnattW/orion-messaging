@@ -34,10 +34,30 @@ const io = new Server(server, {
 	path: "/socket/connect-socket",
 });
 
+<<<<<<< HEAD
+const connectedClients: Map<string, Socket> = new Map();
+
+io.on('connection', (socket: Socket) =>{
+    socket.on('userId', (userId) => {
+    //LISTEN TO FRONTEND AND GET USERID
+    connectedClients.set(userId, socket);
+    
+    socket.on('disconnect', ()=>
+        {
+            connectedClients.delete(userId);
+        }
+    );
+
+    sendFriendRequest(socket, connectedClients);
+    acceptFriendRequest(socket, connectedClients);
+    });
+});
+=======
 // io.on('connection', (socket: Socket) =>{
 //     sendFriendRequest(socket);
 //     acceptFriendRequest(socket);
 // })
+>>>>>>> 4a557970a723d7d78d09682219eb91ffb8f25891
 
 io.on("connection", (socket: Socket) => {
 	console.log("A client connected: " + socket.id);
