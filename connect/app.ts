@@ -8,7 +8,6 @@ import {
 	sendFriendRequest,
 	acceptFriendRequest,
 } from "./routes/sockets/friendrequests";
-import cors from "cors";
 
 const app = express();
 const PORT = 3000;
@@ -16,12 +15,6 @@ const PORT = 3000;
 //mongoose.connect(URI).catch((error) => console.error('Connection error:', error));
 
 app.use(express.json());
-app.use(
-	cors({
-		origin: "http://localhost:3001",
-		credentials: true,
-	})
-);
 
 //routes
 import { friendRequests } from "./routes/api/friendrequests";
@@ -34,30 +27,7 @@ const io = new Server(server, {
 	path: "/socket/connect-socket",
 });
 
-<<<<<<< HEAD
 const connectedClients: Map<string, Socket> = new Map();
-
-io.on('connection', (socket: Socket) =>{
-    socket.on('userId', (userId) => {
-    //LISTEN TO FRONTEND AND GET USERID
-    connectedClients.set(userId, socket);
-    
-    socket.on('disconnect', ()=>
-        {
-            connectedClients.delete(userId);
-        }
-    );
-
-    sendFriendRequest(socket, connectedClients);
-    acceptFriendRequest(socket, connectedClients);
-    });
-});
-=======
-// io.on('connection', (socket: Socket) =>{
-//     sendFriendRequest(socket);
-//     acceptFriendRequest(socket);
-// })
->>>>>>> 4a557970a723d7d78d09682219eb91ffb8f25891
 
 io.on("connection", (socket: Socket) => {
 	console.log("A client connected: " + socket.id);
@@ -66,6 +36,18 @@ io.on("connection", (socket: Socket) => {
 
 	socket.on("ping", () => {
 		console.log("Received ping from client: " + socket.id);
+	});
+
+	socket.on("userId", (userId) => {
+		//LISTEN TO FRONTEND AND GET USERID
+		connectedClients.set(userId, socket);
+
+		socket.on("disconnect", () => {
+			connectedClients.delete(userId);
+		});
+
+		sendFriendRequest(socket, connectedClients);
+		acceptFriendRequest(socket, connectedClients);
 	});
 });
 

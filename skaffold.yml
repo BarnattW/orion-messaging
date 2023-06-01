@@ -16,14 +16,14 @@ build:
             dest: .
           - src: app/**/*/.tsx'
             dest: .
-    #- image: us.gcr.io/orion-messaging-388417/auth
-      #context: auth
-      #docker:
+    - image: us.gcr.io/orion-messaging-388417/auth
+      context: auth
+      docker:
         #dockerfile: Dockerfile
-      #sync:
-        #manual:
-          #- src: '**/*/.ts'
-            #dest: .
+      sync:
+        manual:
+          - src: '**/*/.ts'
+            dest: .
     - image: us.gcr.io/orion-messaging-388417/connect
       context: connect
       docker:
