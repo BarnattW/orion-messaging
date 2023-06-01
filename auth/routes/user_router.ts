@@ -1,20 +1,21 @@
 import mongoose from 'mongoose';
 import { User } from '../models/User'
 import { Router, Request, Response } from 'express';
+import passport from 'passport';
 
 var router = Router();
 
-router.get('/getUser/:id', async (req: Request, res: Response) => {
+router.get('/getUserId', passport.authenticate('jwt'), async (req: Request, res: Response) => {
     try {
-        const user = await User.findOne({ userId: req.params.id });
-
-        if (!user) {
-            res.status(404).json({ success: false , message: 'User not found' });
+        // Is there a session?
+        if (!req.user){
+            return res.status(401).json({ message: "No session"});
         }
         
-        return res.status(200).json({ user });
+        return res.status(200).json(req.user.userId);
+        
     } catch (e) {
-        return res.status(500).json({ message : "Error" });
+        return res.status(500).json({ message : "Internal Server Error" });
     }
 });
 

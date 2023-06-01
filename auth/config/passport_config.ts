@@ -73,8 +73,7 @@ export const PassportConfig = (passport: PassportType) => {
     passport.use(new JwtStrategy({ 
         jwtFromRequest: function(req) {
             var token: string | null = null;
-            if (req && req.cookies)
-            { 
+            if (req && req.cookies['cookie']) { 
                 // Gets 'cookie' cookie from requests, decodes it, and converts to a string
                 token = Buffer.from(req.cookies['cookie'], 'base64').toString('ascii');
 
