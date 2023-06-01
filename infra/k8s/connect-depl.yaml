@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: connect
-          image: barnattw/orion-connect
+          image: us.gcr.io/orion-messaging-388417/connect
           env: 
             - name: MONGO_URI
               value: "mongodb://connect-mongo-srv:27017/connect"

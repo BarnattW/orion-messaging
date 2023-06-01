@@ -1,9 +1,16 @@
 "use client";
 
-import { useRef, useState, ChangeEvent, KeyboardEvent } from "react";
+import {
+	useRef,
+	useState,
+	useContext,
+	ChangeEvent,
+	KeyboardEvent,
+} from "react";
 import EmojiIcon from "../../Icons/EmojiIcon";
 import FileClipIcon from "../../Icons/FileClipIcon";
 import SendIcon from "../SendIcon";
+import socket from "@/app/socketService";
 
 function ChatInput() {
 	const inputRef = useRef<HTMLDivElement>(null);
@@ -11,6 +18,13 @@ function ChatInput() {
 	const iconClassNames: string = "fill-gray-100 h-6 w-6 hover:cursor-pointer";
 
 	const maxCharacters: number = 2000;
+	//
+	const pingSocket = () => {
+		console.log("hi");
+		if (socket) {
+			socket.emit("ping");
+		}
+	};
 
 	const handleInput = () => {
 		//const inputValue = inputRef.current?.textContent || "";
@@ -39,7 +53,7 @@ function ChatInput() {
 				onKeyDown={handleKeyDown}
 			></div>
 
-			<button className="px-3 pb-2">
+			<button className="px-3 pb-2" onClick={pingSocket}>
 				<SendIcon className={iconClassNames} />
 			</button>
 		</div>

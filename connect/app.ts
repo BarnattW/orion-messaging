@@ -4,29 +4,37 @@ import { request } from "./models/request";
 import express, {Request, Response } from 'express';
 import http from 'http';
 import {Server, Socket} from 'socket.io';
-import {sendFriendRequest, acceptFriendRequest} from './routes/sockets/friendrequests';
+import {
+	sendFriendRequest,
+	acceptFriendRequest,
+} from "./routes/sockets/friendrequests";
+import cors from "cors";
 
 const app = express();
 const PORT = 3000;
-const URI:string = process.env.MONGO_URI!
-mongoose.connect(URI).catch((error) => console.error('Connection error:', error));
+//const URI:string = process.env.MONGO_URI!
+//mongoose.connect(URI).catch((error) => console.error('Connection error:', error));
 
 app.use(express.json());
-
-app.listen(3000, () => {
-    console.log('Server is running on port 3000');
-});
-
+app.use(
+	cors({
+		origin: "http://localhost:3001",
+		credentials: true,
+	})
+);
 
 //routes
 import { friendRequests } from "./routes/api/friendrequests";
-app.use(friendRequests)
+app.use(friendRequests);
 import { friends } from "./routes/api/friends";
-app.use(friends)
+app.use(friends);
 
 const server = http.createServer(app);
-const io = new Server(server);
+const io = new Server(server, {
+	path: "/socket/connect-socket",
+});
 
+<<<<<<< HEAD
 const connectedClients: Map<string, Socket> = new Map();
 
 io.on('connection', (socket: Socket) =>{
@@ -44,11 +52,23 @@ io.on('connection', (socket: Socket) =>{
     acceptFriendRequest(socket, connectedClients);
     });
 });
+=======
+// io.on('connection', (socket: Socket) =>{
+//     sendFriendRequest(socket);
+//     acceptFriendRequest(socket);
+// })
+>>>>>>> 4a557970a723d7d78d09682219eb91ffb8f25891
 
+io.on("connection", (socket: Socket) => {
+	console.log("A client connected: " + socket.id);
 
-io.on('connection', (socket: Socket) => {
-    socket.on('ping', () => {
-      console.log('Received ping from client (${socket.id})');
-      socket.emit('pong');
-    });
+	// Add your socket event handlers here
+
+	socket.on("ping", () => {
+		console.log("Received ping from client: " + socket.id);
+	});
+});
+
+server.listen(3000, () => {
+	console.log(`Server is running on port ${PORT}`);
 });

@@ -8,17 +8,17 @@ metadata:
     nginx.org/websocket-services: "connect-srv"
 spec:
   rules:
-    - #host: 
+    - #host:
       http:
         paths:
-          - path: /api/auth/?(.*)
-            pathType: Prefix
-            backend:
-              service:
-                name: auth-srv
-                port:
-                  number: 3000
-          - path: /socket.io/?(.*)
+          #- path: /api/auth/?(.*)
+            #pathType: Prefix
+            #backend:
+              #service:
+                #name: auth-srv
+                #port:
+                  #number: 3000
+          - path: /socket/connect-socket/?(.*)
             pathType: Prefix
             backend:
               service:
