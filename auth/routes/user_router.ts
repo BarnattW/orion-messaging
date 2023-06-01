@@ -6,7 +6,7 @@ var router = Router();
 
 router.get('/getUser/:id', async (req: Request, res: Response) => {
     try {
-        const user = await User.findById(req.params.id);
+        const user = await User.findOne({ userId: req.params.id });
 
         if (!user) {
             res.status(404).json({ success: false , message: 'User not found' });
