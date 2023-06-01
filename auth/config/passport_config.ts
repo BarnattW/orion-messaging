@@ -2,8 +2,8 @@
 
 import passport from 'passport';
 import { User } from '../models/User';
-import { providers } from '../enum/providers';
-import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt'
+import { providers } from '../types/providers';
+import { Strategy as JwtStrategy } from 'passport-jwt'
 import { Strategy as GoogleStrategy } from 'passport-google-oauth2';
 import { Strategy as FacebookStrategy } from 'passport-facebook';
 import { Strategy as GitHubStrategy } from 'passport-github2';
@@ -72,10 +72,14 @@ export const PassportConfig = (passport: PassportType) => {
 
     passport.use(new JwtStrategy({ 
         jwtFromRequest: function(req) {
-            var token = null;
+            var token: string | null = null;
             if (req && req.cookies)
             { 
-                token = req.cookies['jwt'];
+                // Gets 'cookie' cookie from requests, decodes it, and converts to a string
+                token = Buffer.from(req.cookies['cookie'], 'base64').toString('ascii');
+
+                // Parses the string to get the jwt value
+                token = JSON.parse(token).jwt;
             }
             return token;
         },
@@ -83,8 +87,8 @@ export const PassportConfig = (passport: PassportType) => {
         algorithms: ['HS256']
     }, async function(jwt_payload, done: Function) {
         console.log("Jwt auth called");
-        console.log(jwt_payload);
-        if (await User.findById(jwt_payload.sub._id)) {
+        console.log(jwt_payload.sub.userId);
+        if (await User.findOne({userId : jwt_payload.sub.userId})) {
             return done(null, jwt_payload.sub)
         } else {
             return done(null, false)

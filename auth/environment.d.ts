@@ -1,7 +1,7 @@
 declare global {
     namespace NodeJS {
       interface ProcessEnv {
-        MONGO_URL: string;
+        MONGO_URI: string;
         GOOGLE_CLIENT_ID: string;
         GOOGLE_CLIENT_SECRET: string;
         FACEBOOK_CLIENT_ID: string;
@@ -15,6 +15,7 @@ declare global {
     namespace Express {
       interface User {
         _id: string;
+        userId: string;
       }
     }
 }

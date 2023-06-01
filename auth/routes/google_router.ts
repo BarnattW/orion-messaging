@@ -1,6 +1,7 @@
 import passport from 'passport';
 import { Router, Request, Response } from 'express';
 import { issueJWT } from '../lib/utils';
+import { jwtSession } from '../types/jwt_session'
 
 var router = Router();
 
@@ -12,9 +13,11 @@ router.get('/google/callback', passport.authenticate('google'), function(req: Re
                 return res.status(401).json({
                     success: false, message: 'Google Authentication Failed' });
             }
-    
-            const token = issueJWT(req.user);      
-            res.cookie('jwt', token.token, { maxAge : 7 * 24 * 60 * 60 * 1000 });
+            
+            if (!(req.session as jwtSession).jwt){
+                const token = issueJWT(req.user);      
+                (req.session as jwtSession).jwt = token.token;
+            }
 
             res.redirect('/');
         } catch (e) {

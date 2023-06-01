@@ -1,8 +1,8 @@
-import { Router, Request, Response, NextFunction } from 'express';
+import { Router, Request, Response } from 'express';
 
 var router = Router();
 
-router.post('/logout', (req: Request, res: Response, next: NextFunction) => {
+router.post('/logout', (req: Request, res: Response) => {
     try {
         req.logout(function(err: Error) {
             if (err){
@@ -11,7 +11,7 @@ router.post('/logout', (req: Request, res: Response, next: NextFunction) => {
         });
         req.session = null as any;
         res.clearCookie('cookie');
-        res.clearCookie('jwt');
+        res.clearCookie('cookie.sig');
         res.redirect('/');
     } catch (err){
         console.error(err);
