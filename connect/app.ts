@@ -8,7 +8,6 @@ import {
 	sendFriendRequest,
 	acceptFriendRequest,
 } from "./routes/sockets/friendrequests";
-import cors from "cors";
 
 const app = express();
 const PORT = 3000;
@@ -16,12 +15,6 @@ const PORT = 3000;
 //mongoose.connect(URI).catch((error) => console.error('Connection error:', error));
 
 app.use(express.json());
-app.use(
-	cors({
-		origin: "http://localhost:3001",
-		credentials: true,
-	})
-);
 
 //routes
 import { friendRequests } from "./routes/api/friendrequests";
