@@ -1,6 +1,7 @@
-import {Schema, model} from 'mongoose'
+import {Schema, model, Types} from 'mongoose'
 
 interface IUser{
+    userId: string;
     username: String;
     googleId: String;
     facebookId: String;
@@ -8,6 +9,10 @@ interface IUser{
 }
 
 const UserSchema = new Schema<IUser>({
+    userId: {
+        type: String,
+        default: new Types.ObjectId().toString()
+    },
     googleId: {
         type: String
     },

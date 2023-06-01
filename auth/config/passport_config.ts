@@ -74,7 +74,7 @@ export const PassportConfig = (passport: PassportType) => {
         jwtFromRequest: function(req) {
             var token = null;
             if (req && req.cookies)
-            {
+            { 
                 token = req.cookies['jwt'];
             }
             return token;
@@ -113,12 +113,12 @@ export const PassportConfig = (passport: PassportType) => {
     }, authenticateUser));
 
     passport.serializeUser(function (user: Express.User, done: Function) {
-        done(undefined, user._id);
+        done(undefined, user.userId);
     });
 
     passport.deserializeUser(async function (id: String, done: Function) {
         try {
-            const user = await User.findById(id);
+            const user = await User.findOne({userId: id});
             done(undefined, user);
         } catch (err) {
             done(err);
