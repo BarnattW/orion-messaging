@@ -4,7 +4,7 @@ function issueJWT(user: Express.User) {
     const expiresIn = '7d';
 
     const data = {
-        _id: user._id,
+        userId: user.userId,
     }
     
     const payload = {

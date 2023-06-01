@@ -1,6 +1,4 @@
 import express from 'express';
-import cors from 'cors';
-import session from 'express-session';
 import cookieParser from 'cookie-parser';
 import cookieSession from 'cookie-session';
 import cookie from 'cookie-parser';
@@ -20,7 +18,6 @@ require("dotenv").config();
 PassportConfig(passport);
 
 app.use(express.json());
-app.use(cors());
 app.use(cookie());
 
 mongoose
@@ -33,13 +30,14 @@ mongoose
 	});
 
 app.use(cookieParser(process.env.COOKIE_SECRET));
-app.use(
-	cookieSession({
-		name: "cookie",
-		secret: process.env.COOKIE_SECRET,
-		secure: false,
-	})
-);
+
+app.use(cookieSession({
+    name: 'cookie',
+    secret: process.env.COOKIE_SECRET,
+    secure: false,
+	maxAge: 7 * 24 * 60 * 60 * 1000
+}));
+
 
 app.use(passport.initialize());
 app.use(passport.session());
