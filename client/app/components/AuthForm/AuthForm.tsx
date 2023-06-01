@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
 
@@ -21,7 +23,8 @@ function AuthForm(props: Props) {
 						/>
 					</div>
 					<div className="flex flex-col gap-3 mb-12 w-2/3">
-						<button
+						<Link
+							href="/api/auth/facebook"
 							type="button"
 							className="py-2 px-4 flex justify-center items-center  bg-blue-600 hover:bg-blue-700 w-full transition ease-in duration-200 text-center text-base font-semibold rounded-lg"
 						>
@@ -33,11 +36,12 @@ function AuthForm(props: Props) {
 								className="ml-4 mr-2"
 							/>
 							{isLogin ? "Sign in with Facebook? " : "Sign Up with Facebook "}
-						</button>
+						</Link>
 
-						<button
+						<Link
+							href="/api/auth/google"
 							type="button"
-							className="py-2 px-4 flex justify-center items-center  bg-red-600 hover:bg-red-700 w-full transition ease-in duration-200 text-center text-base font-semibold rounded-lg "
+							className="py-2 px-4 flex justify-center items-center  bg-red-600 hover:bg-red-700 w-full transition ease-in duration-200 text-center text-base font-semibold rounded-lg"
 						>
 							<Image
 								src="/google-icon.svg"
@@ -47,9 +51,10 @@ function AuthForm(props: Props) {
 								className="mr-2"
 							/>
 							{isLogin ? "Sign in with Google " : "Sign Up with Google "}
-						</button>
+						</Link>
 
-						<button
+						<Link
+							href="/api/auth/github"
 							type="button"
 							className="py-2 px-4 flex justify-center items-center  bg-gray-600 hover:bg-gray-700 w-full transition ease-in duration-200 text-center text-base font-semibold rounded-lg "
 						>
@@ -61,7 +66,7 @@ function AuthForm(props: Props) {
 								className="mr-2"
 							/>
 							{isLogin ? "Sign in with Github " : "Sign Up with Github "}
-						</button>
+						</Link>
 					</div>
 					<div className="mb-6">
 						<p>

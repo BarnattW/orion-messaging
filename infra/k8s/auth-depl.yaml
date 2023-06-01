@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: auth
-          image: barnattw/orion-auth
+          image: us.gcr.io/orion-messaging-388417/auth
           env: 
             - name: MONGO_URI
               value: "mongodb://auth-mongo-srv:27017/auth"
