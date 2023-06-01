@@ -4,7 +4,7 @@ import { issueJWT } from '../lib/utils';
 
 var router = Router();
 
-router.get('/facebook', passport.authenticate('facebook', { scope: ['profile'] }));
+router.get('/facebook', passport.authenticate('facebook', { scope: ['public_profile'] }));
 
 router.get('/facebook/callback', passport.authenticate('facebook'), function(req: Request, res: Response){
         try {
