@@ -19,7 +19,7 @@ router.get('/google/callback', passport.authenticate('google'), function(req: Re
                 (req.session as jwtSession).jwt = token.token;
             }
 
-            res.redirect('/');
+            res.redirect("/dashboard/friends/m");
         } catch (e) {
             return res.status(500).json({ success: false, message: 'Internal Server Error'});
         }
