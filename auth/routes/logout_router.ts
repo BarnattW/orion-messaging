@@ -4,6 +4,7 @@ var router = Router();
 
 router.post('/logout', (req: Request, res: Response) => {
     try {
+        console.log("logout received");
         req.logout(function(err: Error) {
             if (err){
                 return res.status(500).json({ success: false, message: 'Error during logout'});

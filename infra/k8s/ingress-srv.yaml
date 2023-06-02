@@ -8,7 +8,7 @@ metadata:
     #nginx.org/websocket-services: "connect-srv"
 spec:
   rules:
-    - #host:
+    - host: orion-messaging.com
       http:
         paths:
           - path: /api/auth/?(.*)

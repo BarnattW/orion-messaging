@@ -11,9 +11,8 @@ export function UserData({ children }: { children: React.ReactNode }) {
 				// Get the JWT token from your authentication process
 				const jwtUserIdResponse = await fetch("/api/auth/getUserId");
 				const jwtUserIdData = await jwtUserIdResponse.json();
-				const jwtUserId = jwtUserIdData.userId;
-				setUserId(jwtUserId);
-				console.log(jwtUserId, "setup");
+
+				setUserId(jwtUserIdData);
 				// Fetch user data using the JWT token
 			} catch (error) {
 				console.log(error);
@@ -22,5 +21,5 @@ export function UserData({ children }: { children: React.ReactNode }) {
 		fetchData();
 	}, [setUserId]);
 
-	return children;
+	return <>{children}</>;
 }

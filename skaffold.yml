@@ -12,17 +12,15 @@ build:
         dockerfile: Dockerfile
       sync:
         manual:
-          - src: 'app/**/*/.ts'
-            dest: .
-          - src: app/**/*/.tsx'
+          - src: '**/*.tsx'
             dest: .
     - image: us.gcr.io/orion-messaging-388417/auth
       context: auth
       docker:
-        #dockerfile: Dockerfile
+        dockerfile: Dockerfile
       sync:
         manual:
-          - src: '**/*/.ts'
+          - src: '**/*.ts'
             dest: .
     - image: us.gcr.io/orion-messaging-388417/connect
       context: connect
@@ -30,7 +28,7 @@ build:
         dockerfile: Dockerfile
       sync:
         manual:
-          - src: '**/*/.ts'
+          - src: '**/*.ts'
             dest: .
 manifests:
   rawYaml:

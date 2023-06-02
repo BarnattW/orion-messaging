@@ -5,7 +5,7 @@ const router = Router();
 
 router.get(
 	"/getUserId",
-	passport.authenticate("jwt", { session: false }),
+
 	async (req: Request, res: Response) => {
 		try {
 			if (!req.user) {
