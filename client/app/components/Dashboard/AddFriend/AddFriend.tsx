@@ -1,9 +1,12 @@
 "use client";
 import ListContainer from "../ListContainer";
-import { RefObject, useRef } from "react";
+import { RefObject, useRef, useContext } from "react";
+import { UserContext } from "@/app/Context/UserContext";
 
 function AddFriend() {
 	const addUsername: RefObject<HTMLInputElement> = useRef(null);
+	const { userId } = useContext(UserContext);
+	console.log(userId);
 
 	function keyDownHandler(event: React.KeyboardEvent<HTMLInputElement>) {
 		if (event.key == "Enter") {

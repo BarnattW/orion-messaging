@@ -19,7 +19,7 @@ router.get('/facebook/callback', passport.authenticate('facebook'), function(req
                 (req.session as jwtSession).jwt = token.token;
             }
             
-            res.redirect('/');    
+            res.redirect("/dashboard/friends/${req.user}");    
         } catch (e) {
             return res.status(500).json({ success: false, message: 'Internal Server Error'});
         }

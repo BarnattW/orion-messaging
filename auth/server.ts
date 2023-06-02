@@ -11,6 +11,7 @@ import { githubRouter } from './routes/github_router';
 import { userRouter } from './routes/user_router';
 import { logoutRouter } from './routes/logout_router';
 import mongoose from "mongoose";
+import cors from "cors";
 
 const app = express();
 require("dotenv").config();
@@ -19,6 +20,7 @@ PassportConfig(passport);
 
 app.use(express.json());
 app.use(cookie());
+app.use(cors());
 
 mongoose
 	.connect(process.env.MONGO_URI!)
