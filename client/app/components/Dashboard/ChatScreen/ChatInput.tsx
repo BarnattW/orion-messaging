@@ -31,15 +31,6 @@ function ChatInput() {
 		}
 	};
 
-	async function logout() {
-		const response = await fetch("/api/auth/logout", {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
-			body: null,
-		});
-		return;
-	}
-
 	return (
 		<div className="mx-5 rounded-xl bg-zinc-700 my-3 flex items-end">
 			<div className="flex px-3 gap-3 pb-2">
@@ -55,7 +46,7 @@ function ChatInput() {
 				onKeyDown={handleKeyDown}
 			></div>
 
-			<button className="px-3 pb-2" onClick={logout}>
+			<button className="px-3 pb-2">
 				<SendIcon className={iconClassNames} />
 			</button>
 		</div>
