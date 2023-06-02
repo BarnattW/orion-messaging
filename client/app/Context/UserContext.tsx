@@ -41,7 +41,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
 	);
 
 	const value = {
-		userId: null,
+		userId,
 		setUserId,
 		username,
 		setUsername,

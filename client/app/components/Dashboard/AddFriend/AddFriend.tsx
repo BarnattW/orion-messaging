@@ -1,9 +1,12 @@
 "use client";
 import ListContainer from "../ListContainer";
-import { RefObject, useRef } from "react";
+import { RefObject, useRef, useContext } from "react";
+import { UserContext } from "@/app/Context/UserContext";
+import FriendRequestCard from "./FriendRequestCard";
 
 function AddFriend() {
 	const addUsername: RefObject<HTMLInputElement> = useRef(null);
+	const { userId } = useContext(UserContext);
 
 	function keyDownHandler(event: React.KeyboardEvent<HTMLInputElement>) {
 		if (event.key == "Enter") {
@@ -34,6 +37,18 @@ function AddFriend() {
 			>
 				Send Friend Request
 			</button>
+			<div className="text-lg px-5 bg-zinc-800  sticky top-0 pt-8 pb-1 backdrop-blur-lg z-10">
+				Friend Requests
+			</div>
+			<FriendRequestCard
+				altText="ada"
+				userId="31313131"
+				username="addadoajdaodaaaaaaaaaaaaa"
+			/>
+			<FriendRequestCard altText="ada" userId="31313131" username="bocondaa" />
+			<div className="text-lg px-5 bg-zinc-800  sticky top-0 pt-8 pb-1 backdrop-blur-lg z-10">
+				Sent Requests
+			</div>
 		</ListContainer>
 	);
 }

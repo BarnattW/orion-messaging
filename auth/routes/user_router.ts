@@ -1,10 +1,8 @@
 import mongoose from "mongoose";
-import { User } from "../models/User";
 import { Router, Request, Response } from "express";
-import passport from "passport";
 import { isAuthorized } from "../middleware/auth";
 
-var router = Router();
+const router = Router();
 
 router.get("/getUserId", isAuthorized, async (req: Request, res: Response) => {
   try {

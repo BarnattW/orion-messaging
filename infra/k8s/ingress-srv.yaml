@@ -5,10 +5,10 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/use-regex: "true"
-    nginx.org/websocket-services: "connect-srv"
+    #nginx.org/websocket-services: "connect-srv"
 spec:
   rules:
-    - #host:
+    - host: orion-messaging.com
       http:
         paths:
           - path: /api/auth/?(.*)
@@ -18,7 +18,7 @@ spec:
                 name: auth-srv
                 port:
                   number: 3000
-          - path: /socket/connect-socket/?(.*)
+          - path: /api/connect/?(.*)
             pathType: Prefix
             backend:
               service:

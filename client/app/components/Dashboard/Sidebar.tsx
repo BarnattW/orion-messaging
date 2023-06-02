@@ -7,6 +7,7 @@ import MessageIcon from "../Icons/MessageIcon";
 import FriendAddIcon from "../Icons/FriendAddIcon";
 import NotificationBellIcon from "../Icons/NotificationBellIcon";
 import { usePathname } from "next/navigation";
+import LogoutIcon from "../Icons/LogoutIcon";
 
 interface Props {
 	userId: string;
@@ -18,6 +19,15 @@ function Sidebar(props: Props) {
 	const activeIconClassNames: string = "fill-gray-100 h-6 w-6";
 
 	const pathname = usePathname();
+
+	async function logout() {
+		const response = await fetch("/api/auth/logout", {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: null,
+		});
+		return;
+	}
 
 	return (
 		<div className="h-full bg-zinc-900 w-16 flex flex-col gap-7 items-center pt-8 flex-shrink-0">
@@ -56,6 +66,9 @@ function Sidebar(props: Props) {
 				/>
 			</Link>
 			<NotificationBellIcon className={iconClassNames} />
+			<button onClick={logout}>
+				<LogoutIcon className={iconClassNames} color="#737373" />
+			</button>
 		</div>
 	);
 }
