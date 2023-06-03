@@ -61,8 +61,8 @@ export const dummyMessages = {
 			messageId: "131314131511131",
 		},
 		{
-			sender: "vany",
-			receiver: "barn",
+			sender: "barn",
+			receiver: "vany",
 			message: "wang",
 			timeStamp: timeNow,
 			messageId: "1313129754131",
@@ -85,9 +85,58 @@ export const dummyMessages = {
 		{
 			sender: "vany",
 			receiver: "barn",
-			message: "last",
+			message:
+				"testingthelongestmessageeverpleassedon'tbreakmycodeiaekaejaneanaindaindaidnaindindinaidnaidadadaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaatestingthelongestmessageeverpleassedon'tbreakmycodeiaekaejaneanaindaindaidnaindindinaidnaidadadaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaatestingthelongestmessageeverpleassedon'tbreakmycodeiaekaejaneanaindaindaidnaindindinaidnaidadadaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
 			timeStamp: timeNow,
-			messageId: "13134111",
+			messageId: "1131131",
+		},
+		{
+			sender: "vany",
+			receiver: "barn",
+			message:
+				"testingthelongestmessageeverpleassedon'tbreakmycodeiaekaejaneanaindaindaidnaindindinaidnaidadadaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaatestingthelongestmessageeverpleassedon'tbreakmycodeiaekaejaneanaindaindaidnaindindinaidnaidadadaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaatestingthelongestmessageeverpleassedon'tbreakmycodeiaekaejaneanaindaindaidnaindindinaidnaidadadaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+			timeStamp: timeNow,
+			messageId: "1131131",
+		},
+		{
+			sender: "vany",
+			receiver: "barn",
+			message:
+				"testingthelongestmessageeverpleassedon'tbreakmycodeiaekaejaneanaindaindaidnaindindinaidnaidadadaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaatestingthelongestmessageeverpleassedon'tbreakmycodeiaekaejaneanaindaindaidnaindindinaidnaidadadaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaatestingthelongestmessageeverpleassedon'tbreakmycodeiaekaejaneanaindaindaidnaindindinaidnaidadadaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+			timeStamp: timeNow,
+			messageId: "1131131",
+		},
+		{
+			sender: "vany",
+			receiver: "barn",
+			message:
+				"testingthelongestmessageeverpleassedon'tbreakmycodeiaekaejaneanaindaindaidnaindindinaidnaidadadaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaatestingthelongestmessageeverpleassedon'tbreakmycodeiaekaejaneanaindaindaidnaindindinaidnaidadadaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaatestingthelongestmessageeverpleassedon'tbreakmycodeiaekaejaneanaindaindaidnaindindinaidnaidadadaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+			timeStamp: timeNow,
+			messageId: "1131131",
+		},
+		{
+			sender: "vany",
+			receiver: "barn",
+			message:
+				"testingthelongestmessageeverpleassedon'tbreakmycodeiaekaejaneanaindaindaidnaindindinaidnaidadadaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaatestingthelongestmessageeverpleassedon'tbreakmycodeiaekaejaneanaindaindaidnaindindinaidnaidadadaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaatestingthelongestmessageeverpleassedon'tbreakmycodeiaekaejaneanaindaindaidnaindindinaidnaidadadaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+			timeStamp: timeNow,
+			messageId: "1131131",
+		},
+		{
+			sender: "vany",
+			receiver: "barn",
+			message:
+				"testingthelongestmessageeverpleassedon'tbreakmycodeiaekaejaneanaindaindaidnaindindinaidnaidadadaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaatestingthelongestmessageeverpleassedon'tbreakmycodeiaekaejaneanaindaindaidnaindindinaidnaidadadaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaatestingthelongestmessageeverpleassedon'tbreakmycodeiaekaejaneanaindaindaidnaindindinaidnaidadadaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+			timeStamp: timeNow,
+			messageId: "1131131",
+		},
+		{
+			sender: "vany",
+			receiver: "barn",
+			message:
+				"testingthelongestmessageeverpleassedon'tbreakmycodeiaekaejaneanaindaindaidnaindindinaidnaidadadaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaatestingthelongestmessageeverpleassedon'tbreakmycodeiaekaejaneanaindaindaidnaindindinaidnaidadadaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaatestingthelongestmessageeverpleassedon'tbreakmycodeiaekaejaneanaindaindaidnaindindinaidnaidadadaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+			timeStamp: timeNow,
+			messageId: "1131131",
 		},
 	],
 };

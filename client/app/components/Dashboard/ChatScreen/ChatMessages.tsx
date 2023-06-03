@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import UserMessage from "./UserMessage";
+import UserMessage from "./UserMessages";
 import { dummyMessages } from "@/app/dummy-data/dummy-messages";
 import { debounce } from "lodash";
 import DownArrowIcon from "../../Icons/DownArrowIcon";
+import SentMessage from "./SentMessage";
 
 interface Message {
 	sender: string;
@@ -17,6 +18,7 @@ interface Message {
 function ChatMessages() {
 	const [userMessages, setUserMessages] = useState<Message[]>([]);
 	const scrollRef = useRef<HTMLDivElement>(null);
+	const [loading, setLoading] = useState(true);
 	const [showScrollButton, setShowScrollButton] = useState(false);
 	const [handleScrollEvent, setHandleScrollEvent] = useState(true);
 
@@ -25,8 +27,10 @@ function ChatMessages() {
 			try {
 				const response: Message[] = await dummyMessages.messages;
 				setUserMessages(response);
+				setLoading(false);
 			} catch (error) {
 				console.error("Error retrieving messages:", error);
+				setLoading(false);
 			}
 		})();
 	}, []);
@@ -53,13 +57,33 @@ function ChatMessages() {
 		if (!handleScrollEvent) {
 			return;
 		}
+
 		if (
 			scrollRef.current &&
-			scrollRef.current.scrollTop < scrollRef.current.scrollHeight - 100
+			scrollRef.current.scrollTop <
+				scrollRef.current.scrollHeight - scrollRef.current.clientHeight - 100
 		) {
 			setShowScrollButton(true);
+		} else {
+			setShowScrollButton(false);
 		}
 	}, 10);
+
+	if (loading) {
+		return (
+			<div className="flex items-center justify-center grow">
+				<p>Loading messages...</p>
+			</div>
+		);
+	}
+
+	if (userMessages.length === 0) {
+		return (
+			<div className="flex items-center justify-center grow text-center">
+				<p>No messages found. Trying sending some!</p>
+			</div>
+		);
+	}
 
 	return (
 		<div
@@ -67,12 +91,10 @@ function ChatMessages() {
 			ref={scrollRef}
 			onScroll={handleScroll}
 		>
-			{userMessages.length === 0 ? (
-				<div className="flex items-center justify-center">
-					<p>Loading messages...</p>
-				</div>
-			) : (
-				userMessages.map((message) => (
+			{userMessages.map((message, i) => {
+				const renderUserMessage =
+					i === 0 || message.sender !== userMessages[i - 1].sender;
+				return renderUserMessage ? (
 					<UserMessage
 						sender={message.sender}
 						receiver={message.receiver}
@@ -81,8 +103,18 @@ function ChatMessages() {
 						timeStamp={message.timeStamp}
 						key={message.messageId}
 					/>
-				))
-			)}
+				) : (
+					<SentMessage
+						sender={message.sender}
+						receiver={message.receiver}
+						message={message.message}
+						messageId={message.messageId}
+						timeStamp={message.timeStamp}
+						key={message.messageId}
+						type="consecutiveMessage"
+					/>
+				);
+			})}
 			<button
 				onClick={scrollToBottom}
 				className={
