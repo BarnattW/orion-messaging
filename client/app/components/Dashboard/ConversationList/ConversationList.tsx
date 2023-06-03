@@ -1,4 +1,5 @@
 import ListContainer from "../ListContainer";
+import ListHeading from "../ListHeading";
 import ConversationCard from "./ConversationCard";
 
 interface Conversation {
@@ -16,9 +17,7 @@ function ConversationList({
 }) {
 	return (
 		<ListContainer>
-			<div className="text-lg px-5 bg-zinc-800  sticky top-0 pt-8 pb-1 backdrop-blur-lg z-10">
-				Messages
-			</div>
+			<ListHeading>Messages</ListHeading>
 			<div>
 				{conversations.length > 0 &&
 					conversations.map((conversation) => {

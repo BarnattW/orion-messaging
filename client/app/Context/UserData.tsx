@@ -1,25 +1,23 @@
 "use client";
-import { useEffect, useContext } from "react";
+import { useContext } from "react";
 import { UserContext } from "./UserContext";
+import useSWR from "swr";
+
+const fetcher = (url: string) => fetch(url).then((response) => response.json());
 
 export function UserData({ children }: { children: React.ReactNode }) {
 	const { userId, setUserId } = useContext(UserContext);
+	const { data: userData, error } = useSWR("/api/auth/getUserId", fetcher);
 
-	useEffect(() => {
-		async function fetchData() {
-			try {
-				// Get the JWT token from your authentication process
-				const jwtUserIdResponse = await fetch("/api/auth/getUserId");
-				const jwtUserIdData = await jwtUserIdResponse.json();
+	if (error) {
+		console.log(error);
+	}
 
-				setUserId(jwtUserIdData);
-				// Fetch user data using the JWT token
-			} catch (error) {
-				console.log(error);
-			}
-		}
-		fetchData();
-	}, [setUserId]);
+	if (userData) {
+		setUserId(userData);
+	}
+
+	console.log(userId);
 
 	return <>{children}</>;
 }

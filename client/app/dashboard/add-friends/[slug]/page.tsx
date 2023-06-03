@@ -7,9 +7,10 @@ export default function addFriendPage({
 }: {
 	params: { slug: string };
 }) {
+	
 	return (
 		<>
-			<Sidebar userId={params.slug} />
+			<Sidebar />
 			<AddFriend />
 			<ChatScreen />
 		</>

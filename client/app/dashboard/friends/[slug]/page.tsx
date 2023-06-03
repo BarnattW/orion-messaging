@@ -23,7 +23,7 @@ export default async function UserFriendsPage({
 
 	return (
 		<>
-			<Sidebar userId={params.slug} />
+			<Sidebar />
 			<FriendList
 				onlineFriends={friends.online}
 				offlineFriends={friends.offline}

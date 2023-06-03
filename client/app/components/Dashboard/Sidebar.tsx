@@ -8,13 +8,12 @@ import FriendAddIcon from "../Icons/FriendAddIcon";
 import NotificationBellIcon from "../Icons/NotificationBellIcon";
 import { usePathname } from "next/navigation";
 import LogoutIcon from "../Icons/LogoutIcon";
+import Tooltip from "../Tooltip";
+import { useContext } from "react";
+import { UserContext } from "@/app/Context/UserContext";
 
-interface Props {
-	userId: string;
-}
-
-function Sidebar(props: Props) {
-	const { userId } = props;
+function Sidebar() {
+	const { userId } = useContext(UserContext);
 	const iconClassNames: string = "fill-neutral-500 hover:fill-gray-400 h-6 w-6";
 	const activeIconClassNames: string = "fill-gray-100 h-6 w-6";
 
@@ -38,37 +37,47 @@ function Sidebar(props: Props) {
 				alt="Orion Messaging Logo"
 				className="mb-5"
 			/>
-			<Link href={`/dashboard/friends/${userId}`}>
-				<FriendIcon
-					className={
-						pathname.includes("/dashboard/friends")
-							? activeIconClassNames
-							: iconClassNames
-					}
-				/>
-			</Link>
-			<Link href={`/dashboard/conversations/${userId}`}>
-				<MessageIcon
-					className={
-						pathname.includes("/dashboard/conversations")
-							? activeIconClassNames
-							: iconClassNames
-					}
-				/>
-			</Link>
-			<Link href={`/dashboard/add-friends/${userId}`}>
-				<FriendAddIcon
-					className={
-						pathname.includes("/dashboard/add-friends")
-							? activeIconClassNames
-							: iconClassNames
-					}
-				/>
-			</Link>
-			<NotificationBellIcon className={iconClassNames} />
-			<button onClick={logout}>
-				<LogoutIcon className={iconClassNames} color="#737373" />
-			</button>
+			<Tooltip content="Friends">
+				<Link href={`/dashboard/friends/${userId}`}>
+					<FriendIcon
+						className={
+							pathname.includes("/dashboard/friends")
+								? activeIconClassNames
+								: iconClassNames
+						}
+					/>
+				</Link>
+			</Tooltip>
+			<Tooltip content="Messages">
+				<Link href={`/dashboard/conversations/${userId}`}>
+					<MessageIcon
+						className={
+							pathname.includes("/dashboard/conversations")
+								? activeIconClassNames
+								: iconClassNames
+						}
+					/>
+				</Link>
+			</Tooltip>
+			<Tooltip content="Add Friends">
+				<Link href={`/dashboard/add-friends/${userId}`}>
+					<FriendAddIcon
+						className={
+							pathname.includes("/dashboard/add-friends")
+								? activeIconClassNames
+								: iconClassNames
+						}
+					/>
+				</Link>
+			</Tooltip>
+			<Tooltip content="Notifications">
+				<NotificationBellIcon className={iconClassNames} />
+			</Tooltip>
+			<Tooltip content="Logout">
+				<button onClick={logout}>
+					<LogoutIcon className={iconClassNames} color="#737373" />
+				</button>
+			</Tooltip>
 		</div>
 	);
 }
