@@ -30,8 +30,6 @@ router.post('/api/createUser', async(req: Request,  res: Response) => {
         return res.status(500).json({ message: 'Server error' });
     }
 });
-
-
 /*
 router.put('/api/onlineStatus', async (req: Request, res: Response) =>{
     try{
@@ -40,3 +38,5 @@ router.put('/api/onlineStatus', async (req: Request, res: Response) =>{
     }
 })
 */
+
+export const createUser = router;

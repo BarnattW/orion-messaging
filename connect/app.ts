@@ -21,7 +21,7 @@ import { friendRequests } from "./routes/api/friendrequests";
 app.use(friendRequests);
 import { friends } from "./routes/api/friends";
 app.use(friends);
-import { createUser } from "./routes/api/friends";
+import { createUser } from "./routes/api/user";
 app.use(createUser);
 
 
@@ -51,25 +51,6 @@ io.on('connection', (socket: Socket) =>{
     sendFriendRequest(socket, connectedClients);
     acceptFriendRequest(socket, connectedClients);
     });
-});
-
-	// Add your socket event handlers here
-
-	socket.on("ping", () => {
-		console.log("Received ping from client: " + socket.id);
-	});
-
-	socket.on("userId", (userId) => {
-		//LISTEN TO FRONTEND AND GET USERID
-		connectedClients.set(userId, socket);
-
-		socket.on("disconnect", () => {
-			connectedClients.delete(userId);
-		});
-
-		sendFriendRequest(socket, connectedClients);
-		acceptFriendRequest(socket, connectedClients);
-	});
 });
 
 const newUser = new User();
