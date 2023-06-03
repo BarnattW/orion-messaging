@@ -20,16 +20,24 @@ app.listen(3000, () => {
 
 //routes
 import { friendRequests } from "./routes/api/friendrequests";
-app.use(friendRequests)
+app.use(friendRequests);
 import { friends } from "./routes/api/friends";
-app.use(friends)
+app.use(friends);
+import { createUser } from "./routes/api/friends";
+app.use(createUser);
 
 const server = http.createServer(app);
 const io = new Server(server);
 
 const connectedClients: Map<string, Socket> = new Map();
 
+
 io.on('connection', (socket: Socket) =>{
+	socket.on('ping', () => {
+		console.log('Received ping from client (${socket.id})');
+		socket.emit('pong');
+	  });
+
     socket.on('userId', (userId) => {
     //LISTEN TO FRONTEND AND GET USERID
     connectedClients.set(userId, socket);
@@ -46,9 +54,4 @@ io.on('connection', (socket: Socket) =>{
 });
 
 
-io.on('connection', (socket: Socket) => {
-    socket.on('ping', () => {
-      console.log('Received ping from client (${socket.id})');
-      socket.emit('pong');
-    });
-});
+const newUser = new User();
