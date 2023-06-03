@@ -26,7 +26,7 @@ export default async function userConversationsPage({
 
 	return (
 		<>
-			<Sidebar userId={params.slug} />
+			<Sidebar />
 			<ConversationList conversations={conversations} />
 			<ChatScreen />
 		</>
