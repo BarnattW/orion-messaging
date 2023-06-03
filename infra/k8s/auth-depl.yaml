@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels: 
+      app: auth
+  template:
+    metadata:
+      labels:
+        app: auth
+    spec:
+      containers:
+        - name: auth
+          image: us.gcr.io/orion-messaging-388417/auth
+          env: 
+            - name: MONGO_URI
+              value: "mongodb://auth-mongo-srv:27017/auth"
+            - name: GOOGLE_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: google-client-id
+                  key: GOOGLE_CLIENT_ID
+            - name: GOOGLE_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: google-client-secret
+                  key: GOOGLE_CLIENT_SECRET
+            - name: FACEBOOK_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: facebook-client-id
+                  key: FACEBOOK_CLIENT_ID
+            - name: FACEBOOK_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: facebook-client-secret
+                  key: FACEBOOK_CLIENT_SECRET
+            - name: GITHUB_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: facebook-client-secret
+                  key: FACEBOOK_CLIENT_SECRET
+            - name: GITHUB_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: github-client-secret
+                  key: GITHUB_CLIENT_SECRET
+            - name: JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-key
+                  key: JWT_KEY
+            - name: COOKIE_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: cookie-secret
+                  key: COOKIE_SECRET
+---
+apiVersion: v1
+kind: Service
+metadata: 
+  name: auth-srv
+spec:
+  selector:
+    app: auth
+  ports:
+  - name: auth
+    protocol: TCP
+    port: 3000
+    targetPort: 3000
