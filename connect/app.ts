@@ -21,6 +21,9 @@ import { friendRequests } from "./routes/api/friendrequests";
 app.use(friendRequests);
 import { friends } from "./routes/api/friends";
 app.use(friends);
+import { createUser } from "./routes/api/friends";
+app.use(createUser);
+
 
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -29,8 +32,26 @@ const io = new Server(server, {
 
 const connectedClients: Map<string, Socket> = new Map();
 
-io.on("connection", (socket: Socket) => {
-	console.log("A client connected: " + socket.id);
+io.on('connection', (socket: Socket) =>{
+	socket.on('ping', () => {
+		console.log('Received ping from client (${socket.id})');
+		socket.emit('pong');
+	  });
+
+    socket.on('userId', (userId) => {
+    //LISTEN TO FRONTEND AND GET USERID
+    connectedClients.set(userId, socket);
+    
+    socket.on('disconnect', ()=>
+        {
+            connectedClients.delete(userId);
+        }
+    );
+
+    sendFriendRequest(socket, connectedClients);
+    acceptFriendRequest(socket, connectedClients);
+    });
+});
 
 	// Add your socket event handlers here
 
@@ -51,6 +72,4 @@ io.on("connection", (socket: Socket) => {
 	});
 });
 
-server.listen(3000, () => {
-	console.log(`Server is running on port ${PORT}`);
-});
+const newUser = new User();
