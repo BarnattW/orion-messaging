@@ -40,7 +40,7 @@ function AddFriend() {
 			<FriendRequestCard
 				altText="ada"
 				userId="31313131"
-				username="addadoajdaodaaaaaaaaaaaaa"
+				username="superduperlongnamefortest"
 			/>
 			<FriendRequestCard altText="ada" userId="31313131" username="bocondaa" />
 			<ListHeading>Sent Requests</ListHeading>

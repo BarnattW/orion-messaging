@@ -1,5 +1,5 @@
 "use client";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { UserContext } from "./UserContext";
 import useSWR from "swr";
 
@@ -13,9 +13,11 @@ export function UserData({ children }: { children: React.ReactNode }) {
 		console.log(error);
 	}
 
-	if (userData) {
-		setUserId(userData);
-	}
+	useEffect(() => {
+		if (userData) {
+			setUserId(userData);
+		}
+	}, [userData, setUserId]);
 
 	console.log(userId);
 
