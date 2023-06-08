@@ -24,7 +24,7 @@ router.get(
         (req.session as jwtSession).jwt = token.token;
       }
 
-      res.redirect("/dashboard/friends/m");
+      res.redirect(`/dashboard/friends/${req.user.userId}`);
     } catch (e) {
       return res
         .status(500)

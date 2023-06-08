@@ -15,7 +15,7 @@ router.post("/logout", (req: Request, res: Response) => {
     req.session = null as any;
     res.clearCookie("cookie");
     res.clearCookie("cookie.sig");
-    res.redirect("/");
+    res.redirect("/auth/login");
   } catch (err) {
     console.error(err);
     return res
