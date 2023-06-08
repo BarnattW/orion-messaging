@@ -5,6 +5,7 @@ interface IConversationDocument {
   conversationType: "group" | "individual";
   users: Types.Array<Types.ObjectId>;
   messages: Types.Array<Types.Array<Types.ObjectId>>;
+  latestMessage: Types.ObjectId;
 }
 
 interface IConversation extends IConversationDocument {
@@ -34,6 +35,7 @@ const ConversationSchema = new Schema<IConversation>({
       },
     ],
   ],
+  latestMessage: Schema.Types.ObjectId
 });
 
 ConversationSchema.method("addMessage", function (message: Types.ObjectId) {
@@ -42,6 +44,7 @@ ConversationSchema.method("addMessage", function (message: Types.ObjectId) {
     this.messages.push([]);
   }
   this.messages[this.messages.length - 1].push(message);
+  this.latestMessage = message;
 });
 
 export const Conversation = model<IConversation>(
