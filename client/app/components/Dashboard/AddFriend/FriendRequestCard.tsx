@@ -13,7 +13,7 @@ function FriendRequestCard(friendRequestCardProps: FriendRequestCardProps) {
 			<div className="flex mx-4 gap-2 items-center text-xs">
 				<div className="relative z-0">
 					<Avatar
-						imageUrl="/barn.png"
+						imageUrl="/friend-icon.svg"
 						altText={friendRequestCardProps.altText}
 					/>
 				</div>

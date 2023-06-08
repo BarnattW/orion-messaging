@@ -7,6 +7,7 @@ import MessageIcon from "../Icons/MessageIcon";
 import FriendAddIcon from "../Icons/FriendAddIcon";
 import NotificationBellIcon from "../Icons/NotificationBellIcon";
 import { usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 import LogoutIcon from "../Icons/LogoutIcon";
 import Tooltip from "../Tooltip";
 import { useContext } from "react";
@@ -18,6 +19,7 @@ function Sidebar() {
 	const activeIconClassNames: string = "fill-gray-100 h-6 w-6";
 
 	const pathname = usePathname();
+	const router = useRouter();
 
 	async function logout() {
 		const response = await fetch("/api/auth/logout", {
@@ -25,7 +27,7 @@ function Sidebar() {
 			headers: { "Content-Type": "application/json" },
 			body: null,
 		});
-		return;
+		router.push("/auth/login");
 	}
 
 	return (
