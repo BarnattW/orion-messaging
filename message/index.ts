@@ -35,29 +35,14 @@ const connectedClients: Map<string, Socket> = new Map();
 
 io.on("connection", async (socket: Socket) => {
   console.log("Socket Connected " + socket.id);
-
-  const user = {
-    userId: new mongoose.Types.ObjectId()
-  }
-  const newUser = await User.create(user);
-  connectedClients.set(newUser.userId, socket)
-
-  socket.on('disconnect', async () => {
-    try {
-        connectedClients.delete(newUser.userId); 
-        const user = await User.findOneAndDelete({userId: newUser.userId});
-    } catch (e) {
-        console.log("Error disconnecting");
-    }
-  })
   
-//   socket.on('userId', (userId) => {
-//     console.log(userId);
-//     connectedClients.set(userId, socket);
-//       socket.on('disconnect, () => {
-//          connectedClients.delete(userId);
-//       })
-//   })  
+  socket.on('userId', (userId) => {
+    console.log(userId);
+    connectedClients.set(userId, socket);
+      socket.on('disconnect', () => {
+         connectedClients.delete(userId);
+      })
+  })
 
   createUser(socket, connectedClients);
 

@@ -16,8 +16,21 @@ export const createUser = (
         userId: userId,
         username: username,
       };
-      const createdUser = User.create(user);
+      const createdUser = await User.create(user);
+      if (!createdUser) {
+        socket.emit("requestError", {
+          message: "Failed to Create User",
+        });
+        return;
+      }
+      socket.emit("userCreated", {
+        message: `User with userId ${createdUser.userId}`,
+        data: createdUser,
+      });
     } catch (e) {
+      socket.emit("requestError", {
+        message: "Server Error"
+      })
       console.log("Unable to create user");
     }
   });

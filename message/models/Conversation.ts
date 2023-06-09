@@ -51,3 +51,5 @@ export const Conversation = model<IConversation>(
   "Conversation",
   ConversationSchema
 );
+
+export { IConversation };
