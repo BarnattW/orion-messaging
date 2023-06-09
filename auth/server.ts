@@ -55,43 +55,6 @@ app.use(
 	logoutRouter
 );
 
-async function start() {
-	const { Kafka } = require("kafkajs");
-
-	const kafka = new Kafka({
-		clientId: "my-app",
-		brokers: [
-			"my-release-kafka-0.my-release-kafka-headless.default.svc.cluster.local:9092",
-		],
-	});
-
-	//my-release-kafka-0.my-release-kafka-headless.default.svc.cluster.local:9092 -> producers
-	//my-release-kafka.default.svc.cluster.local -> consumers
-	const consumer = kafka.consumer({ groupId: "test-group" });
-
-	await consumer.connect();
-	await consumer.subscribe({ topic: "test-topic", fromBeginning: true });
-
-	await consumer.run({
-		eachMessage: async ({ topic, partition, message }: EachMessagePayload) => {
-			console.log({
-				value: message.value?.toString(),
-			});
-		},
-	});
-
-	const producer = kafka.producer();
-
-	await producer.connect();
-	await producer.send({
-		topic: "test-topic",
-		messages: [{ value: "Hello KafkaJS user!" }],
-	});
-
-	await producer.disconnect();
-}
-start();
-
 app.listen(3000, () => {
 	console.log(`Server Started on Port 3000`);
 });

@@ -7,9 +7,13 @@ import { Strategy as JwtStrategy } from "passport-jwt";
 import { Strategy as GoogleStrategy } from "passport-google-oauth2";
 import { Strategy as FacebookStrategy } from "passport-facebook";
 import { Strategy as GitHubStrategy } from "passport-github2";
+import { authProducer } from "../types/kafka";
 
 type PassportType = typeof passport;
 type ProviderType = typeof providers;
+
+const producer = new authProducer();
+producer.connect();
 
 async function authenticateUser(
   req: Express.Request,
@@ -61,8 +65,14 @@ async function authenticateUser(
     };
 
     user = await User.create(newUser);
-    console.log("User Created");
+    if (!user) {
+      console.log('Error creating user');
+      return done(undefined);
+    }
 
+    console.log("User Created");
+    producer.send(user.userId);
+    
     return done(undefined, user);
   } catch (err) {
     console.error(err);
