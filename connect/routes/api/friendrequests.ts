@@ -2,24 +2,11 @@ import mongoose from "mongoose";
 import {User} from '../../models/user'
 import { request } from "../../models/request";
 import express, {Request, Response} from 'express';
-import { Kafka } from 'kafkajs';
+import { publishMessage } from "./kafkaproducer";
 
 const router = express.Router();
 
-const kafka = new Kafka({
-    clientId: 'connect',
-    brokers: ['localhost:3000']
-});
 
-const producer = kafka.producer();
-
-// Helper function to publish messages to Kafka
-async function publishMessage(topic: string, value: any) {
-    await producer.send({
-      topic: topic,
-      messages: [{ value: JSON.stringify(value) }]
-    });
-}
     
 
 export const sendRequest = async (req: Request,  res: Response, requestType: String) =>{

@@ -4,10 +4,11 @@ import { request } from "./models/request";
 import express, {Request, Response } from 'express';
 import http from 'http';
 import {Server, Socket} from 'socket.io';
-import {
-	sendFriendRequest,
-	acceptFriendRequest,
-} from "./routes/sockets/friendrequests";
+import {consumer} from './routes/api/kafkaproducer'
+// import {
+// 	sendFriendRequest,
+// 	acceptFriendRequest,
+// } from "./routes/sockets/friendrequests";
 
 const app = express();
 const PORT = 3000;
@@ -31,31 +32,50 @@ const io = new Server(server, {
 	path: "/socket/connect-socket",
 });
 
-const connectedClients: Map<string, Socket> = new Map();
+// const connectedClients: Map<string, Socket> = new Map();
 
-io.on('connection', (socket: Socket) =>{
-	socket.on('ping', () => {
-		console.log('Received ping from client (${socket.id})');
-		socket.emit('pong');
-	  });
+// io.on('connection', (socket: Socket) =>{
+// 	socket.on('ping', () => {
+// 		console.log('Received ping from client (${socket.id})');
+// 		socket.emit('pong');
+// 	  });
 
-    socket.on('userId', (userId) => {
-    //LISTEN TO FRONTEND AND GET USERID
-    connectedClients.set(userId, socket);
+//     socket.on('userId', (userId) => {
+//     //LISTEN TO FRONTEND AND GET USERID
+//     connectedClients.set(userId, socket);
     
-    socket.on('disconnect', ()=>
-        {
-            connectedClients.delete(userId);
-        }
-    );
+//     socket.on('disconnect', ()=>
+//         {
+//             connectedClients.delete(userId);
+//         }
+//     );
 
-    sendFriendRequest(socket, connectedClients);
-    acceptFriendRequest(socket, connectedClients);
-    });
-});
+//     sendFriendRequest(socket, connectedClients);
+//     acceptFriendRequest(socket, connectedClients);
+//     });
+// });
 
 app.listen(3000, () => {
 	console.log(`Server Started on Port 3000`);
 });
 
-const newUser = new User();
+async function run(){
+	await consumer.connect();
+	await consumer.subscribe({
+		topic: 'user-created',
+		fromBeginning: true
+	});
+
+	await consumer.run({
+		eachMessage: async ({ topic, partition, message }) => {
+			console.log('Received message: ${message.value}');
+			const newUser = new User();
+			newUser.userId = JSON.parse(message.value.toString()).userId; //assuming message is a json with userId
+		},
+	})
+	
+}
+
+
+//consumer group auth
+//topic: "user-created"
