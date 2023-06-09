@@ -1,18 +1,16 @@
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import cookieSession from 'cookie-session';
-import cookie from 'cookie-parser';
-import { connect } from 'mongoose';
-import passport from 'passport';
-import { googleRouter } from './routes/google_router';
-import { PassportConfig } from './config/passport_config';
-import { facebookRouter } from './routes/facebook_router';
-import { githubRouter } from './routes/github_router';
-import { userRouter } from './routes/user_router';
-import { logoutRouter } from './routes/logout_router';
+import cookie from "cookie-parser";
+import passport from "passport";
+import { googleRouter } from "./routes/google_router";
+import { PassportConfig } from "./config/passport_config";
+import { facebookRouter } from "./routes/facebook_router";
+import { githubRouter } from "./routes/github_router";
+import { userRouter } from "./routes/user_router";
+import { logoutRouter } from "./routes/logout_router";
 import mongoose from "mongoose";
 import cors from "cors";
-import { Kafka, EachMessagePayload } from "kafkajs";
 
 const app = express();
 require("dotenv").config();

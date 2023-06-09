@@ -16,149 +16,148 @@ const producer = new authProducer();
 producer.connect();
 
 async function authenticateUser(
-  req: Express.Request,
-  token: string,
-  tokenSecret: string,
-  profile: passport.Profile,
-  done: Function
+	req: Express.Request,
+	token: string,
+	tokenSecret: string,
+	profile: passport.Profile,
+	done: Function
 ) {
-  console.log("Trying to get profile");
-  console.log(profile);
-  try {
-    const providerId = providers[profile.provider as keyof ProviderType];
+	console.log("Trying to get profile");
+	console.log(profile);
+	try {
+		const providerId = providers[profile.provider as keyof ProviderType];
 
-    // Is there a user currently logged in?
-    if (req.user) {
-      console.log("User is logged in");
-      const userWithProviderId = await User.findOne({
-        [providerId]: profile.id,
-      });
+		// Is there a user currently logged in?
+		if (req.user) {
+			console.log("User is logged in");
+			const userWithProviderId = await User.findOne({
+				[providerId]: profile.id,
+			});
 
-      // Is there a user that already connected this account?
-      if (userWithProviderId) {
-        return done(undefined, userWithProviderId);
-      }
+			// Is there a user that already connected this account?
+			if (userWithProviderId) {
+				return done(undefined, userWithProviderId);
+			}
 
-      const userWithId = await User.findById(req.user._id);
+			const userWithId = await User.findById(req.user._id);
 
-      if (!userWithId) {
-        return done(undefined);
-      }
+			if (!userWithId) {
+				return done(undefined);
+			}
 
-      userWithId[providerId] = profile.id;
-      console.log(userWithId[providerId]);
+			userWithId[providerId] = profile.id;
+			console.log(`ProviderId: ${userWithId[providerId]}`);
 
-      userWithId.save();
+			userWithId.save();
 
-      return done(undefined, userWithId);
-    }
+			return done(undefined, userWithId);
+		}
 
-    let user = await User.findOne({ [providerId]: profile.id });
+		let user = await User.findOne({ [providerId]: profile.id });
 
-    // Does the user exist?
-    if (user) {
-      return done(undefined, user);
-    }
+		// Does the user exist?
+		if (user) {
+			return done(undefined, user);
+		}
 
-    const newUser = {
-      [providerId]: profile.id,
-    };
+		const newUser = {
+			[providerId]: profile.id,
+		};
 
-    user = await User.create(newUser);
-    if (!user) {
-      console.log('Error creating user');
-      return done(undefined);
-    }
+		user = await User.create(newUser);
+		if (!user) {
+			console.log("Error creating user");
+			return done(undefined);
+		}
 
-    console.log("User Created");
-    producer.send(user.userId);
-    
-    return done(undefined, user);
-  } catch (err) {
-    console.error(err);
-  }
+		console.log("User Created");
+		producer.send(user.userId);
+
+		return done(undefined, user);
+	} catch (err) {
+		console.error(err);
+	}
 }
 
 export const PassportConfig = (passport: PassportType) => {
-  passport.use(
-    new JwtStrategy(
-      {
-        jwtFromRequest: function (req) {
-          let token: string | null = null;
-          if (req && req.cookies["cookie"]) {
-            // Gets 'cookie' cookie from requests, decodes it, and converts to a string
-            token = Buffer.from(req.cookies["cookie"], "base64").toString(
-              "ascii"
-            );
+	passport.use(
+		new JwtStrategy(
+			{
+				jwtFromRequest: function (req) {
+					let token: string | null = null;
+					if (req && req.cookies["cookie"]) {
+						// Gets 'cookie' cookie from requests, decodes it, and converts to a string
+						token = Buffer.from(req.cookies["cookie"], "base64").toString(
+							"ascii"
+						);
 
-            // Parses the string to get the jwt value
-            token = JSON.parse(token).jwt;
-          }
-          return token;
-        },
-        secretOrKey: process.env.JWT_KEY,
-        algorithms: ["HS256"],
-      },
-      async function (jwt_payload, done: Function) {
-        console.log("Jwt auth called");
-        console.log(jwt_payload.sub.userId);
-        const user = await User.findOne({ userId: jwt_payload.sub.userId });
-        if (user) {
-          console.log("hi");
-          return done(null, jwt_payload.sub);
-        } else {
-          return done(null, false);
-        }
-      }
-    )
-  );
+						// Parses the string to get the jwt value
+						token = JSON.parse(token).jwt;
+					}
+					return token;
+				},
+				secretOrKey: process.env.JWT_KEY,
+				algorithms: ["HS256"],
+			},
+			async function (jwt_payload, done: Function) {
+				console.log("Jwt auth called");
+				console.log(jwt_payload.sub.userId);
+				const user = await User.findOne({ userId: jwt_payload.sub.userId });
+				if (user) {
+					return done(null, jwt_payload.sub);
+				} else {
+					return done(null, false);
+				}
+			}
+		)
+	);
 
-  passport.use(
-    new GoogleStrategy(
-      {
-        clientID: process.env.GOOGLE_CLIENT_ID,
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        callbackURL: "/api/auth/google/callback",
-        passReqToCallback: true,
-      },
-      authenticateUser
-    )
-  );
+	passport.use(
+		new GoogleStrategy(
+			{
+				clientID: process.env.GOOGLE_CLIENT_ID,
+				clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+				callbackURL: "/api/auth/google/callback",
+				passReqToCallback: true,
+			},
+			authenticateUser
+		)
+	);
 
-  passport.use(
-    new FacebookStrategy(
-      {
-        clientID: process.env.FACEBOOK_CLIENT_ID,
-        clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
-        callbackURL: "/api/auth/facebook/callback",
-        passReqToCallback: true,
-      },
-      authenticateUser
-    )
-  );
+	passport.use(
+		new FacebookStrategy(
+			{
+				clientID: process.env.FACEBOOK_CLIENT_ID,
+				clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
+				callbackURL: "/api/auth/facebook/callback",
+				passReqToCallback: true,
+			},
+			authenticateUser
+		)
+	);
 
-  passport.use(
-    new GitHubStrategy(
-      {
-        clientID: process.env.GITHUB_CLIENT_ID,
-        clientSecret: process.env.GITHUB_CLIENT_SECRET,
-        callbackURL: "/api/auth/github/callback",
-        passReqToCallback: true,
-      },
-      authenticateUser
-    )
-  );
+	passport.use(
+		new GitHubStrategy(
+			{
+				clientID: process.env.GITHUB_CLIENT_ID,
+				clientSecret: process.env.GITHUB_CLIENT_SECRET,
+				callbackURL: "/api/auth/github/callback",
+				passReqToCallback: true,
+			},
+			authenticateUser
+		)
+	);
 
-  passport.serializeUser(function (user: Express.User, done: Function) {
-    done(undefined, user.userId);
-  });
+	passport.serializeUser(function (user: Express.User, done: Function) {
+		done(undefined, user.userId);
+	});
 
-  passport.deserializeUser(async function (id: String, done: Function) {
-    try {
-      const user = await User.findOne({ userId: id });
-      done(undefined, user);
-    } catch (err) {
-      done(err);
-    }
-  });
+	passport.deserializeUser(async function (id: String, done: Function) {
+		try {
+			const user = await User.findOne({ userId: id });
+			done(undefined, user);
+		} catch (err) {
+			done(err);
+		}
+	});
 };
