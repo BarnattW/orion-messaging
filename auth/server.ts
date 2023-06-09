@@ -60,9 +60,7 @@ async function start() {
 
 	const kafka = new Kafka({
 		clientId: "my-app",
-		brokers: [
-			"my-release-kafka-0.my-release-kafka-headless.default.svc.cluster.local:9092",
-		],
+		brokers: ["kafka-srv:9092"],
 	});
 
 	//my-release-kafka-0.my-release-kafka-headless.default.svc.cluster.local:9092 -> producers
