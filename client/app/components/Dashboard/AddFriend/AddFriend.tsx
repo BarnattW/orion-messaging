@@ -1,9 +1,9 @@
 "use client";
-import ListContainer from "../ListContainer";
+import ListContainer from "../ListWrappers/ListContainer";
 import { RefObject, useRef, useContext } from "react";
 import { UserContext } from "@/app/Context/UserContext";
 import FriendRequestCard from "./FriendRequestCard";
-import ListHeading from "../ListHeading";
+import ListHeading from "../ListWrappers/ListHeading";
 
 function AddFriend() {
 	const addUsername: RefObject<HTMLInputElement> = useRef(null);

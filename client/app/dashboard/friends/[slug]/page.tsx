@@ -1,7 +1,7 @@
 import Sidebar from "@/app/components/Dashboard/Sidebar";
 import FriendList from "@/app/components/Dashboard/FriendList/FriendList";
 import { dummyFriends } from "@/app/dummy-data/dummy-friends";
-import ChatScreen from "@/app/components/Dashboard/ChatScreen/ChatScreen";
+import ChatScreen from "@/app/components/Dashboard/ChatScreen/ChatScreen/ChatScreen";
 
 interface Friends {
 	online: string[];

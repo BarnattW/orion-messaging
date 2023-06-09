@@ -1,5 +1,5 @@
-import ListContainer from "../ListContainer";
-import ListHeading from "../ListHeading";
+import ListContainer from "../ListWrappers/ListContainer";
+import ListHeading from "../ListWrappers/ListHeading";
 import ConversationCard from "./ConversationCard";
 
 interface Conversation {
