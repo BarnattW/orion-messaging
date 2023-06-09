@@ -1,5 +1,5 @@
 import { useState } from "react";
-import LogoutIcon from "../../Icons/LogoutIcon";
+import LogoutIcon from "../../../Icons/LogoutIcon";
 
 function ScrollButton() {
 	const [showScrollButton, setShowScrollButton] = useState(false);

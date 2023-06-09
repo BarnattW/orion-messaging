@@ -1,4 +1,5 @@
 const timeNow = new Date();
+const specificPastTime = new Date(2023, 5, 7);
 
 export const dummyMessages = {
 	convoId: "12311",
@@ -8,77 +9,77 @@ export const dummyMessages = {
 			receiver: "barn",
 			message:
 				"Should I be splitting up by routes then into agroup that use traditonal api routes and a group that uses sockets?",
-			timeStamp: timeNow,
+			timeStamp: specificPastTime,
 			messageId: "131313131",
 		},
 		{
 			sender: "barn",
 			receiver: "barn",
 			message: "Yeah",
-			timeStamp: timeNow,
+			timeStamp: specificPastTime,
 			messageId: "131231131",
 		},
 		{
 			sender: "barn",
 			receiver: "barn",
 			message: "Code splitting good",
-			timeStamp: timeNow,
+			timeStamp: specificPastTime,
 			messageId: "13131375441131",
 		},
 		{
 			sender: "vany",
 			receiver: "barn",
 			message: "ok i implemented friend requests but without socket ids",
-			timeStamp: timeNow,
+			timeStamp: specificPastTime,
 			messageId: "131313611131",
 		},
 		{
 			sender: "vany",
 			receiver: "barn",
 			message: "as I dont understand that  yet",
-			timeStamp: timeNow,
+			timeStamp: specificPastTime,
 			messageId: "1312313851131",
 		},
 		{
 			sender: "barn",
 			receiver: "vany",
 			message: "Just chill then",
-			timeStamp: timeNow,
+			timeStamp: specificPastTime,
 			messageId: "131831131131",
 		},
 		{
 			sender: "barn",
 			receiver: "vany",
 			message: "Optimize your code, add more typescript",
-			timeStamp: timeNow,
+			timeStamp: specificPastTime,
 			messageId: "1313113123456131",
 		},
 		{
 			sender: "barn",
 			receiver: "vany",
 			message: "Look up Kafka",
-			timeStamp: timeNow,
+			timeStamp: specificPastTime,
 			messageId: "131314131511131",
 		},
 		{
 			sender: "barn",
 			receiver: "vany",
 			message: "Ah wait, you can write unit tests",
-			timeStamp: timeNow,
+			timeStamp: specificPastTime,
 			messageId: "1313129754131",
 		},
 		{
 			sender: "vany",
 			receiver: "barn",
 			message: "X_X",
-			timeStamp: timeNow,
+			timeStamp: specificPastTime,
 			messageId: "131764131",
 		},
 		{
 			sender: "barn",
 			receiver: "vany",
 			message: "There's a socket client mock library you can use",
-			timeStamp: timeNow,
+			timeStamp: specificPastTime,
 			messageId: "1131131",
 		},
 		{
@@ -86,7 +87,7 @@ export const dummyMessages = {
 			receiver: "barn",
 			message:
 				"CRITICAL: ACTION REQUIRED: gke-gcloud-auth-plugin, which is needed for continued use of kubectl, was not found or is not executable. Install gke-gcloud-auth-plugin for use with kubectl by following ",
-			timeStamp: timeNow,
+			timeStamp: specificPastTime,
 			messageId: "310",
 		},
 		{
@@ -117,21 +118,21 @@ export const dummyMessages = {
 			receiver: "vany",
 			message: "The test server should be live",
 			timeStamp: timeNow,
-			messageId: "11041i11",
+			messageId: "1104f1i11",
 		},
 		{
 			sender: "barn",
 			receiver: "vany",
 			message: "wait, nvm there's an issue",
 			timeStamp: timeNow,
-			messageId: "11041i11",
+			messageId: "1104aa1i11",
 		},
 		{
 			sender: "barn",
 			receiver: "vany",
 			message: "i need to check what's wrong real quick",
 			timeStamp: timeNow,
-			messageId: "11041i11",
+			messageId: "1104113i11",
 		},
 		{
 			sender: "barn",
