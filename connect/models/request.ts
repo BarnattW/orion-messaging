@@ -5,11 +5,15 @@ interface IRequest{
     receiverId: mongoose.Types.ObjectId;
     requestType: 'friend' | 'group' 
     status: 'pending' | 'accepted' | 'rejected';
-    username: string
+    senderUsername: string;
+    receiverUsername: string;
 }
 
 const RequestSchema = new Schema<IRequest>({
-    username: {
+    senderUsername: {
+        type: String,
+    },
+    receiverUsername:{
         type: String,
     },
     senderId: {

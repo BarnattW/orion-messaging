@@ -29,7 +29,8 @@ export const sendRequest = async (req: Request,  res: Response, requestType: Str
         }
     
         const newRequest = new request({
-            username: senderUsername,
+            receiverUsername: receiverUsername,
+            senderUsername: senderUsername,
             senderId: sender._id,
             receiverId: receiver._id,
             requestType: requestType,
@@ -38,7 +39,7 @@ export const sendRequest = async (req: Request,  res: Response, requestType: Str
     
         await newRequest.save();
 
-        await publishMessage('${requestType}', newRequest);
+        await publishMessage(`${requestType}`, newRequest);
 
         sender.outgoingrequests.push(newRequest._id);
         await sender.save();
@@ -48,13 +49,13 @@ export const sendRequest = async (req: Request,  res: Response, requestType: Str
     
         return res.status(201).json(
             { 
-                message: '${requestType} request created' ,
+                message: `${requestType} request created` ,
                 data: newRequest
             }
             );
         
     } catch (error) {
-        console.error('Error creating ${requestType} request:', error);
+        console.error(`Error creating ${requestType} request:`, error);
 
         return res.status(500).json({ message: 'Server error' });
     }
@@ -120,7 +121,7 @@ export const getRequest = async(req: Request,  res: Response, requestType: Strin
 
         const outgoingreqs = await User.find(
             { 
-                Id: { $in: user.outgoingrequests } , 
+                userId: { $in: user.outgoingrequests } , 
                 outgoingrequests: {
                     $elemMatch: {
                         requestType: requestType
@@ -130,7 +131,7 @@ export const getRequest = async(req: Request,  res: Response, requestType: Strin
         );
         const incomingreqs = await User.find(
             { 
-                Id: { $in: user.incomingrequests } , 
+                userId: { $in: user.incomingrequests } , 
                 incomingrequests: {
                     $elemMatch: {
                         requestType: requestType
