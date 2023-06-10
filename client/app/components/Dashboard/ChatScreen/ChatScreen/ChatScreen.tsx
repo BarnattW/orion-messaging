@@ -1,5 +1,5 @@
-import ChatInput from "./ChatInput";
-import ChatMessages from "./ChatMessages";
+import ChatInput from "../ChatInput";
+import ChatMessages from "../ChatMessages";
 
 function ChatScreen() {
 	return (

@@ -10,31 +10,36 @@ interface IUser{
 }
 
 const UserSchema = new Schema<IUser>({
-    onlineStatus: {
-        type: Boolean,
-        default: false,
-        required: true
-    },
-    userId:{
-        type: String,
-        required: true
-    },
-    username:{
-        type: String,
-        required: true
-    },
-    friends: [{ 
-        type: mongoose.Schema.Types.ObjectId, 
-        ref: 'User' 
-    }],
-    incomingrequests: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Request'
-    }],
-    outgoingrequests: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Request'
-    }],
+	onlineStatus: {
+		type: Boolean,
+		default: false,
+		required: true,
+	},
+	userId: {
+		type: String,
+		required: true,
+	},
+	username: {
+		type: String,
+	},
+	friends: [
+		{
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "User",
+		},
+	],
+	incomingrequests: [
+		{
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Request",
+		},
+	],
+	outgoingrequests: [
+		{
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Request",
+		},
+	],
 });
 
 UserSchema.pre('save', function (next) {

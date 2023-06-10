@@ -2,8 +2,13 @@ import mongoose from "mongoose";
 import {User} from '../../models/user'
 import { request } from "../../models/request";
 import express, {Request, Response} from 'express';
+import { publishMessage } from "./kafkaproducer";
 
 const router = express.Router();
+
+
+    
+
 export const sendRequest = async (req: Request,  res: Response, requestType: String) =>{
     try {
         const {senderUsername, receiverUsername} = req.body;
@@ -32,6 +37,8 @@ export const sendRequest = async (req: Request,  res: Response, requestType: Str
     
         await newRequest.save();
 
+        await publishMessage('${requestType}', newRequest);
+
         sender.outgoingrequests.push(newRequest._id);
         await sender.save();
 
@@ -46,13 +53,12 @@ export const sendRequest = async (req: Request,  res: Response, requestType: Str
             );
         
     } catch (error) {
-        console.error('Error creating friend request:', error);
+        console.error('Error creating ${requestType} request:', error);
 
         return res.status(500).json({ message: 'Server error' });
     }
 
 }
-
 
 router.post('/api/sendFriendRequest', (req: Request, res: Response) =>
   sendRequest(req, res, 'friend'));
@@ -78,6 +84,9 @@ router.put('/api/acceptFriendRequest/:requestId', async (req: Request,  res: Res
 
         await sender.save();
         await receiver.save();
+
+        //publish to kafka
+        await publishMessage('Friend request accepted', receiver.friends);
 
         await request.findByIdAndDelete(requestId);
 

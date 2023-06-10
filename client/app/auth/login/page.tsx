@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 export default function LoginPage() {
 	return (
 		<>
-			<AuthForm type="login" />
+			<AuthForm />
 		</>
 	);
 }

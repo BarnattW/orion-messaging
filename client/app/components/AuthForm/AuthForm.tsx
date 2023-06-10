@@ -1,13 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 
-interface Props {
-	type: string;
-}
-
-function AuthForm(props: Props) {
-	const isLogin = props.type === "login" ? true : false;
-
+function AuthForm() {
 	return (
 		<div className="bg-gradient-to-r from-zinc-800 to-neutral-800 h-full min-h-full">
 			<div className="items-center flex h-full">
@@ -33,7 +27,7 @@ function AuthForm(props: Props) {
 								alt="Authenticate with Facebook"
 								className="ml-4 mr-2"
 							/>
-							{isLogin ? "Sign in with Facebook? " : "Sign Up with Facebook "}
+							Sign in with Facebook
 						</Link>
 
 						<Link
@@ -48,7 +42,7 @@ function AuthForm(props: Props) {
 								alt="Authenticate with Google"
 								className="mr-2"
 							/>
-							{isLogin ? "Sign in with Google " : "Sign Up with Google "}
+							Sign in with Google
 						</Link>
 
 						<Link
@@ -63,21 +57,8 @@ function AuthForm(props: Props) {
 								alt="Authenticate with Github"
 								className="mr-2"
 							/>
-							{isLogin ? "Sign in with Github " : "Sign Up with Github "}
+							Sign in with Github
 						</Link>
-					</div>
-					<div className="mb-6">
-						<p>
-							{isLogin
-								? "Don't have an account? "
-								: "Already have an account? "}
-							<Link
-								className="font-bold underline"
-								href={isLogin ? "/auth/signup" : "/auth/login"}
-							>
-								{isLogin ? "Create an account" : "Sign back in"}
-							</Link>
-						</p>
 					</div>
 				</div>
 			</div>

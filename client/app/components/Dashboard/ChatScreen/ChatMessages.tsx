@@ -1,39 +1,16 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import UserMessage from "./UserMessages";
-import { dummyMessages } from "@/app/dummy-data/dummy-messages";
+import UserMessage from "./ChatScreen/UserMessages";
 import { debounce } from "lodash";
 import DownArrowIcon from "../../Icons/DownArrowIcon";
-import SentMessage from "./SentMessage";
-
-interface Message {
-	sender: string;
-	receiver: string;
-	message: string;
-	messageId: string;
-	timeStamp: Date;
-}
+import SentMessage from "./ChatScreen/SentMessage";
+import useUserMessages from "../../../custom-hooks/useUserMessages";
 
 function ChatMessages() {
-	const [userMessages, setUserMessages] = useState<Message[]>([]);
 	const scrollRef = useRef<HTMLDivElement>(null);
-	const [loading, setLoading] = useState(true);
 	const [showScrollButton, setShowScrollButton] = useState(false);
-	const [handleScrollEvent, setHandleScrollEvent] = useState(true);
-
-	useEffect(() => {
-		(async () => {
-			try {
-				const response: Message[] = await dummyMessages.messages;
-				setUserMessages(response);
-				setLoading(false);
-			} catch (error) {
-				console.error("Error retrieving messages:", error);
-				setLoading(false);
-			}
-		})();
-	}, []);
+	const { sortedUserMessages, loading } = useUserMessages();
 
 	function scrollToBottom() {
 		if (scrollRef.current) {
@@ -42,22 +19,14 @@ function ChatMessages() {
 				behavior: "smooth",
 			});
 			setShowScrollButton(false);
-			setHandleScrollEvent(false);
-			setTimeout(() => {
-				setHandleScrollEvent(true);
-			}, 500);
 		}
 	}
 
 	useEffect(() => {
 		scrollToBottom();
-	}, [userMessages]);
+	}, [sortedUserMessages]);
 
 	const handleScroll = debounce(() => {
-		if (!handleScrollEvent) {
-			return;
-		}
-
 		if (
 			scrollRef.current &&
 			scrollRef.current.scrollTop <
@@ -77,7 +46,7 @@ function ChatMessages() {
 		);
 	}
 
-	if (userMessages.length === 0) {
+	if (sortedUserMessages.length === 0) {
 		return (
 			<div className="flex items-center justify-center grow text-center">
 				<p>No messages found. Trying sending some!</p>
@@ -91,10 +60,8 @@ function ChatMessages() {
 			ref={scrollRef}
 			onScroll={handleScroll}
 		>
-			{userMessages.map((message, i) => {
-				const renderUserMessage =
-					i === 0 || message.sender !== userMessages[i - 1].sender;
-				return renderUserMessage ? (
+			{sortedUserMessages.map((message) => {
+				return message.renderUserMessage ? (
 					<UserMessage
 						sender={message.sender}
 						receiver={message.receiver}
