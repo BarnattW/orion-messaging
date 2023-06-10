@@ -1,13 +1,13 @@
 import Avatar from "../Avatar/Avatar";
 
-interface FriendRequestCardProps {
+interface RequestCardProps {
 	imageUrl?: string;
-	altText: string;
+	altText?: string;
 	userId: string;
 	username: string;
 }
 
-function FriendRequestCard(friendRequestCardProps: FriendRequestCardProps) {
+function RequestCard(friendRequestCardProps: RequestCardProps) {
 	return (
 		<div className="py-2 pl-1 hover:bg-zinc-700 hover:text-neutral-50 hover:cursor-pointer focus:bg-white max-w-full">
 			<div className="flex mx-4 gap-2 items-center text-xs">
@@ -33,4 +33,4 @@ function FriendRequestCard(friendRequestCardProps: FriendRequestCardProps) {
 	);
 }
 
-export default FriendRequestCard;
+export default RequestCard;

@@ -6,20 +6,30 @@ import useSWR from "swr";
 const fetcher = (url: string) => fetch(url).then((response) => response.json());
 
 export function UserData({ children }: { children: React.ReactNode }) {
-	const { userId, setUserId } = useContext(UserContext);
-	const { data: userData, error } = useSWR("/api/auth/getUserId", fetcher);
+	const { userId, setUserId, username, setUsername } = useContext(UserContext);
+	const { data: userIdSWR, error } = useSWR("/api/auth/getUserId", fetcher);
+	const { data: usernameSWR } = useSWR(
+		userIdSWR ? `/api/users/${userIdSWR}/username` : null,
+		fetcher
+	);
 
 	if (error) {
 		console.log(error);
 	}
 
 	useEffect(() => {
-		if (userData) {
-			setUserId(userData);
+		if (userIdSWR) {
+			setUserId(userIdSWR);
 		}
-	}, [userData, setUserId]);
+	}, [userIdSWR, setUserId]);
 
-	console.log(userId);
+	useEffect(() => {
+		if (usernameSWR) {
+			setUsername(usernameSWR);
+		}
+	}, [usernameSWR, setUsername]);
+
+	console.log(userId, username);
 
 	return <>{children}</>;
 }

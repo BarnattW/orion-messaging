@@ -1,14 +1,13 @@
 "use client";
-import ListContainer from "../ListWrappers/ListContainer";
 import { RefObject, useRef, useContext } from "react";
 import { UserContext } from "@/app/Context/UserContext";
-import FriendRequestCard from "./FriendRequestCard";
 import ListHeading from "../ListWrappers/ListHeading";
 
 function AddFriend() {
 	const addUsername: RefObject<HTMLInputElement> = useRef(null);
 	const { userId } = useContext(UserContext);
 
+	// submitting friend requests
 	function keyDownHandler(event: React.KeyboardEvent<HTMLInputElement>) {
 		if (event.key == "Enter") {
 			submitFriendRequest();
@@ -16,13 +15,32 @@ function AddFriend() {
 	}
 
 	async function submitFriendRequest() {
-		if (addUsername.current?.value === "") return;
+		const receiverUsername = addUsername.current?.value;
+		if (receiverUsername === "") return;
 
-		console.log("creating request!");
+		const request = await fetch("/api/sendFriendRequest", {
+			method: "POST",
+			body: JSON.stringify({
+				senderUsername: userId,
+				receiverUsername: receiverUsername,
+			}),
+			headers: {
+				"Content-Type": "application/json",
+			},
+		});
+
+		if (request.status != 200) {
+			// update with common error handling
+			console.log(request);
+		} else {
+			//update the ui
+			console.log("sucess", request);
+		}
+		addUsername.current!.value = "";
 	}
 
 	return (
-		<ListContainer>
+		<>
 			<ListHeading>Add Friends</ListHeading>
 			<input
 				ref={addUsername}
@@ -36,15 +54,7 @@ function AddFriend() {
 			>
 				Send Friend Request
 			</button>
-			<ListHeading>Friend Requests</ListHeading>
-			<FriendRequestCard
-				altText="ada"
-				userId="31313131"
-				username="superduperlongnamefortest"
-			/>
-			<FriendRequestCard altText="ada" userId="31313131" username="bocondaa" />
-			<ListHeading>Sent Requests</ListHeading>
-		</ListContainer>
+		</>
 	);
 }
 

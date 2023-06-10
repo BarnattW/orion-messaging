@@ -27,6 +27,9 @@ function Sidebar() {
 			headers: { "Content-Type": "application/json" },
 			body: null,
 		});
+
+		// error handling
+
 		router.push("/auth/login");
 	}
 
@@ -40,7 +43,7 @@ function Sidebar() {
 				className="mb-5"
 			/>
 			<Tooltip content="Friends">
-				<Link href={`/dashboard/friends/${userId}`}>
+				<Link href={`/dashboard/friends`}>
 					<FriendIcon
 						className={
 							pathname.includes("/dashboard/friends")
@@ -51,7 +54,7 @@ function Sidebar() {
 				</Link>
 			</Tooltip>
 			<Tooltip content="Messages">
-				<Link href={`/dashboard/conversations/${userId}`}>
+				<Link href={`/dashboard/conversations`}>
 					<MessageIcon
 						className={
 							pathname.includes("/dashboard/conversations")
@@ -62,7 +65,7 @@ function Sidebar() {
 				</Link>
 			</Tooltip>
 			<Tooltip content="Add Friends">
-				<Link href={`/dashboard/add-friends/${userId}`}>
+				<Link href={`/dashboard/add-friends`}>
 					<FriendAddIcon
 						className={
 							pathname.includes("/dashboard/add-friends")
