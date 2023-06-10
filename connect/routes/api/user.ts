@@ -46,4 +46,19 @@ router.put('/api/onlineStatus', async (req: Request, res: Response) =>{
     }
 })
 
+router.get("/api/:userId/getUsername", async (req: Request, res: Response) => {
+	try {
+		const { userId } = req.params;
+
+		const user = await User.findByIdAndUpdate(userId);
+		if (!user) {
+			return res.status(404).json({ message: "user not found" });
+		}
+		return res.json(user.username);
+	} catch (error) {
+		console.error(error);
+		return res.status(500).json({ message: "Server error" });
+	}
+});
+
 export const createUser = router;
