@@ -29,6 +29,7 @@ export const sendRequest = async (req: Request,  res: Response, requestType: Str
         }
     
         const newRequest = new request({
+            username: senderUsername,
             senderId: sender._id,
             receiverId: receiver._id,
             requestType: requestType,
