@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import {User} from './models/user'
+import {User, IUser} from './models/user'
 import { request } from "./models/request";
 import express, {Request, Response } from 'express';
 import http from 'http';
@@ -73,9 +73,9 @@ async function run() {
 			if (message.value){
 				console.log(`Received message: ${message.value}`);
 				const newUser = new User();
-				newUser.userId = message.value; //assuming message is a json with userId
+				newUser.userId = message.value.toString(); //assuming message is a json with userId
         newUser.save()
-				.then((savedUser) => {
+				.then((savedUser: IUser) => {
 					console.log(`Saved user: ${savedUser}`);
 				})
 				.catch((error) => {
