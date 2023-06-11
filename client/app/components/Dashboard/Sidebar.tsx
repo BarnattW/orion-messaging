@@ -22,15 +22,23 @@ function Sidebar() {
 	const router = useRouter();
 
 	async function logout() {
-		const response = await fetch("/api/auth/logout", {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
-			body: null,
-		});
+		try {
+			const response = await fetch("/api/auth/logout", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: null,
+			});
 
-		// error handling
+			// error handling
+			if (!response.ok) {
+				// update with common error handling
+				console.log(response);
+			}
 
-		router.push("/auth/login");
+			router.push("/auth/login");
+		} catch (error) {
+			console.log(error);
+		}
 	}
 
 	return (

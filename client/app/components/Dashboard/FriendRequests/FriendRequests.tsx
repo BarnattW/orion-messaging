@@ -2,7 +2,6 @@
 import ListContainer from "../ListWrappers/ListContainer";
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "@/app/Context/UserContext";
-import RequestCard from "./RequestCard";
 import ReceivedFriendRequests from "./ReceivedFriendRequests";
 import AddFriend from "./AddFriend";
 import SentFriendRequests from "./SentFriendRequests";
@@ -18,18 +17,28 @@ function FriendRequests() {
 	// fetch all incoming and outgoing friend requests
 	useEffect(() => {
 		async function getRequests() {
-			const response = await fetch(`/api/${userId}/getFriendReqs`);
-			const friendRequests = await response.json();
+			try {
+				const response = await fetch(`/api/${userId}/getFriendReqs`, {
+					method: "GET",
+					headers: {
+						"Content-Type": "application/json",
+					},
+				});
 
-			if (friendRequests.status != 200) {
-				// update with common error handling
-				console.log(friendRequests);
+				if (!response.ok) {
+					// update with common error handling
+					console.log(response);
+				}
+
+				const friendRequests = await response.json();
+
+				setFriendRequests({
+					receivedRequests: friendRequests.outgoing,
+					sentRequests: friendRequests.incoming,
+				});
+			} catch (error) {
+				console.log(error);
 			}
-
-			setFriendRequests({
-				receivedRequests: friendRequests.outgoing,
-				sentRequests: friendRequests.incoming,
-			});
 		}
 
 		getRequests();
@@ -41,12 +50,6 @@ function FriendRequests() {
 			<ReceivedFriendRequests
 				receivedRequests={friendRequests.receivedRequests}
 			/>
-			<RequestCard
-				altText="ada"
-				userId="31313131"
-				username="superduperlongnamefortest"
-			/>
-			<RequestCard altText="ada" userId="31313131" username="bocondaa" />
 			<SentFriendRequests sentRequests={friendRequests.sentRequests} />
 		</ListContainer>
 	);
