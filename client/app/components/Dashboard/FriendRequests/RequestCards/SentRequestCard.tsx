@@ -5,12 +5,15 @@ function SentRequestCard(friendRequestCardProps: RequestCardProps) {
 	async function deleteRequest() {
 		//pending
 		try {
-			const response = await fetch(`/api/deleteFriendRequest/:requestId`, {
-				method: "PUT",
-				headers: {
-					"Content-Type": "application/json",
-				},
-			});
+			const response = await fetch(
+				`/api/connect/rejectFriendRequest/${friendRequestCardProps.requestId}`,
+				{
+					method: "PUT",
+					headers: {
+						"Content-Type": "application/json",
+					},
+				}
+			);
 
 			if (!response.ok) {
 				// update with common error handling

@@ -11,11 +11,11 @@ export function UserData({ children }: { children: React.ReactNode }) {
 		useContext(UserContext);
 	const { data: userIdSWR, error } = useSWR("/api/auth/getUserId", fetcher);
 	const { data: usernameSWR } = useSWR(
-		userIdSWR ? `/api/users/${userIdSWR}/username` : null,
+		userIdSWR ? `/api/connect/${userIdSWR}/getUsername` : null,
 		fetcher
 	);
 	const { data: friendsSWR } = useSWR(
-		userIdSWR ? `/api/getFriends/${userIdSWR}` : null,
+		userIdSWR ? `/api/connect/getFriends/${userIdSWR}` : null,
 		fetcher
 	);
 

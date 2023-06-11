@@ -77,8 +77,8 @@ export const acceptFriendRequest = (
 				return;
 			}
 
-			const sender = await User.findById(friendReq.senderId);
-			const receiver = await User.findById(friendReq.receiverId);
+			const sender = await User.findOne({ userId: friendReq.senderId });
+			const receiver = await User.findOne({ userId: friendReq.receiverId });
 
 			if (!sender || !receiver) {
 				socket.emit("requestError", {
@@ -95,13 +95,19 @@ export const acceptFriendRequest = (
 
 			await request.findByIdAndDelete(requestId);
 
-			await User.findByIdAndUpdate(sender._id, {
-				$pull: { incomingrequests: requestId },
-			});
+			await User.findOneAndUpdate(
+				{ userId: sender._id },
+				{
+					$pull: { incomingrequests: requestId },
+				}
+			);
 
-			await User.findByIdAndUpdate(receiver._id, {
-				$pull: { outgoingrequests: requestId },
-			});
+			await User.findOneAndUpdate(
+				{ userId: receiver._id },
+				{
+					$pull: { outgoingrequests: requestId },
+				}
+			);
 
 			if (connectedClients.has(sender.id)) {
 				const senderSocket = connectedClients.get(sender.id);
