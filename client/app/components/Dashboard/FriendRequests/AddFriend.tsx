@@ -29,7 +29,7 @@ function AddFriend() {
 			},
 		});
 
-		if (request.status != 200) {
+		if (request.ok) {
 			// update with common error handling
 			console.log(request);
 		} else {

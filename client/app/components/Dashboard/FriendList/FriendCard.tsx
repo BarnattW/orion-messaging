@@ -1,12 +1,6 @@
 import Avatar from "../Avatar/Avatar";
 import OnlineStatus from "../Avatar/OnlineStatus";
-
-interface FriendCardProps {
-	imageUrl?: string;
-	altText: string;
-	userId: string;
-	onlineStatus: string;
-}
+import { FriendCardProps } from "@/app/types/FriendList";
 
 function FriendCard(friendCardProps: FriendCardProps) {
 	return (
@@ -19,7 +13,7 @@ function FriendCard(friendCardProps: FriendCardProps) {
 					/>
 					<OnlineStatus onlineStatus={friendCardProps.onlineStatus} />
 				</div>
-				<div className="truncate text-sm">{friendCardProps.userId}</div>
+				<div className="truncate text-sm">{friendCardProps.username}</div>
 			</div>
 		</div>
 	);
