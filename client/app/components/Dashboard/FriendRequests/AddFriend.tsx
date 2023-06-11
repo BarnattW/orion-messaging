@@ -5,7 +5,7 @@ import ListHeading from "../ListWrappers/ListHeading";
 
 function AddFriend() {
 	const addUsername: RefObject<HTMLInputElement> = useRef(null);
-	const { userId } = useContext(UserContext);
+	const { username } = useContext(UserContext);
 
 	// submitting friend requests
 	function keyDownHandler(event: React.KeyboardEvent<HTMLInputElement>) {
@@ -18,10 +18,10 @@ function AddFriend() {
 		const receiverUsername = addUsername.current?.value;
 		if (receiverUsername === "") return;
 
-		const request = await fetch("/api/sendFriendRequest", {
+		const request = await fetch("/api/connect/sendFriendRequest", {
 			method: "POST",
 			body: JSON.stringify({
-				senderUsername: userId,
+				senderUsername: username,
 				receiverUsername: receiverUsername,
 			}),
 			headers: {

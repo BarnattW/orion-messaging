@@ -18,12 +18,13 @@ function FriendRequests() {
 	useEffect(() => {
 		async function getRequests() {
 			try {
-				const response = await fetch(`/api/${userId}/getFriendReqs`, {
+				const response = await fetch(`/api/connect/${userId}/getFriendReqs`, {
 					method: "GET",
 					headers: {
 						"Content-Type": "application/json",
 					},
 				});
+				console.log(response);
 
 				if (!response.ok) {
 					// update with common error handling
@@ -31,7 +32,7 @@ function FriendRequests() {
 				}
 
 				const friendRequests = await response.json();
-
+				console.log(friendRequests);
 				setFriendRequests({
 					receivedRequests: friendRequests.outgoing,
 					sentRequests: friendRequests.incoming,
