@@ -198,29 +198,34 @@ export const getRequest = async (
 		const { userId } = req.params;
 
 		const user = await User.findOne({ userId: userId });
+		console.log(user);
 
 		if (!user) {
 			return res.status(404).json({ message: "User not found" });
 		}
 
-		const outgoingRequests = await User.find(
-			{ userId },
-			{ outgoingrequests: { $elemMatch: { requestType: "your_request_type" } } }
-		)
-			.populate("outgoingrequests")
-			.exec();
-		const incomingreqs = await User.findOne(
-			{ userId },
-			{ outgoingrequests: { $elemMatch: { requestType: "your_request_type" } } }
-		)
-			.populate("incomingrequests")
-			.exec();
+		const outgoingRequestIds = user.outgoingrequests;
 
-		console.log(outgoingRequests, incomingreqs);
+		const outgoingRequests = await request.find({
+		  _id: { $in: outgoingRequestIds },
+		  requestType: requestType,
+		});
+
+		const incomingRequestIds = user.incomingrequests;
+
+		const incomingRequests = await request.find({
+		  _id: { $in: incomingRequestIds },
+		  requestType: requestType,
+		});
+	
+	
+	
+
+		console.log(outgoingRequests, incomingRequests);
 
 		return res.status(200).json({
 			outgoing: outgoingRequests,
-			incoming: incomingreqs,
+			incoming: incomingRequests,
 		});
 	} catch (error) {
 		console.error("Error fetching friend requests:", error);
