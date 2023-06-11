@@ -2,12 +2,10 @@ import mongoose from "mongoose";
 import {User} from '../../models/user'
 import { request } from "../../models/request";
 import express, {Request, Response} from 'express';
-import { publishMessage } from "./kafkaproducer";
+import { publishMessage } from "./idkwhattonamethis/kafkaproducer";
+import { insertionSort } from "./idkwhattonamethis/sort";
 
 const router = express.Router();
-
-
-    
 
 export const sendRequest = async (req: Request,  res: Response, requestType: String) =>{
     try {
@@ -29,6 +27,8 @@ export const sendRequest = async (req: Request,  res: Response, requestType: Str
         }
     
         const newRequest = new request({
+            receiverUsername: receiverUsername,
+            senderUsername: senderUsername,
             senderId: sender._id,
             receiverId: receiver._id,
             requestType: requestType,
@@ -37,7 +37,7 @@ export const sendRequest = async (req: Request,  res: Response, requestType: Str
     
         await newRequest.save();
 
-        await publishMessage('${requestType}', newRequest);
+        await publishMessage(`${requestType}`, newRequest);
 
         sender.outgoingrequests.push(newRequest._id);
         await sender.save();
@@ -47,13 +47,13 @@ export const sendRequest = async (req: Request,  res: Response, requestType: Str
     
         return res.status(201).json(
             { 
-                message: '${requestType} request created' ,
+                message: `${requestType} request created` ,
                 data: newRequest
             }
             );
         
     } catch (error) {
-        console.error('Error creating ${requestType} request:', error);
+        console.error(`Error creating ${requestType} request:`, error);
 
         return res.status(500).json({ message: 'Server error' });
     }
@@ -82,6 +82,17 @@ router.put('/api/acceptFriendRequest/:requestId', async (req: Request,  res: Res
         sender.friends.push(receiver._id);
         receiver.friends.push(sender._id);
 
+        //SORT
+        const populatedSenderFriends = await User.find({ _id: { $in: receiver.friends } }).populate('friends');
+        const sortedSenderFriends = insertionSort(populatedSenderFriends, 'username');
+        const sortedSenderFriendIds = sortedSenderFriends.map((friend) => friend._id);
+        sender.friends = sortedSenderFriendIds;
+
+        const populatedReceiverFriends = await User.find({ _id: { $in: receiver.friends } }).populate('friends');
+        const sortedReceiverFriends = insertionSort(populatedReceiverFriends, 'username');
+        const sortedReceiverFriendIds = sortedReceiverFriends.map((friend) => friend._id);
+        sender.friends = sortedReceiverFriendIds;
+
         await sender.save();
         await receiver.save();
 
@@ -107,6 +118,45 @@ router.put('/api/acceptFriendRequest/:requestId', async (req: Request,  res: Res
     }
 })
 
+router.put('/api/rejectFriendRequest/:requestId', async (req: Request,  res: Response)=>{
+    try{
+        const {requestId} = req.params;
+        const friendReq = await request.findById(requestId);
+
+        if (!friendReq){
+            return res.status(404).json({ message: 'Friend request not found' });
+        }
+
+        const sender = await User.findById(friendReq.senderId);
+        const receiver = await User.findById(friendReq.receiverId);
+
+        if (!sender || !receiver) {
+            return res.status(404).json({ message: 'Sender or receiver not found' });
+        }
+
+    
+        //publish to kafka
+        await publishMessage('Friend request rejected', receiver.friends);
+
+        await request.findByIdAndDelete(requestId);
+
+        await User.findByIdAndUpdate(sender._id, {
+            $pull: { incomingrequests: requestId }
+        });
+
+        await User.findByIdAndUpdate(receiver._id, {
+            $pull: { outgoingrequests: requestId }
+        });
+
+        return res.status(200).json({ message: 'Friend request rejected' });
+        
+    } catch (error) {
+        console.error('Error deleting friend request:', error);
+
+        return res.status(500).json({ message: 'Server error' });
+    }
+})
+
 export const getRequest = async(req: Request,  res: Response, requestType: String) =>{
     try{
         const {userId} = req.params;
@@ -119,7 +169,7 @@ export const getRequest = async(req: Request,  res: Response, requestType: Strin
 
         const outgoingreqs = await User.find(
             { 
-                Id: { $in: user.outgoingrequests } , 
+                userId: { $in: user.outgoingrequests } , 
                 outgoingrequests: {
                     $elemMatch: {
                         requestType: requestType
@@ -129,7 +179,7 @@ export const getRequest = async(req: Request,  res: Response, requestType: Strin
         );
         const incomingreqs = await User.find(
             { 
-                Id: { $in: user.incomingrequests } , 
+                userId: { $in: user.incomingrequests } , 
                 incomingrequests: {
                     $elemMatch: {
                         requestType: requestType
