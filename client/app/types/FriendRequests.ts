@@ -9,16 +9,16 @@ export interface Request {
 }
 
 export interface FriendRequests {
-	receivedRequests: Request[];
-	sentRequests: Request[];
+	receivedRequests?: Request[];
+	sentRequests?: Request[];
 }
 
 export interface receviedRequestsProps {
-	receivedRequests: Request[];
+	receivedRequests?: Request[];
 }
 
 export interface SentFriendRequestsProps {
-	sentRequests: Request[];
+	sentRequests?: Request[];
 }
 
 export interface RequestCardProps {

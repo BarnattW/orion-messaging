@@ -4,12 +4,15 @@ import { RequestCardProps } from "@/app/types/FriendRequests";
 function ReceivedRequestCard(friendRequestCardProps: RequestCardProps) {
 	async function acceptRequest() {
 		try {
-			const response = await fetch(`/api/acceptFriendRequest/:requestId`, {
-				method: "PUT",
-				headers: {
-					"Content-Type": "application/json",
-				},
-			});
+			const response = await fetch(
+				`/api/connect/acceptFriendRequest/:requestId`,
+				{
+					method: "PUT",
+					headers: {
+						"Content-Type": "application/json",
+					},
+				}
+			);
 
 			if (!response.ok) {
 				// update with common error handling
@@ -23,12 +26,15 @@ function ReceivedRequestCard(friendRequestCardProps: RequestCardProps) {
 	async function deleteRequest() {
 		//pending
 		try {
-			const response = await fetch(`/api/deleteFriendRequest/:requestId`, {
-				method: "PUT",
-				headers: {
-					"Content-Type": "application/json",
-				},
-			});
+			const response = await fetch(
+				`/api/connect/rejectFriendRequest/${friendRequestCardProps.requestId}`,
+				{
+					method: "PUT",
+					headers: {
+						"Content-Type": "application/json",
+					},
+				}
+			);
 
 			if (!response.ok) {
 				// update with common error handling

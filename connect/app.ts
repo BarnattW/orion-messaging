@@ -73,14 +73,16 @@ async function run() {
 			if (message.value){
 				console.log(`Received message: ${message.value}`);
 				const newUser = new User();
-				newUser.userId = message.value.toString(); //assuming message is a json with userId
-        newUser.save()
-				.then((savedUser: IUser) => {
-					console.log(`Saved user: ${savedUser}`);
-				})
-				.catch((error) => {
-					console.error('Error saving user:', error);
-				});
+				//@ts-ignore
+				newUser.userId = message.value; //assuming message is a json with userId
+				newUser
+					.save()
+					.then((savedUser: IUser) => {
+						console.log(`Saved user: ${savedUser}`);
+					})
+					.catch((error) => {
+						console.error("Error saving user:", error);
+					});
 			}
 			
 		},
