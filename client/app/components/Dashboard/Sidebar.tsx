@@ -22,12 +22,23 @@ function Sidebar() {
 	const router = useRouter();
 
 	async function logout() {
-		const response = await fetch("/api/auth/logout", {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
-			body: null,
-		});
-		router.push("/auth/login");
+		try {
+			const response = await fetch("/api/auth/logout", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: null,
+			});
+
+			// error handling
+			if (!response.ok) {
+				// update with common error handling
+				console.log(response);
+			}
+
+			router.push("/auth/login");
+		} catch (error) {
+			console.log(error);
+		}
 	}
 
 	return (
@@ -40,7 +51,7 @@ function Sidebar() {
 				className="mb-5"
 			/>
 			<Tooltip content="Friends">
-				<Link href={`/dashboard/friends/${userId}`}>
+				<Link href={`/dashboard/friends`}>
 					<FriendIcon
 						className={
 							pathname.includes("/dashboard/friends")
@@ -51,7 +62,7 @@ function Sidebar() {
 				</Link>
 			</Tooltip>
 			<Tooltip content="Messages">
-				<Link href={`/dashboard/conversations/${userId}`}>
+				<Link href={`/dashboard/conversations`}>
 					<MessageIcon
 						className={
 							pathname.includes("/dashboard/conversations")
@@ -62,7 +73,7 @@ function Sidebar() {
 				</Link>
 			</Tooltip>
 			<Tooltip content="Add Friends">
-				<Link href={`/dashboard/add-friends/${userId}`}>
+				<Link href={`/dashboard/add-friends`}>
 					<FriendAddIcon
 						className={
 							pathname.includes("/dashboard/add-friends")

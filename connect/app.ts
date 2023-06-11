@@ -1,10 +1,11 @@
 import mongoose from "mongoose";
-import {User} from './models/user'
+import {User, IUser} from './models/user'
 import { request } from "./models/request";
 import express, {Request, Response } from 'express';
 import http from 'http';
 import {Server, Socket} from 'socket.io';
-import { consumer } from "./routes/api/kafkaproducer";
+import {consumer} from './routes/api/idkwhattonamethis/kafkaproducer'
+
 // import {
 // 	sendFriendRequest,
 // 	acceptFriendRequest,
@@ -68,19 +69,22 @@ async function run() {
 	});
 
 	await consumer.run({
-		eachMessage: async ({
-			topic,
-			partition,
-			message,
-		}: {
-			topic: string;
-			partition: number;
-			message: any;
-		}) => {
-			console.log(`Received message: ${message.value}`);
-			const newUser = new User();
-			newUser.userId = message.value; //assuming message is a json with userId]
-			newUser.save();
+		eachMessage: async ({ topic, partition, message }) => {
+			if (message.value){
+				console.log(`Received message: ${message.value}`);
+				const newUser = new User();
+				//@ts-ignore
+				newUser.userId = message.value; //assuming message is a json with userId
+				newUser
+					.save()
+					.then((savedUser: IUser) => {
+						console.log(`Saved user: ${savedUser}`);
+					})
+					.catch((error) => {
+						console.error("Error saving user:", error);
+					});
+			}
+			
 		},
 	});
 }
@@ -89,3 +93,16 @@ run();
 
 //consumer group auth
 //topic: "user-created"
+
+//TESTING WITHOUT KAFKA
+// const newUser = new User();
+// newUser.userId = newUser._id.toString();
+// // Call the save method explicitly
+
+// newUser.save()
+//   .then((savedUser) => {
+//     console.log(`Saved user: ${savedUser}`);
+//   })
+//   .catch((error) => {
+//     console.error('Error saving user:', error);
+//   });

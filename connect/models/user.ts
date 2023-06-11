@@ -1,6 +1,6 @@
 import mongoose, {Schema, model} from 'mongoose';
 
-interface IUser{
+export interface IUser{
     userId: string
     username: string
     friends: Array<mongoose.Types.ObjectId>
@@ -39,7 +39,7 @@ const UserSchema = new Schema<IUser>({
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Request",
 		},
-	],
+	]
 });
 
 UserSchema.pre('save', function (next) {

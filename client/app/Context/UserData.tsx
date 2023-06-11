@@ -2,24 +2,41 @@
 import { useContext, useEffect } from "react";
 import { UserContext } from "./UserContext";
 import useSWR from "swr";
+import { set } from "lodash";
 
 const fetcher = (url: string) => fetch(url).then((response) => response.json());
 
 export function UserData({ children }: { children: React.ReactNode }) {
-	const { userId, setUserId } = useContext(UserContext);
-	const { data: userData, error } = useSWR("/api/auth/getUserId", fetcher);
+	const { userId, setUserId, username, setUsername, setFriends } =
+		useContext(UserContext);
+	const { data: userIdSWR, error } = useSWR("/api/auth/getUserId", fetcher);
+	const { data: usernameSWR } = useSWR(
+		userIdSWR ? `/api/connect/${userIdSWR}/getUsername` : null,
+		fetcher
+	);
+	const { data: friendsSWR } = useSWR(
+		userIdSWR ? `/api/connect/getFriends/${userIdSWR}` : null,
+		fetcher
+	);
 
 	if (error) {
 		console.log(error);
 	}
 
 	useEffect(() => {
-		if (userData) {
-			setUserId(userData);
+		if (userIdSWR) {
+			setUserId(userIdSWR);
 		}
-	}, [userData, setUserId]);
+	}, [userIdSWR, setUserId]);
 
-	console.log(userId);
+	useEffect(() => {
+		if (usernameSWR && friendsSWR) {
+			setUsername(usernameSWR);
+			setFriends(friendsSWR);
+		}
+	}, [usernameSWR, setUsername, friendsSWR, setFriends]);
+
+	console.log(userId, username);
 
 	return <>{children}</>;
 }
