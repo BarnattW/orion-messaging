@@ -134,6 +134,45 @@ router.put('/api/acceptFriendRequest/:requestId', async (req: Request,  res: Res
     }
 })
 
+router.put('/api/rejectFriendRequest/:requestId', async (req: Request,  res: Response)=>{
+    try{
+        const {requestId} = req.params;
+        const friendReq = await request.findById(requestId);
+
+        if (!friendReq){
+            return res.status(404).json({ message: 'Friend request not found' });
+        }
+
+        const sender = await User.findById(friendReq.senderId);
+        const receiver = await User.findById(friendReq.receiverId);
+
+        if (!sender || !receiver) {
+            return res.status(404).json({ message: 'Sender or receiver not found' });
+        }
+
+    
+        //publish to kafka
+        await publishMessage('Friend request rejected', receiver.friends);
+
+        await request.findByIdAndDelete(requestId);
+
+        await User.findByIdAndUpdate(sender._id, {
+            $pull: { incomingrequests: requestId }
+        });
+
+        await User.findByIdAndUpdate(receiver._id, {
+            $pull: { outgoingrequests: requestId }
+        });
+
+        return res.status(200).json({ message: 'Friend request rejected' });
+        
+    } catch (error) {
+        console.error('Error deleting friend request:', error);
+
+        return res.status(500).json({ message: 'Server error' });
+    }
+})
+
 export const getRequest = async(req: Request,  res: Response, requestType: String) =>{
     try{
         const {userId} = req.params;
