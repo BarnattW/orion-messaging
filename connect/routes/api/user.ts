@@ -35,15 +35,30 @@ router.put('/api/onlineStatus', async (req: Request, res: Response) =>{
     try{
         const{userId, newStatus} = req.body;
 
-        const user = await User.findByIdAndUpdate(userId, { onelineStatus: newStatus }, { new: true });
+        const user = await User.findByIdAndUpdate(userId, { onlineStatus: newStatus }, { new: true });
         if (!user){
             return res.status(404).json({message: 'user not found'});
         }
         return res.json(user);
     } catch(error){
         console.error(error);
-        return res.status(500).json({message: 'Server error'})
+        return res.status(500).json({message: 'Server error'});
     }
 })
 
+
+router.put('/api/changeUsername', async(req: Request, res: Response) =>{
+    try{
+        const{userId, newUsername} = req.body;
+
+        const user = await User.findByIdAndUpdate(userId, {username: newUsername}, {new: true});
+        if (!user){
+            return res.status(404).json({message:'user not found'});
+        }
+        return res.json(user);
+    } catch(error){
+        console.error(error);
+        return res.status(500).json({message: 'Server error'});
+    }
+})
 export const createUser = router;
