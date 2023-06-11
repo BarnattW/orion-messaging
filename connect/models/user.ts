@@ -21,7 +21,6 @@ const UserSchema = new Schema<IUser>({
     },
     username:{
         type: String,
-        required: true
     },
     friends: [{ 
         type: mongoose.Schema.Types.ObjectId, 

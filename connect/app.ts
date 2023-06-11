@@ -68,9 +68,19 @@ async function run(){
 
 	await consumer.run({
 		eachMessage: async ({ topic, partition, message }) => {
-			console.log('Received message: ${message.value}');
-			const newUser = new User();
-			newUser.userId = JSON.parse(message.value.toString()).userId; //assuming message is a json with userId
+			if (message.value){
+				console.log(`Received message: ${message.value}`);
+				const newUser = new User();
+				newUser.save()
+				.then((savedUser) => {
+					console.log(`Saved user: ${savedUser}`);
+				})
+				.catch((error) => {
+					console.error('Error saving user:', error);
+				});
+				newUser.userId = JSON.parse(message.value.toString()).userId; //assuming message is a json with userId
+			}
+			
 		},
 	})
 	
@@ -79,3 +89,16 @@ async function run(){
 
 //consumer group auth
 //topic: "user-created"
+
+//TESTING WITHOUT KAFKA
+// const newUser = new User();
+// newUser.userId = newUser._id.toString();
+// // Call the save method explicitly
+
+// newUser.save()
+//   .then((savedUser) => {
+//     console.log(`Saved user: ${savedUser}`);
+//   })
+//   .catch((error) => {
+//     console.error('Error saving user:', error);
+//   });
