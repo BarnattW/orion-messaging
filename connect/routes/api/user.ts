@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import {User} from '../../models/user'
 import { request } from "../../models/request";
 import express, {Request, Response} from 'express';
+import { insertionSort } from "./idkwhattonamethis/sort";
 
 const router = express.Router();
 
@@ -55,6 +56,18 @@ router.put('/api/changeUsername', async(req: Request, res: Response) =>{
         if (!user){
             return res.status(404).json({message:'user not found'});
         }
+
+        
+
+        const usersWithUserAsFriend = await User.find({ friends: userId });
+
+        usersWithUserAsFriend.forEach(async (user) => {
+            const populatedFriends = await User.find({ _id: { $in: user.friends } }).populate('friends');
+            const sortedFriends = insertionSort(populatedFriends, 'username');
+            const sortedFriendIds = sortedFriends.map((friend) => friend._id);
+            user.friends = sortedFriendIds;
+          });
+
         return res.json(user);
     } catch(error){
         console.error(error);

@@ -4,7 +4,7 @@ import { request } from "./models/request";
 import express, {Request, Response } from 'express';
 import http from 'http';
 import {Server, Socket} from 'socket.io';
-import {consumer} from './routes/api/kafkaproducer'
+import {consumer} from './routes/api/idkwhattonamethis/kafkaproducer'
 // import {
 // 	sendFriendRequest,
 // 	acceptFriendRequest,
