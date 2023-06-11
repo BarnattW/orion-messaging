@@ -1,5 +1,5 @@
-import ChatInput from "./ChatInput";
-import ChatMessages from "./ChatMessages";
+import ChatInput from "../ChatInput";
+import ChatMessages from "../ChatMessages";
 
 function ChatScreen() {
 	return (
@@ -8,7 +8,7 @@ function ChatScreen() {
 			style={{ wordBreak: "break-word" }}
 		>
 			<div className="pt-8 px-5 pb-1 text-lg bg-zinc-800 border-b-2 border-neutral-600 sticky top-0 backdrop-blur-lg font-medium">
-				Hi
+				Chat App Dev Team
 			</div>
 			<ChatMessages />
 			<ChatInput />

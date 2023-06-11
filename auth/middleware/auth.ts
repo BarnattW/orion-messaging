@@ -40,7 +40,7 @@ export async function isAuthorized(
     console.log(userId);
 
     if (!(await User.findOne({ userId: userId }))) {
-      res.status(404).json({ message: "User doesn't exist" });
+      return res.status(404).json({ message: "User doesn't exist" });
     }
   } catch (e) {
     return res.status(401).json({ message: "Invalid token" });

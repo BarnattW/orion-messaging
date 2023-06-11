@@ -1,23 +1,6 @@
 "use client";
-import { createContext, useEffect, useState } from "react";
-
-interface friend {
-	friend: {
-		username: string;
-		userId: string;
-	};
-}
-
-interface UserContextProps {
-	userId: string | null;
-	setUserId: (userId: string | null) => void;
-	username: string | null;
-	setUsername: (username: string | null) => void;
-	friends: friend[];
-	setFriends: (friends: friend[]) => void;
-	activeConversation: string | null;
-	setActiveConversation: (activeConversation: string | null) => void;
-}
+import { createContext, useState } from "react";
+import { UserContextProps, Friend } from "../types/UserContextTypes";
 
 export const UserContext = createContext<UserContextProps>({
 	userId: null,
@@ -35,7 +18,7 @@ export const UserContext = createContext<UserContextProps>({
 export function UserProvider({ children }: { children: React.ReactNode }) {
 	const [userId, setUserId] = useState<string | null>(null);
 	const [username, setUsername] = useState<string | null>(null);
-	const [friends, setFriends] = useState<friend[]>([]);
+	const [friends, setFriends] = useState<Friend[]>([]);
 	const [activeConversation, setActiveConversation] = useState<string | null>(
 		null
 	);

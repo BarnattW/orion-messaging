@@ -2,7 +2,7 @@ import Image from "next/image";
 
 interface AvatarProps {
 	imageUrl: string;
-	altText: string;
+	altText?: string;
 	size?: number;
 }
 

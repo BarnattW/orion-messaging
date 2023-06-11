@@ -7,6 +7,7 @@ import MessageIcon from "../Icons/MessageIcon";
 import FriendAddIcon from "../Icons/FriendAddIcon";
 import NotificationBellIcon from "../Icons/NotificationBellIcon";
 import { usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 import LogoutIcon from "../Icons/LogoutIcon";
 import Tooltip from "../Tooltip";
 import { useContext } from "react";
@@ -18,14 +19,26 @@ function Sidebar() {
 	const activeIconClassNames: string = "fill-gray-100 h-6 w-6";
 
 	const pathname = usePathname();
+	const router = useRouter();
 
 	async function logout() {
-		const response = await fetch("/api/auth/logout", {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
-			body: null,
-		});
-		return;
+		try {
+			const response = await fetch("/api/auth/logout", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: null,
+			});
+
+			// error handling
+			if (!response.ok) {
+				// update with common error handling
+				console.log(response);
+			}
+
+			router.push("/auth/login");
+		} catch (error) {
+			console.log(error);
+		}
 	}
 
 	return (
@@ -38,7 +51,7 @@ function Sidebar() {
 				className="mb-5"
 			/>
 			<Tooltip content="Friends">
-				<Link href={`/dashboard/friends/${userId}`}>
+				<Link href={`/dashboard/friends`}>
 					<FriendIcon
 						className={
 							pathname.includes("/dashboard/friends")
@@ -49,7 +62,7 @@ function Sidebar() {
 				</Link>
 			</Tooltip>
 			<Tooltip content="Messages">
-				<Link href={`/dashboard/conversations/${userId}`}>
+				<Link href={`/dashboard/conversations`}>
 					<MessageIcon
 						className={
 							pathname.includes("/dashboard/conversations")
@@ -60,7 +73,7 @@ function Sidebar() {
 				</Link>
 			</Tooltip>
 			<Tooltip content="Add Friends">
-				<Link href={`/dashboard/add-friends/${userId}`}>
+				<Link href={`/dashboard/add-friends`}>
 					<FriendAddIcon
 						className={
 							pathname.includes("/dashboard/add-friends")
