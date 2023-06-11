@@ -14,7 +14,6 @@ export const sendRequest = async (
 ) => {
 	try {
 		const { senderUsername, receiverUsername } = req.body;
-		console.log("check", senderUsername, receiverUsername);
 
 		const sender = await User.findOne({
 			username: senderUsername,
@@ -22,11 +21,30 @@ export const sendRequest = async (
 		const receiver = await User.findOne({
 			username: receiverUsername,
 		});
-
-		console.log("log send,recevier", sender, receiver);
 		if (!sender || !receiver) {
 			return res.status(404).json({ message: "Sender or receiver not found" });
 		}
+
+		//check if already friends
+		if (sender.friends.includes(receiver.userId)) {
+			return res
+			  .status(400)
+			  .json({ message: `${receiverUsername} is already your friend` });
+		  }
+
+		//check if friendrequest is pending
+		const outgoingRequestIds = sender.outgoingrequests;
+
+		const outgoingRequests = await request.find({
+		  _id: { $in: outgoingRequestIds },
+		  requestType: requestType,
+		  receiverId: receiver.userId
+		});
+		console.log(outgoingRequests);
+		if (outgoingRequests.length > 0){
+			return res.status(400).json({ message: `Friend request to ${receiverUsername} is currently pending` });
+		}
+
 
 		const newRequest = new request({
 			receiverUsername: receiverUsername,
@@ -119,14 +137,14 @@ router.put(
 			await request.findByIdAndDelete(requestId);
 
 			await User.findOneAndUpdate(
-				{ userId: sender.userId },
+				{ userId: receiver.userId },
 				{
 					$pull: { incomingrequests: requestId },
 				}
 			);
 
 			await User.findOneAndUpdate(
-				{ userId: receiver.userId },
+				{ userId: sender.userId },
 				{
 					$pull: { outgoingrequests: requestId },
 				}
@@ -167,14 +185,14 @@ router.put(
 			await request.findByIdAndDelete(requestId);
 
 			await User.findOneAndUpdate(
-				{ userId: sender.userId },
+				{ userId: receiver.userId },
 				{
 					$pull: { incomingrequests: requestId },
 				}
 			);
 
 			await User.findOneAndUpdate(
-				{ userId: receiver.userId },
+				{ userId: sender.userId },
 				{
 					$pull: { outgoingrequests: requestId },
 				}

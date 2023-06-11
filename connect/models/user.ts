@@ -57,7 +57,7 @@ UserSchema.pre('save', function (next) {
   });
 
 const generateRandomUsername = () => {
-    const randomString = Math.random().toString(36).substring(2, 10);
+    const randomString = Math.random().toString(36).substring(2, 20);
     return randomString;
 }
 
