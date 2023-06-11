@@ -3,7 +3,7 @@ import mongoose, {Schema, model} from 'mongoose';
 export interface IUser{
     userId: string
     username: string
-    friends: Array<mongoose.Types.ObjectId>
+    friends: Array<String>
     outgoingrequests: Array<mongoose.Types.ObjectId>
     incomingrequests: Array<mongoose.Types.ObjectId>
     onlineStatus: boolean
@@ -24,7 +24,7 @@ const UserSchema = new Schema<IUser>({
 	},
 	friends: [
 		{
-			type: mongoose.Schema.Types.ObjectId,
+			type: String,
 			ref: "User",
 		},
 	],
@@ -40,7 +40,8 @@ const UserSchema = new Schema<IUser>({
 			ref: "Request",
 		},
 	]
-},
+}
+,
 {
 	_id: false
 });

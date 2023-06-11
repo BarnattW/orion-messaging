@@ -4,7 +4,11 @@ import { request } from "./models/request";
 import express, {Request, Response } from 'express';
 import http from 'http';
 import {Server, Socket} from 'socket.io';
+import { friendRequests } from "./routes/api/friendrequests";
+import { friends } from "./routes/api/friends";
+import { createUser } from "./routes/api/user";
 import {consumer} from './routes/api/idkwhattonamethis/kafkaproducer'
+import { KafkaMessage } from "kafkajs";
 
 // import {
 // 	sendFriendRequest,
@@ -22,11 +26,11 @@ mongoose
 app.use(express.json());
 
 //routes
-import { friendRequests } from "./routes/api/friendrequests";
+
 app.use(friendRequests);
-import { friends } from "./routes/api/friends";
+
 app.use(friends);
-import { createUser } from "./routes/api/user";
+
 app.use(createUser);
 
 const server = http.createServer(app);
@@ -69,7 +73,11 @@ async function run() {
 	});
 
 	await consumer.run({
-		eachMessage: async ({ topic, partition, message }) => {
+		eachMessage: async ({ topic, partition, message }: {
+			topic: string,
+			partition: number,
+			message: KafkaMessage
+		  }) => {
 			if (message.value){
 				console.log(`Received message: ${message.value}`);
 				const newUser = new User();
@@ -100,7 +108,7 @@ run();
 // // Call the save method explicitly
 
 // newUser.save()
-//   .then((savedUser) => {
+//   .then((savedUser: IUser) => {
 //     console.log(`Saved user: ${savedUser}`);
 //   })
 //   .catch((error) => {
