@@ -1,4 +1,4 @@
-import ListHeading from "../ListHeading";
+import ListHeading from "../ListWrappers/ListHeading";
 import RecievedRequestCard from "./RequestCards/ReceivedRequestCard";
 import { receviedRequestsProps } from "@/app/types/FriendRequests";
 
