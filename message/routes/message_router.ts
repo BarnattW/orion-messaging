@@ -5,53 +5,53 @@ import { Conversation } from "../models/Conversation";
 import express, { Request, Response } from "express";
 import { Server, Socket } from "socket.io";
 import { socketsInConversation } from "../lib/utils";
+import { MessageContainer } from "../models/MessageContainer";
 
-export const sendMessage = (
+export const editMessage = (
+  io: Server,
   socket: Socket,
   connectedClients: Map<string, Socket>
 ) => {
-  socket.on("sendMessage", async (data) => {
+  socket.on("editMessage", async (data) => {
     try {
-      const { conversationIds, userId, message } = data;
-      
-      const conv = await Conversation.findById(conversationIds);
+      const { messageId, text } = data;
+      const message = await Message.findById(messageId);
+      if (!message) {
+        console.log("Message doesn't exist");
+        return;
+      }
+      message.message = text;
+      message.save();
+      console.log(message);
+      const messageContainer = await MessageContainer.findOne({messages: messageId});
 
-      if (!conv) {
-        socket.emit("requestError", {
-          message: "Failed to Find Conversation",
-        });
+      const conversation = await Conversation.findOne({messages: messageContainer?._id});
+
+      if (!conversation) {
+        console.log("Message doesn't exist in a conversation");
         return;
       }
 
-      const sentMessage = {
-        senderId: userId,
-        message: message,
-        timestamp: Date.now(),
-      };
+      let result = await socketsInConversation(conversation, connectedClients);
 
-      const createdMessage = await Message.create(sentMessage);
-
-      if (!createdMessage) {
-        socket.emit("requestError", {
-          message: "Failed to Create Message",
-        });
-      }
-      console.log("Created Message");
-
-      conv.addMessage(createdMessage._id);
-      conv.save();
-
-      let result = await socketsInConversation(conv, connectedClients);
-
-      socket.to(result as string[]).emit("newMessage", {
-        message: "Message Sent",
+      io.sockets.to(result as string[]).emit("editMessage", {
+        message: "Message Edited",
         data: message,
       });
     } catch (e) {
-      socket.emit("requestError", {
-        message: "Server Error"
-      });
-      console.log("Unable to send message");
+      console.log(e);
+    }
+  });
+};
+
+export const deleteMessage = (
+  socket: Socket,
+  connectedClients: Map<string, Socket>
+) => {
+  socket.on("deleteMessage", async (data) => {
+    try {
+    } catch (e) {
+      console.log(e);
     }
   });
 };

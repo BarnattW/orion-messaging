@@ -6,11 +6,13 @@ import { User } from "./models/User";
 import { Conversation } from "./models/Conversation";
 import { Message } from "./models/Message";
 import {
-  addUserToConvo,
+  addUser,
   createConversation,
+  getMessages,
+  sendMessage,
 } from "./routes/conversation_router";
-import { sendMessage } from "./routes/message_router";
 import { createUser } from "./routes/user_router";
+import { editMessage } from "./routes/message_router";
 
 mongoose
   .connect(
@@ -25,6 +27,7 @@ mongoose
 
 const app = express();
 app.use(express.json());
+
 const server = http.createServer(app);
 
 const io = new Server(server, {
@@ -35,21 +38,23 @@ const connectedClients: Map<string, Socket> = new Map();
 
 io.on("connection", async (socket: Socket) => {
   console.log("Socket Connected " + socket.id);
-  
-  socket.on('userId', (userId) => {
-    console.log(userId);
+
+  socket.on("userId", async (userId) => {
     connectedClients.set(userId, socket);
-      socket.on('disconnect', () => {
-         connectedClients.delete(userId);
-      })
-  })
+
+    socket.on("disconnect", () => {
+      console.log("Disconnected");
+      connectedClients.delete(userId);
+    });
+
+    getMessages(socket, connectedClients);
+    createConversation(socket, connectedClients);
+    addUser(socket, connectedClients);
+    sendMessage(io, socket, connectedClients);
+    editMessage(io, socket, connectedClients);
+  });
 
   createUser(socket, connectedClients);
-
-  createConversation(socket, connectedClients);
-  addUserToConvo(socket, connectedClients);
-
-  sendMessage(socket, connectedClients);
 });
 
 server.listen(8080, function () {

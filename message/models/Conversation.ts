@@ -1,4 +1,5 @@
 import { Schema, model, Types, Model } from "mongoose";
+import { MessageContainer } from "./MessageContainer";
 
 interface IConversationDocument {
   title: string;
@@ -28,23 +29,28 @@ const ConversationSchema = new Schema<IConversation>({
     },
   ],
   messages: [
-    [
-      {
+    {
         type: Schema.Types.ObjectId,
-        ref: "Message",
-      },
-    ],
+        ref: "MessageContainer",
+    },
   ],
-  latestMessage: Schema.Types.ObjectId
+  latestMessage: {
+    type: Schema.Types.ObjectId,
+    ref: "Message"
+  }
 });
 
-ConversationSchema.method("addMessage", function (message: Types.ObjectId) {
-  const lastMessages = this.messages[this.messages.length - 1];
-  if (!lastMessages || lastMessages.length === 50) {
-    this.messages.push([]);
+ConversationSchema.method("addMessage", async function (message: Types.ObjectId) {
+  const latestContainer = await MessageContainer.findById(this.messages[this.messages.length - 1]);
+  if (latestContainer && latestContainer.messages.length < 50) {
+    latestContainer.messages.push(message);
+    await latestContainer.save();
+  } else {
+    const container = new MessageContainer({messages: [message]});
+    await container.save();
+    this.messages.push(container);
+    await this.save();
   }
-  this.messages[this.messages.length - 1].push(message);
-  this.latestMessage = message;
 });
 
 export const Conversation = model<IConversation>(
