@@ -92,7 +92,11 @@ function Sidebar() {
 					<LogoutIcon className={iconClassNames} color="#737373" />
 				</button>
 			</Tooltip>
-			<UserProfile username={username} type="default" />
+			<UserProfile
+				username={username ? username : "null"}
+				type="default"
+				imageUrl=""
+			/>
 		</div>
 	);
 }

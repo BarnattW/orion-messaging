@@ -2,11 +2,21 @@ import { UserProfileCardProps } from "@/app/types/UserProfile";
 import Avatar from "../Avatar/Avatar";
 import MessageIcon from "../../Icons/MessageIcon";
 import Image from "next/image";
+import { ForwardedRef, forwardRef } from "react";
+import ExitIcon from "../../Icons/ExitIcon";
 
-function UserProfileCard({ username, imageUrl }: UserProfileCardProps) {
+const UserProfileCard = forwardRef(function (
+	{ username, imageUrl }: UserProfileCardProps,
+	ref: ForwardedRef<HTMLDialogElement>
+) {
 	const iconClassNames: string = "fill-neutral-200 hover:fill-gray-300 h-8 w-8";
 	// implement userId props and fetch data that way
 
+	function closeProfile() {
+		if (ref && "current" in ref && ref.current) {
+			ref.current.close();
+		}
+	}
 	// top-> banner + dropdown for options such as removing friend and blocking?
 	// middle -> avatar + username
 	// bottom -> icons for messaging
@@ -19,7 +29,14 @@ function UserProfileCard({ username, imageUrl }: UserProfileCardProps) {
 					height={100}
 					alt="starry"
 					style={{ objectFit: "scale-down" }}
+					className="select-none"
 				/>
+				<div
+					className="absolute top-0 right-0 transform -translate-x-2 translate-y-2 select-none hover:cursor-pointer"
+					onClick={closeProfile}
+				>
+					<ExitIcon />
+				</div>
 			</div>
 			<div className="absolute left-1/2 transform -translate-x-1/2 -translate-y-1/2 select-none">
 				<Avatar
@@ -39,6 +56,8 @@ function UserProfileCard({ username, imageUrl }: UserProfileCardProps) {
 			</div>
 		</div>
 	);
-}
+});
+
+UserProfileCard.displayName = "UserProfileCard";
 
 export default UserProfileCard;

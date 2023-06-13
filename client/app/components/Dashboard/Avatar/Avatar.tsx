@@ -11,7 +11,7 @@ function Avatar({
 	let className: string =
 		"rounded-full h-8 w-8 flex-shrink-0 hover:cursor-pointer overflow-hidden";
 	if (type === "userProfile") {
-		className = "rounded-full h-16 w-16 flex-shrink-0 hover:cursor-pointer";
+		className = "rounded-full h-16 w-16 flex-shrink-0";
 	}
 	if (type === "message") {
 		className = "rounded-full h-10 w-10 flex-shrink-0 hover:cursor-pointer";

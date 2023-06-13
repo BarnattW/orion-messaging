@@ -1,4 +1,3 @@
-import Avatar from "../Avatar/Avatar";
 import OnlineStatus from "../Avatar/OnlineStatus";
 import { FriendCardProps } from "@/app/types/FriendList";
 import UserProfile from "../UserProfile/UserProfile";
@@ -12,6 +11,7 @@ function FriendCard(friendCardProps: FriendCardProps) {
 						imageUrl="/friend-icon.png"
 						altText={friendCardProps.altText}
 						username={friendCardProps.username}
+						type="default"
 					/>
 					<OnlineStatus onlineStatus={friendCardProps.onlineStatus} />
 				</div>

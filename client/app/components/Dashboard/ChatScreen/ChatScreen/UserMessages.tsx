@@ -1,6 +1,4 @@
 import { memo } from "react";
-
-import Avatar from "../../Avatar/Avatar";
 import SentMessage from "./SentMessage";
 import UserProfile from "../../UserProfile/UserProfile";
 
@@ -18,7 +16,6 @@ const UserMessages = memo(function UserMessages(message: Message) {
 			<div className="mt-1">
 				<UserProfile
 					imageUrl="/friend-icon.png"
-					altText={message.sender}
 					username={message.sender}
 					type="message"
 				/>
