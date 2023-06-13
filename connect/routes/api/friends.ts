@@ -22,6 +22,7 @@ router.delete(
 				return res.status(404).json({ message: "User not found" });
 			}
 
+			//find friend in user's friends list and delete
 			const friendIndex = user.friends.findIndex(
 				(friend) => friend.toString() === friendId
 			);
@@ -34,6 +35,15 @@ router.delete(
 
 			user.friends.splice(friendIndex, 1);
 			await user.save();
+
+			//find user in friend's friends list and delete
+			const friendIndexOfUser = friend.friends.findIndex(
+				(friend) => friend.toString() === userId
+			);
+
+			friend.friends.splice(friendIndexOfUser, 1);
+			await friend.save();
+
 
 			return res.status(200).json({ message: "Friend removed successfully" });
 		} catch (error) {

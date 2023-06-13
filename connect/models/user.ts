@@ -40,10 +40,6 @@ const UserSchema = new Schema<IUser>({
 			ref: "Request",
 		},
 	]
-}
-,
-{
-	_id: false
 });
 
 UserSchema.pre('save', function (next) {
