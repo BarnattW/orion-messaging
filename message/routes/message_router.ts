@@ -23,9 +23,14 @@ export const editMessage = (
       message.message = text;
       message.save();
       console.log(message);
-      const messageContainer = await MessageContainer.findOne({messages: messageId});
 
-      const conversation = await Conversation.findOne({messages: messageContainer?._id});
+      const messageContainer = await MessageContainer.findOne({
+        messages: messageId,
+      });
+
+      const conversation = await Conversation.findOne({
+        messages: messageContainer?._id,
+      });
 
       if (!conversation) {
         console.log("Message doesn't exist in a conversation");
@@ -50,6 +55,19 @@ export const deleteMessage = (
 ) => {
   socket.on("deleteMessage", async (data) => {
     try {
+      const { messageId } = data;
+
+      console.log(messageId);
+      const message = await Message.findByIdAndDelete(messageId);
+      if (!message) {
+        console.log("Message does not exist");
+        return;
+      }
+
+      const messageContainer = await MessageContainer.findOneAndUpdate(
+        { messages: messageId },
+        { $pull: { messages: messageId } }
+      );
     } catch (e) {
       console.log(e);
     }

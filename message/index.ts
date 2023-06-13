@@ -12,7 +12,7 @@ import {
   sendMessage,
 } from "./routes/conversation_router";
 import { createUser } from "./routes/user_router";
-import { editMessage } from "./routes/message_router";
+import { deleteMessage, editMessage } from "./routes/message_router";
 
 mongoose
   .connect(
@@ -52,6 +52,7 @@ io.on("connection", async (socket: Socket) => {
     addUser(socket, connectedClients);
     sendMessage(io, socket, connectedClients);
     editMessage(io, socket, connectedClients);
+    deleteMessage(socket, connectedClients);
   });
 
   createUser(socket, connectedClients);

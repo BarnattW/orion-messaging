@@ -122,7 +122,7 @@ export const sendMessage = (
 
       io.sockets.to(result as string[]).emit("newMessage", {
         message: "Message Sent",
-        data: message,
+        data: createdMessage,
       });
     } catch (e) {
       socket.emit("requestError", {
@@ -156,8 +156,6 @@ export const getMessages = (
         });
         return;
       }
-
-      const messages = convo.messages[index];
 
       socket.emit("gotMessage", {
         message: "Message Received",
