@@ -12,9 +12,10 @@ import LogoutIcon from "../Icons/LogoutIcon";
 import Tooltip from "../Tooltip";
 import { useContext } from "react";
 import { UserContext } from "@/app/Context/UserContext";
+import UserProfile from "./UserProfile/UserProfile";
 
 function Sidebar() {
-	const { userId } = useContext(UserContext);
+	const { userId, username } = useContext(UserContext);
 	const iconClassNames: string = "fill-neutral-500 hover:fill-gray-400 h-6 w-6";
 	const activeIconClassNames: string = "fill-gray-100 h-6 w-6";
 
@@ -91,6 +92,11 @@ function Sidebar() {
 					<LogoutIcon className={iconClassNames} color="#737373" />
 				</button>
 			</Tooltip>
+			<UserProfile
+				username={username ? username : "null"}
+				type="default"
+				imageUrl=""
+			/>
 		</div>
 	);
 }

@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useContext } from "react";
+import { useContext } from "react";
 import ListContainer from "../ListWrappers/ListContainer";
 import ListHeading from "../ListWrappers/ListHeading";
 import FriendCard from "./FriendCard";

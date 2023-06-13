@@ -24,7 +24,6 @@ function FriendRequests() {
 						"Content-Type": "application/json",
 					},
 				});
-				console.log(response);
 
 				if (!response.ok) {
 					// update with common error handling
