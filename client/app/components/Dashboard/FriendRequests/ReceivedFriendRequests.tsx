@@ -16,12 +16,14 @@ function ReceivedFriendRequests({ receivedRequests }: receviedRequestsProps) {
 		<>
 			<ListHeading>Friend Requests</ListHeading>
 			{receivedRequests?.map((receivedRequest) => {
-				<RecievedRequestCard
-					userId={receivedRequest.receiverId}
-					username={receivedRequest.receiverUsername}
-					requestId={receivedRequest._id}
-					key={receivedRequest._id}
-				/>;
+				return (
+					<RecievedRequestCard
+						userId={receivedRequest.senderId}
+						username={receivedRequest.senderUsername}
+						requestId={receivedRequest._id}
+						key={receivedRequest._id}
+					/>
+				);
 			})}
 		</>
 	);

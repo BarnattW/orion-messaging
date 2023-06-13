@@ -5,7 +5,7 @@ function ReceivedRequestCard(friendRequestCardProps: RequestCardProps) {
 	async function acceptRequest() {
 		try {
 			const response = await fetch(
-				`/api/connect/acceptFriendRequest/:requestId`,
+				`/api/connect/acceptFriendRequest/${friendRequestCardProps.requestId}`,
 				{
 					method: "PUT",
 					headers: {

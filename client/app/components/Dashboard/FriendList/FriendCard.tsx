@@ -9,7 +9,7 @@ function FriendCard(friendCardProps: FriendCardProps) {
 				<div className="relative z-0">
 					<UserProfile
 						imageUrl="/friend-icon.png"
-						altText={friendCardProps.altText}
+						altText={friendCardProps.username}
 						username={friendCardProps.username}
 						type="default"
 					/>
