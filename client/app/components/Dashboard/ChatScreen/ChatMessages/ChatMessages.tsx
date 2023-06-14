@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import React from "react";
 import UserMessages from "./UserMessages";
 import { debounce } from "lodash";
 import DownArrowIcon from "@/app/components/Icons/DownArrowIcon";
@@ -67,7 +68,7 @@ function ChatMessages() {
 			{sortedUserMessages.map((message) => {
 				if (message.renderUserMessage && message.renderDatestamp) {
 					return (
-						<>
+						<React.Fragment key={message.timeStamp.getTime()}>
 							<ChatDate
 								timeStamp={message.timeStamp}
 								key={message.timeStamp.getTime()}
@@ -80,7 +81,7 @@ function ChatMessages() {
 								timeStamp={message.timeStamp}
 								key={message.messageId}
 							/>
-						</>
+						</React.Fragment>
 					);
 				}
 				return message.renderUserMessage ? (
