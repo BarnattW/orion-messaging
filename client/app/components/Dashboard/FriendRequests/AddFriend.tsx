@@ -18,7 +18,7 @@ function AddFriend() {
 		const receiverUsername = addUsername.current?.value;
 		if (receiverUsername === "") return;
 
-		const request = await fetch("/api/connect/sendFriendRequest", {
+		const response = await fetch("/api/connect/sendFriendRequest", {
 			method: "POST",
 			body: JSON.stringify({
 				senderUsername: username,
@@ -29,12 +29,12 @@ function AddFriend() {
 			},
 		});
 
-		if (request.ok) {
+		if (response.ok) {
 			// update with common error handling
-			console.log(request);
+			console.log(response);
 		} else {
 			//update the ui
-			console.log(request);
+			console.log(response);
 		}
 		addUsername.current!.value = "";
 	}

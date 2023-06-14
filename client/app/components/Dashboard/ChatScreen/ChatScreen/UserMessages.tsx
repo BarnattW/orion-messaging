@@ -17,6 +17,7 @@ const UserMessages = memo(function UserMessages(message: Message) {
 				<UserProfile
 					imageUrl="/friend-icon.png"
 					username={message.sender}
+					userId={message.sender}
 					type="message"
 				/>
 			</div>

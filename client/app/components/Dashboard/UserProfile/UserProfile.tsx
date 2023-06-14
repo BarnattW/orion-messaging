@@ -4,7 +4,13 @@ import { UserProfile } from "@/app/types/UserProfile";
 import { useRef } from "react";
 import classes from "./UserProfile.module.css";
 
-function UserProfile({ imageUrl, size = 300, username, type }: UserProfile) {
+function UserProfile({
+	imageUrl,
+	size = 300,
+	username,
+	type,
+	userId,
+}: UserProfile) {
 	const userProfileCardRef = useRef<HTMLDialogElement>(null);
 
 	function showProfile() {
@@ -33,6 +39,7 @@ function UserProfile({ imageUrl, size = 300, username, type }: UserProfile) {
 					username={username}
 					imageUrl="/friend-icon-blue.png"
 					ref={userProfileCardRef}
+					userId={userId}
 				/>
 			</dialog>
 			<div onClick={showProfile} className="select-none">
@@ -40,7 +47,6 @@ function UserProfile({ imageUrl, size = 300, username, type }: UserProfile) {
 					imageUrl="/friend-icon-blue.png"
 					altText={username}
 					size={size}
-					username={username}
 					type={type}
 				/>
 			</div>
