@@ -3,7 +3,7 @@ import { Schema, model, Types } from "mongoose";
 interface IUser {
   userId: string;
   username: String;
-  conversations: Array<Types.ObjectId>
+  conversations: Array<Types.ObjectId>;
 }
 
 const UserSchema = new Schema<IUser>({
@@ -15,7 +15,7 @@ const UserSchema = new Schema<IUser>({
   },
   conversations: [{
     type: Schema.Types.ObjectId,
-    ref: 'Conversation'
+    ref: "Conversation"
   }]
 });
 
