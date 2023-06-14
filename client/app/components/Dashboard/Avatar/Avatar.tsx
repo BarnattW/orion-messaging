@@ -1,13 +1,7 @@
 import Image from "next/image";
 import { AvatarProps } from "@/app/types/UserProfile";
 
-function Avatar({
-	imageUrl,
-	altText,
-	size = 300,
-	username,
-	type,
-}: AvatarProps) {
+function Avatar({ imageUrl, altText, size = 300, type }: AvatarProps) {
 	let className: string =
 		"rounded-full h-8 w-8 flex-shrink-0 hover:cursor-pointer overflow-hidden";
 	if (type === "userProfile") {

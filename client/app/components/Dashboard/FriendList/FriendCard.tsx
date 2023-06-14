@@ -9,8 +9,8 @@ function FriendCard(friendCardProps: FriendCardProps) {
 				<div className="relative z-0">
 					<UserProfile
 						imageUrl="/friend-icon.png"
-						altText={friendCardProps.username}
 						username={friendCardProps.username}
+						userId={friendCardProps.userId}
 						type="default"
 					/>
 					<OnlineStatus onlineStatus={friendCardProps.onlineStatus} />
