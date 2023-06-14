@@ -1,11 +1,13 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import UserMessage from "./ChatScreen/UserMessages";
+import React from "react";
+import UserMessages from "./UserMessages";
 import { debounce } from "lodash";
-import DownArrowIcon from "../../Icons/DownArrowIcon";
-import SentMessage from "./ChatScreen/SentMessage";
-import useUserMessages from "../../../custom-hooks/useUserMessages";
+import DownArrowIcon from "@/app/components/Icons/DownArrowIcon";
+import SentMessage from "./SentMessage";
+import useUserMessages from "@/app/custom-hooks/useUserMessages";
+import ChatDate from "./ChatDate";
 
 function ChatMessages() {
 	const scrollRef = useRef<HTMLDivElement>(null);
@@ -60,9 +62,30 @@ function ChatMessages() {
 			ref={scrollRef}
 			onScroll={handleScroll}
 		>
+			<div className="flex justify-center items-center text-sm pt-4 pb-2">
+				Beginning of messages
+			</div>
 			{sortedUserMessages.map((message) => {
+				if (message.renderUserMessage && message.renderDatestamp) {
+					return (
+						<React.Fragment key={message.timeStamp.getTime()}>
+							<ChatDate
+								timeStamp={message.timeStamp}
+								key={message.timeStamp.getTime()}
+							/>
+							<UserMessages
+								sender={message.sender}
+								receiver={message.receiver}
+								message={message.message}
+								messageId={message.messageId}
+								timeStamp={message.timeStamp}
+								key={message.messageId}
+							/>
+						</React.Fragment>
+					);
+				}
 				return message.renderUserMessage ? (
-					<UserMessage
+					<UserMessages
 						sender={message.sender}
 						receiver={message.receiver}
 						message={message.message}

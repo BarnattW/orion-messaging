@@ -15,7 +15,8 @@ const sortMessagesByTimestamps = function (userMessages: Message[]) {
 			i === 0 ||
 			message.sender !== userMessages[i - 1].sender ||
 			timeDifference >= 300000;
-		return { ...message, renderUserMessage };
+		const renderDatestamp = i === 0 || timeDifference >= 86400000;
+		return { ...message, renderUserMessage, renderDatestamp };
 	});
 	return sortedMessages;
 };
