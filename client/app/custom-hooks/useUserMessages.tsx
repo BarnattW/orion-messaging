@@ -12,6 +12,7 @@ interface Message {
 
 interface SortedMessage extends Message {
 	renderUserMessage: boolean;
+	renderDatestamp: boolean;
 }
 
 const useUserMessages = () => {
