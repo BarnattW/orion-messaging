@@ -37,15 +37,16 @@ export const createConversation = (
         data: conv,
       });
     } catch (e) {
+      console.log("Unable to create: ", e);
       socket.emit("requestError", {
         message: "Server Error",
       });
-      console.log("Unable to create");
     }
   });
 };
 
 export const addUser = (
+  io: Server,
   socket: Socket,
   connectedClients: Map<string, Socket>
 ) => {
@@ -73,12 +74,14 @@ export const addUser = (
 
       console.log("Added User");
 
-      socket.emit("addedUser", {
+      const result = await socketsInConversation(conv, connectedClients);
+
+      io.to(result as string[]).emit("addedUser", {
         message: `Added user ${userId} to conversation ${conv._id}`,
         data: conv,
       });
     } catch (e) {
-      console.log("Unable to add user");
+      console.log("Unable to add user: ", e);
       socket.emit("requestError", {
         message: "Server Error",
       });
@@ -86,19 +89,77 @@ export const addUser = (
   });
 };
 
+export const removeUser = (
+  io: Server,
+  socket: Socket,
+  connectedClients: Map<string, Socket>
+) => {
+  socket.on("removeUser", async (data) => {
+    try {
+      const { conversationId, userId } = data;
+
+      const user = await User.findOneAndUpdate(
+        { userId: userId },
+        { $pull: { conversations: conversationId }}
+      );
+
+      if (!user) {
+        console.log("User does not exist");
+        return socket.emit("requestError", {
+          message: "User does not exist"
+        })
+      }
+      const conversation = await Conversation.findOneAndUpdate(
+        { _id: conversationId },
+        { $pull: { users: userId }}
+      );
+
+      if (!conversation){
+        console.log("Conversation does not exist");
+        return socket.emit("requestError", {
+          message: "Conversation does not exist"
+        })
+      }
+
+      const result = await socketsInConversation(conversation, connectedClients);
+
+      io.to(result as string[]).emit("removedUser", {
+        message: `Removed user ${userId} from ${conversationId}`,
+        data: {
+          user: user,
+          conversation: conversation
+        }
+      })
+    } catch (e) {
+      console.log("Unable to remove user: ", e);
+      socket.emit("requestError", {
+        message: "Server Error"
+      })
+    }
+  })
+}
+
 export const getUsers = (
   socket: Socket,
   connectedClients: Map<string, Socket>
 ) => {
   socket.on("getUsers", async (data) => {
-    const { conversationId } = data;
-    
-    const conversation = await Conversation.findById(conversationId).populate('conversationUsers');
-    console.log((conversation as any).conversationUsers);
+    try {
+      const { conversationId } = data;
+      
+      const conversation = await Conversation.findById(conversationId).populate('conversationUsers');
+      const users = (conversation as any).conversationUsers;
 
-    socket.emit("gotUser", {
-      message: "Got users",
-    })
+      socket.emit("gotUser", {
+        message: `Users of conversation ${conversationId}`,
+        data: users
+      })
+    } catch (e) {
+      console.log("Unable to get users: ", e);
+      socket.emit("requestError", {
+        message: "Server Error"
+      })
+    }
   })
 }
 
@@ -108,9 +169,16 @@ export const deleteConversation = (
   connectedClients: Map<string, Socket>
 ) => {
   socket.on("deleteConversation", async (data) => {
-    const { conversationId } = data;
-    console.log(conversationId)
-    const deletedConversation = await Conversation.deleteOne({_id: conversationId});
-
+    try {
+      const { conversationId } = data;
+      console.log(conversationId)
+      const deletedConversation = await Conversation.deleteOne({_id: conversationId});
+    } catch (e) {
+      console.log("Unable to delete conversation");
+      socket.emit("requestError", {
+        message: "Server Error"
+      })
+    }
+      
   });
 };

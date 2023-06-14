@@ -50,7 +50,7 @@ export const sendMessage = (
       });
     } catch (e) {
       socket.emit("requestError", {
-        message: "Server Error",
+        message: "Server Error (Send Message)",
       });
       console.log("Unable to send message");
     }
@@ -89,7 +89,10 @@ export const getMessages = (
         },
       });
     } catch (e) {
-      console.log(e);
+      console.log("Unable to get messages: ", e);
+      socket.emit("requestError", {
+        message: "Server Error (Get Message)"
+      })
     }
   });
 };
@@ -131,12 +134,16 @@ export const editMessage = (
         data: message,
       });
     } catch (e) {
-      console.log(e);
+      console.log("Unable to edit message");
+      socket.emit("requestError", {
+        message: "Server Error (Edit Message)"
+      })
     }
   });
 };
 
 export const deleteMessage = (
+  io: Server,
   socket: Socket,
   connectedClients: Map<string, Socket>
 ) => {
@@ -155,8 +162,25 @@ export const deleteMessage = (
         { messages: messageId },
         { $pull: { messages: messageId } }
       );
+
+      const conversation = await Conversation.findOne({ messages: messageContainer?._id})
+
+      if (!conversation) {
+        console.log("Message in messageContainer does not exist in a conversation");
+        return;
+      }
+
+      const result = await socketsInConversation(conversation, connectedClients);
+
+      io.to(result as string[]).emit("deletedMessage", {
+        message: `Delete message ${messageId}`,
+        data: message
+      })
     } catch (e) {
-      console.log(e);
+      console.log("Unable to delete message: ", e);
+      socket.emit("requestError", {
+        message: "Server Error (Delete Message)"
+      })
     }
   });
 };

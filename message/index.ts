@@ -8,11 +8,13 @@ import { Message } from "./models/Message";
 import {
   addUser,
   createConversation,
-  getMessages,
-  sendMessage,
+  deleteConversation,
+  getUsers,
+  removeUser
 } from "./routes/conversation_router";
 import { createUser } from "./routes/user_router";
-import { deleteMessage, editMessage } from "./routes/message_router";
+import { deleteMessage, editMessage, getMessages,
+  sendMessage, } from "./routes/message_router";
 
 mongoose
   .connect(
@@ -48,11 +50,15 @@ io.on("connection", async (socket: Socket) => {
     });
 
     getMessages(socket, connectedClients);
-    createConversation(socket, connectedClients);
-    addUser(socket, connectedClients);
     sendMessage(io, socket, connectedClients);
     editMessage(io, socket, connectedClients);
-    deleteMessage(socket, connectedClients);
+    deleteMessage(io, socket, connectedClients);
+
+    createConversation(socket, connectedClients);
+    deleteConversation(io, socket, connectedClients);
+    addUser(io, socket, connectedClients);
+    removeUser(io, socket, connectedClients);
+    getUsers(socket, connectedClients);
   });
 
   createUser(socket, connectedClients);
