@@ -68,10 +68,10 @@ router.put(
 
 			usersWithUserAsFriend.forEach(async (user) => {
 				const populatedFriends = await User.find({
-					_id: { $in: user.friends },
+					userId: { $in: user.friends },
 				}).populate("friends");
 				const sortedFriends = insertionSort(populatedFriends, "username");
-				const sortedFriendIds = sortedFriends.map((friend) => friend._id);
+				const sortedFriendIds = sortedFriends.map((friend) => friend.userId);
 				user.friends = sortedFriendIds;
 			});
 

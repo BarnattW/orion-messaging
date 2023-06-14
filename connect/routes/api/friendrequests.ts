@@ -14,7 +14,6 @@ export const sendRequest = async (
 ) => {
 	try {
 		const { senderUsername, receiverUsername } = req.body;
-		console.log("check", senderUsername, receiverUsername);
 
 		const sender = await User.findOne({
 			username: senderUsername,
@@ -22,11 +21,30 @@ export const sendRequest = async (
 		const receiver = await User.findOne({
 			username: receiverUsername,
 		});
-
-		console.log("log send,recevier", sender, receiver);
 		if (!sender || !receiver) {
 			return res.status(404).json({ message: "Sender or receiver not found" });
 		}
+
+		//check if already friends
+		if (sender.friends.includes(receiver.userId)) {
+			return res
+			  .status(400)
+			  .json({ message: `${receiverUsername} is already your friend` });
+		  }
+
+		//check if friendrequest is pending
+		const outgoingRequestIds = sender.outgoingrequests;
+
+		const outgoingRequests = await request.find({
+		  _id: { $in: outgoingRequestIds },
+		  requestType: requestType,
+		  receiverId: receiver.userId
+		});
+		console.log(outgoingRequests);
+		if (outgoingRequests.length > 0){
+			return res.status(400).json({ message: `Friend request to ${receiverUsername} is currently pending` });
+		}
+
 
 		const newRequest = new request({
 			receiverUsername: receiverUsername,
@@ -82,51 +100,51 @@ router.put(
 					.json({ message: "Sender or receiver not found" });
 			}
 
-			sender.friends.push(receiver._id);
-			receiver.friends.push(sender._id);
+			sender.friends.push(receiver.userId);
+			receiver.friends.push(sender.userId);
 
-			//SORT
-			const populatedSenderFriends = await User.find({
-				_id: { $in: receiver.friends },
-			}).populate("friends");
-			const sortedSenderFriends = insertionSort(
-				populatedSenderFriends,
-				"username"
-			);
-			const sortedSenderFriendIds = sortedSenderFriends.map(
-				(friend) => friend._id
-			);
-			sender.friends = sortedSenderFriendIds;
+			// //SORT
+			// const populatedSenderFriends = await User.find({
+			// 	userId: { $in: sender.friends },
+			// }).populate("friends");
+			// const sortedSenderFriends = insertionSort(
+			// 	populatedSenderFriends,
+			// 	"username"
+			// );
+			// const sortedSenderFriendIds = sortedSenderFriends.map(
+			// 	(friends) => friends.userId
+			// );
+			// sender.friends = sortedSenderFriendIds;
 
-			const populatedReceiverFriends = await User.find({
-				_id: { $in: receiver.friends },
-			}).populate("friends");
-			const sortedReceiverFriends = insertionSort(
-				populatedReceiverFriends,
-				"username"
-			);
-			const sortedReceiverFriendIds = sortedReceiverFriends.map(
-				(friend) => friend._id
-			);
-			sender.friends = sortedReceiverFriendIds;
+			// const populatedReceiverFriends = await User.find({
+			// 	userId: { $in: receiver.friends },
+			// }).populate("friends");
+			// const sortedReceiverFriends = insertionSort(
+			// 	populatedReceiverFriends,
+			// 	"username"
+			// );
+			// const sortedReceiverFriendIds = sortedReceiverFriends.map(
+			// 	(friends) => friends.userId
+			// );
+			// sender.friends = sortedReceiverFriendIds;
 
 			await sender.save();
 			await receiver.save();
 
 			//publish to kafka
-			await publishMessage("Friend request accepted", receiver.friends);
+			//await publishMessage("Friend request accepted", receiver.friends);
 
 			await request.findByIdAndDelete(requestId);
 
 			await User.findOneAndUpdate(
-				{ userId: sender._id },
+				{ userId: receiver.userId },
 				{
 					$pull: { incomingrequests: requestId },
 				}
 			);
 
 			await User.findOneAndUpdate(
-				{ userId: receiver._id },
+				{ userId: sender.userId },
 				{
 					$pull: { outgoingrequests: requestId },
 				}
@@ -162,19 +180,19 @@ router.put(
 			}
 
 			//publish to kafka
-			await publishMessage("Friend request rejected", receiver.friends);
+			//await publishMessage("Friend request rejected", receiver.friends);
 
 			await request.findByIdAndDelete(requestId);
 
 			await User.findOneAndUpdate(
-				{ userId: sender._id },
+				{ userId: receiver.userId },
 				{
 					$pull: { incomingrequests: requestId },
 				}
 			);
 
 			await User.findOneAndUpdate(
-				{ userId: receiver._id },
+				{ userId: sender.userId },
 				{
 					$pull: { outgoingrequests: requestId },
 				}
@@ -198,29 +216,34 @@ export const getRequest = async (
 		const { userId } = req.params;
 
 		const user = await User.findOne({ userId: userId });
+		console.log(user);
 
 		if (!user) {
 			return res.status(404).json({ message: "User not found" });
 		}
 
-		const outgoingRequests = await User.find(
-			{ userId },
-			{ outgoingrequests: { $elemMatch: { requestType: "your_request_type" } } }
-		)
-			.populate("outgoingrequests")
-			.exec();
-		const incomingreqs = await User.findOne(
-			{ userId },
-			{ outgoingrequests: { $elemMatch: { requestType: "your_request_type" } } }
-		)
-			.populate("incomingrequests")
-			.exec();
+		const outgoingRequestIds = user.outgoingrequests;
 
-		console.log(outgoingRequests, incomingreqs);
+		const outgoingRequests = await request.find({
+		  _id: { $in: outgoingRequestIds },
+		  requestType: requestType,
+		});
+
+		const incomingRequestIds = user.incomingrequests;
+
+		const incomingRequests = await request.find({
+		  _id: { $in: incomingRequestIds },
+		  requestType: requestType,
+		});
+	
+	
+	
+
+		console.log(outgoingRequests, incomingRequests);
 
 		return res.status(200).json({
 			outgoing: outgoingRequests,
-			incoming: incomingreqs,
+			incoming: incomingRequests,
 		});
 	} catch (error) {
 		console.error("Error fetching friend requests:", error);

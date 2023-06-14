@@ -1,4 +1,4 @@
-import ListHeading from "../ListHeading";
+import ListHeading from "../ListWrappers/ListHeading";
 import SentRequestCard from "./RequestCards/SentRequestCard";
 import { SentFriendRequestsProps } from "@/app/types/FriendRequests";
 
@@ -15,13 +15,15 @@ function SentFriendRequests({ sentRequests }: SentFriendRequestsProps) {
 	return (
 		<>
 			<ListHeading>Sent Requests</ListHeading>
-			{sentRequests?.map((sentRequest) => {
-				<SentRequestCard
-					userId={sentRequest.senderId}
-					username={sentRequest.senderUsername}
-					requestId={sentRequest._id}
-					key={sentRequest._id}
-				/>;
+			{sentRequests.map((sentRequest) => {
+				return (
+					<SentRequestCard
+						userId={sentRequest.receiverId}
+						username={sentRequest.receiverUsername}
+						requestId={sentRequest._id}
+						key={sentRequest._id}
+					/>
+				);
 			})}
 		</>
 	);

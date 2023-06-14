@@ -34,7 +34,7 @@ function AddFriend() {
 			console.log(request);
 		} else {
 			//update the ui
-			console.log("sucess", request);
+			console.log(request);
 		}
 		addUsername.current!.value = "";
 	}
