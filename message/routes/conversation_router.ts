@@ -68,6 +68,9 @@ export const addUser = (
       conv.users.push(userId);
       conv.save();
 
+      user.conversations.push(conversationId);
+      user.save();
+
       console.log("Added User");
 
       socket.emit("addedUser", {
@@ -83,89 +86,31 @@ export const addUser = (
   });
 };
 
-export const sendMessage = (
+export const getUsers = (
+  socket: Socket,
+  connectedClients: Map<string, Socket>
+) => {
+  socket.on("getUsers", async (data) => {
+    const { conversationId } = data;
+    
+    const conversation = await Conversation.findById(conversationId).populate('conversationUsers');
+    console.log((conversation as any).conversationUsers);
+
+    socket.emit("gotUser", {
+      message: "Got users",
+    })
+  })
+}
+
+export const deleteConversation = (
   io: Server,
   socket: Socket,
   connectedClients: Map<string, Socket>
 ) => {
-  socket.on("sendMessage", async (data) => {
-    try {
-      const { conversationIds, userId, message } = data;
+  socket.on("deleteConversation", async (data) => {
+    const { conversationId } = data;
+    console.log(conversationId)
+    const deletedConversation = await Conversation.deleteOne({_id: conversationId});
 
-      const conv = await Conversation.findById(conversationIds);
-
-      if (!conv) {
-        socket.emit("requestError", {
-          message: "Failed to Find Conversation",
-        });
-        return;
-      }
-
-      const sentMessage = {
-        senderId: userId,
-        message: message,
-        timestamp: Date.now(),
-      };
-
-      const createdMessage = await Message.create(sentMessage);
-
-      if (!createdMessage) {
-        socket.emit("requestError", {
-          message: "Failed to Create Message",
-        });
-      }
-      console.log("Created Message" + createdMessage);
-
-      conv.addMessage(createdMessage._id);
-
-      let result = await socketsInConversation(conv, connectedClients);
-
-      io.sockets.to(result as string[]).emit("newMessage", {
-        message: "Message Sent",
-        data: createdMessage,
-      });
-    } catch (e) {
-      socket.emit("requestError", {
-        message: "Server Error",
-      });
-      console.log("Unable to send message");
-    }
-  });
-};
-
-export const getMessages = (
-  socket: Socket,
-  connectedClients: Map<string, Socket>
-) => {
-  socket.on("getMessages", async (data) => {
-    try {
-      const { conversationId, index } = data;
-
-      const convo = await Conversation.findById(conversationId);
-
-      const message = await MessageContainer.findById({
-        _id: convo?.messages[index]
-      }).populate('messages');
-
-      console.log(message?.messages);
-
-      if (!convo) {
-        console.log("No Conversation");
-        socket.emit("requestError", {
-          message: "Conversation Doesn't Exist",
-        });
-        return;
-      }
-
-      socket.emit("gotMessage", {
-        message: "Message Received",
-        data: {
-          newIndex: index - 1,
-          messages: message?.messages,
-        },
-      });
-    } catch (e) {
-      console.log(e);
-    }
   });
 };
