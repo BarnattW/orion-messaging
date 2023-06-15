@@ -154,7 +154,7 @@ export const getUsers = (
       const conversation = await Conversation.findById(conversationId).populate('conversationUsers');
       const users = (conversation as any).conversationUsers;
 
-      socket.emit("gotUser", {
+      socket.emit("gotUsers", {
         message: `Users of conversation ${conversationId}`,
         data: users
       })
