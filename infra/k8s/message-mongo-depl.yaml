@@ -1,28 +1,28 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: messages-mongo-depl
+  name: message-mongo-depl
 spec:
   replicas: 1
   selector:
     matchLabels: 
-      app: messages-mongo
+      app: message-mongo
   template:
     metadata:
       labels:
-        app: messages-mongo
+        app: message-mongo
     spec:
       containers:
-        - name: messages-mongo
+        - name: message-mongo
           image: mongo
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: messages-mongo-srv
+  name: message-mongo-srv
 spec:
   selector:
-    app: messages-mongo
+    app: message-mongo
   ports:
     - name: db
       protocol: TCP

@@ -17,15 +17,13 @@ import { deleteMessage, editMessage, getMessages,
   sendMessage, } from "./routes/message_router";
 
 mongoose
-  .connect(
-    "mongodb://127.0.0.1:27017/message?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+1.9.1"
-  )
-  .then(() => {
-    console.log("Connected to DB");
-  })
-  .catch((err) => {
-    console.log(err.message);
-  });
+	.connect(process.env.MONGO_URI!)
+	.then(() => {
+		console.log("Connected to DB");
+	})
+	.catch((err) => {
+		console.log(err.message);
+	});
 
 const app = express();
 app.use(express.json());
@@ -33,35 +31,44 @@ app.use(express.json());
 const server = http.createServer(app);
 
 const io = new Server(server, {
-  cors: { origin: "*" },
+	path: "/socket/message-socket",
 });
 
 const connectedClients: Map<string, Socket> = new Map();
 
 io.on("connection", async (socket: Socket) => {
-  console.log("Socket Connected " + socket.id);
+	console.log("Socket Connected " + socket.id);
+	socket.on("connection", () => {
+		socket.emit("connection", {
+			message: "user connected",
+		});
+	});
 
-  socket.on("userId", async (userId) => {
-    connectedClients.set(userId, socket);
+	socket.on("userId", async (userId) => {
+		connectedClients.set(userId, socket);
 
-    socket.on("disconnect", () => {
-      console.log("Disconnected");
-      connectedClients.delete(userId);
-    });
+		// socket.on("disconnect", () => {
+		// 	console.log("Disconnected + socket.id");
+		// 	connectedClients.delete(userId);
+		// });
 
-    getMessages(socket, connectedClients);
-    sendMessage(io, socket, connectedClients);
-    editMessage(io, socket, connectedClients);
-    deleteMessage(io, socket, connectedClients);
+		getMessages(socket, connectedClients);
+		sendMessage(io, socket, connectedClients);
+		editMessage(io, socket, connectedClients);
+		deleteMessage(io, socket, connectedClients);
 
-    createConversation(socket, connectedClients);
-    deleteConversation(io, socket, connectedClients);
-    addUser(io, socket, connectedClients);
-    removeUser(io, socket, connectedClients);
-    getUsers(socket, connectedClients);
-  });
+		createConversation(socket, connectedClients);
+		deleteConversation(io, socket, connectedClients);
+		addUser(io, socket, connectedClients);
+		removeUser(io, socket, connectedClients);
+		getUsers(socket, connectedClients);
+	});
 
-  createUser(socket, connectedClients);
+	socket.on("disconnect", () => {
+		console.log("Disconnected " + socket.id);
+		//connectedClients.delete(userId);
+	});
+	createUser(socket, connectedClients);
 });
 
 server.listen(8080, function () {

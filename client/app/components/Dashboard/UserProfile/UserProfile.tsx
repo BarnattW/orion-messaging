@@ -40,6 +40,7 @@ function UserProfile({
 					imageUrl="/friend-icon-blue.png"
 					ref={userProfileCardRef}
 					userId={userId}
+					key={userId}
 				/>
 			</dialog>
 			<div onClick={showProfile} className="select-none">
