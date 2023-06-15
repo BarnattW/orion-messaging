@@ -96,6 +96,7 @@ function Sidebar() {
 				username={username ? username : "null"}
 				type="default"
 				imageUrl=""
+				userId={userId ? userId : "null"}
 			/>
 		</div>
 	);

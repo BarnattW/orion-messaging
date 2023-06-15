@@ -1,6 +1,6 @@
-import ChatInput from "../ChatInput";
-import ChatMessages from "../ChatMessages";
-import ChatTitle from "../ChatTitle";
+import ChatInput from "./ChatInput";
+import ChatMessages from "./ChatMessages/ChatMessages";
+import ChatTitle from "./ChatTitle";
 
 function ChatScreen() {
 	return (

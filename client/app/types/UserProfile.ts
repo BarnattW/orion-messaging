@@ -1,15 +1,28 @@
-export interface UserProfile {
+interface UserDetails {
+	username: string;
+	userId: string;
+}
+
+export interface UserProfile extends UserDetails {
 	imageUrl: string;
 	size?: number;
-	username: string;
 	type: string;
 }
 
-export interface AvatarProps extends UserProfile {
+export interface AvatarProps {
 	altText: string;
+	imageUrl: string;
+	size?: number;
+	type: string;
 }
 
-export interface UserProfileCardProps {
-	username: string;
+export interface UserProfileCardProps extends UserDetails {
 	imageUrl: string;
+}
+
+export interface OptionsPopoutProps extends UserDetails {
+	children: React.ReactNode;
+	showOptions: boolean;
+	currentUserId: string | null;
+	currentUsername: string | null;
 }

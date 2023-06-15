@@ -2,7 +2,7 @@
 import { useContext, useEffect } from "react";
 import { UserContext } from "./UserContext";
 import useSWR from "swr";
-import { set } from "lodash";
+import messageSocket from "../sockets/messageSocket";
 
 const fetcher = (url: string) => fetch(url).then((response) => response.json());
 

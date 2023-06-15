@@ -39,7 +39,12 @@ const io = new Server(server, {
 const connectedClients: Map<string, Socket> = new Map();
 
 io.on("connection", async (socket: Socket) => {
-  console.log("Socket Connected " + socket.id);
+	console.log("Socket Connected " + socket.id);
+	socket.on("connection", () => {
+		socket.emit("connection", {
+			message: "user connected",
+		});
+	});
 
   socket.on("userId", async (userId) => {
     connectedClients.set(userId, socket);
