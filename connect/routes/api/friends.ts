@@ -11,6 +11,8 @@ router.delete(
 		try {
 			const { userId, friendId } = req.body;
 
+			User.createIndexes();
+
 			const user = await User.findOne({ userId: userId });
 			const friend = await User.findOne({ userId: friendId });
 
@@ -57,6 +59,9 @@ router.get(
 	"/api/connect/getFriends/:userId",
 	async (req: Request, res: Response) => {
 		try {
+
+			User.createIndexes();
+
 			const { userId } = req.params;
 			const user = await User.findOne({ userId: userId });
 			if (!user) {
