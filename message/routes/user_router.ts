@@ -26,7 +26,7 @@ export const createUser = (
         });
       }
 
-      socket.emit("userCreated", {
+      socket.emit("createdUser", {
         message: `User with userId ${createdUser.userId}`,
         data: createdUser,
       });

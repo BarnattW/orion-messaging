@@ -36,7 +36,7 @@ export const createConversation = (
 
       console.log("Conversation Created");
 
-      socket.emit("messageSent", {
+      socket.emit("createdConversation", {
         message: `Conversation of Type ${conv.conversationType} created`,
         data: conv,
       });
@@ -54,7 +54,7 @@ export const addUser = (
   socket: Socket,
   connectedClients: Map<string, Socket>
 ) => {
-  socket.on("addUserToConvo", async (data) => {
+  socket.on("addUser", async (data) => {
     try {
       const { conversationId, userId } = data;
       console.log(data);

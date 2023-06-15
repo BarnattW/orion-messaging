@@ -44,7 +44,7 @@ export const sendMessage = (
 
       let result = await socketsInConversation(conv, connectedClients);
 
-      io.sockets.to(result as string[]).emit("newMessage", {
+      io.sockets.to(result as string[]).emit("sentMessage", {
         message: "Message Sent",
         data: createdMessage,
       });
