@@ -33,6 +33,7 @@ const ConversationSchema = new Schema<IConversation>({
     {
         type: Schema.Types.ObjectId,
         ref: "MessageContainer",
+        index: true
     },
   ],
   latestMessage: {

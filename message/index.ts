@@ -43,23 +43,24 @@ io.on("connection", async (socket: Socket) => {
 
   socket.on("userId", async (userId) => {
     connectedClients.set(userId, socket);
-
-    socket.on("disconnect", () => {
-      console.log("Disconnected");
-      connectedClients.delete(userId);
-    });
-
-    getMessages(socket, connectedClients);
-    sendMessage(io, socket, connectedClients);
-    editMessage(io, socket, connectedClients);
-    deleteMessage(io, socket, connectedClients);
-
-    createConversation(socket, connectedClients);
-    deleteConversation(io, socket, connectedClients);
-    addUser(io, socket, connectedClients);
-    removeUser(io, socket, connectedClients);
-    getUsers(socket, connectedClients);
   });
+
+  socket.on("disconnect", () => {
+    console.log("Disconnected");
+    const result = [...connectedClients].find(([key, value]) => socket === value)?.[0];
+    if (result) connectedClients.delete(result);
+  });
+
+  getMessages(socket, connectedClients);
+  sendMessage(io, socket, connectedClients);
+  editMessage(io, socket, connectedClients);
+  deleteMessage(io, socket, connectedClients);
+
+  createConversation(socket, connectedClients);
+  deleteConversation(io, socket, connectedClients);
+  addUser(io, socket, connectedClients);
+  removeUser(io, socket, connectedClients);
+  getUsers(socket, connectedClients);
 
   createUser(socket, connectedClients);
 });
