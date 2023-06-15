@@ -18,7 +18,7 @@ import { deleteMessage, editMessage, getMessages,
 
 mongoose
   .connect(
-    "mongodb://127.0.0.1:27017/message?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+1.9.1"
+    process.env.MONGO_URI
   )
   .then(() => {
     console.log("Connected to DB");
@@ -33,7 +33,7 @@ app.use(express.json());
 const server = http.createServer(app);
 
 const io = new Server(server, {
-  cors: { origin: "*" },
+  path: "/socket/message-socket"
 });
 
 const connectedClients: Map<string, Socket> = new Map();

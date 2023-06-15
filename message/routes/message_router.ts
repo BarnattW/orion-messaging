@@ -14,9 +14,9 @@ export const sendMessage = (
 ) => {
   socket.on("sendMessage", async (data) => {
     try {
-      const { conversationIds, userId, message } = data;
+      const { conversationId, userId, message } = data;
 
-      const conv = await Conversation.findById(conversationIds);
+      const conv = await Conversation.findById(conversationId);
 
       if (!conv) {
         socket.emit("requestError", {

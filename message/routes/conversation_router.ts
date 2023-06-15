@@ -22,6 +22,10 @@ export const createConversation = (
       };
 
       const conv = await Conversation.create(newChat);
+      const user = await User.updateMany( 
+        { userId: { $in : users} },
+        { $push: { conversations: conv._id}}
+      )
 
       if (!conv) {
         socket.emit("requestError", {
