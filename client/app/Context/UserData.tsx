@@ -2,7 +2,7 @@
 import { useContext, useEffect } from "react";
 import { UserContext } from "./UserContext";
 import useSWR from "swr";
-import { set } from "lodash";
+import messageSocket from "../sockets/messageSocket";
 
 const fetcher = (url: string) => fetch(url).then((response) => response.json());
 
@@ -12,10 +12,6 @@ export function UserData({ children }: { children: React.ReactNode }) {
 	const { data: userIdSWR, error } = useSWR("/api/auth/getUserId", fetcher);
 	const { data: usernameSWR } = useSWR(
 		userIdSWR ? `/api/connect/${userIdSWR}/getUsername` : null,
-		fetcher
-	);
-	const { data: friendsSWR } = useSWR(
-		userIdSWR ? `/api/connect/getFriends/${userIdSWR}` : null,
 		fetcher
 	);
 
@@ -30,11 +26,26 @@ export function UserData({ children }: { children: React.ReactNode }) {
 	}, [userIdSWR, setUserId]);
 
 	useEffect(() => {
-		if (usernameSWR && friendsSWR) {
-			setUsername(usernameSWR);
-			setFriends(friendsSWR);
+		async function getUserData() {
+			if (usernameSWR) {
+				setUsername(usernameSWR);
+
+				const response = await fetch(`/api/connect/getFriends/${userIdSWR}`, {
+					headers: {
+						method: "GET",
+						"Content-Type": "application/json",
+					},
+				});
+
+				if (!response.ok) {
+					return;
+				}
+				const friends = await response.json();
+				setFriends(friends.friends);
+			}
 		}
-	}, [usernameSWR, setUsername, friendsSWR, setFriends]);
+		getUserData();
+	}, [usernameSWR, setUsername, setFriends, userIdSWR]);
 
 	console.log(userId, username);
 

@@ -30,7 +30,9 @@ function SentRequestCard(friendRequestCardProps: RequestCardProps) {
 				<div className="relative z-0">
 					<Avatar
 						imageUrl="/friend-icon.svg"
-						altText={friendRequestCardProps.altText}
+						altText={friendRequestCardProps.username}
+						username={friendRequestCardProps.username}
+						type="default"
 					/>
 				</div>
 				<div className="flex-1 overflow-hidden">
