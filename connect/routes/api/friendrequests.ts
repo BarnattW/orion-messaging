@@ -150,7 +150,7 @@ router.put(
 			}
 
 			//publish to kafka
-			await publishMessage("friends", data, "request-accepted");
+			await publishMessage("friends", JSON.stringify(data), "request-accepted");
 
 			await request.findByIdAndDelete(requestId);
 
