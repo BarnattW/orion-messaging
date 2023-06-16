@@ -1,11 +1,11 @@
 import mongoose from "mongoose";
-import { User } from "../models/User";
-import { Message } from "../models/Message";
-import { Conversation, IConversation } from "../models/Conversation";
+import { User } from "../../models/User";
+import { Message } from "../../models/Message";
+import { Conversation, IConversation } from "../../models/Conversation";
 import express, { Request, Response } from "express";
 import { Server, Socket } from "socket.io";
-import { socketsInConversation } from "../lib/utils";
-import { MessageContainer } from "../models/MessageContainer";
+import { socketsInConversation } from "../../lib/utils";
+import { MessageContainer } from "../../models/MessageContainer";
 
 export const createConversation = (
   socket: Socket,

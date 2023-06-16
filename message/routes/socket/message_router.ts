@@ -1,11 +1,11 @@
 import mongoose from "mongoose";
-import { User } from "../models/User";
-import { Message } from "../models/Message";
-import { Conversation } from "../models/Conversation";
+import { User } from "../../models/User";
+import { Message } from "../../models/Message";
+import { Conversation } from "../../models/Conversation";
 import express, { Request, Response } from "express";
 import { Server, Socket } from "socket.io";
-import { socketsInConversation } from "../lib/utils";
-import { MessageContainer } from "../models/MessageContainer";
+import { socketsInConversation } from "../../lib/utils";
+import { MessageContainer } from "../../models/MessageContainer";
 
 export const sendMessage = (
   io: Server,
@@ -14,8 +14,9 @@ export const sendMessage = (
 ) => {
   socket.on("sendMessage", async (data) => {
     try {
+      console.log("Event received")
       const { conversationId, userId, message } = data;
-
+      console.log(data)
       const conv = await Conversation.findById(conversationId);
 
       if (!conv) {
@@ -38,9 +39,10 @@ export const sendMessage = (
           message: "Failed to Create Message",
         });
       }
+
       console.log("Created Message" + createdMessage);
 
-      conv.addMessage(createdMessage._id);
+      conv.addMessage(createdMessage);
 
       let result = await socketsInConversation(conv, connectedClients);
 
@@ -63,13 +65,15 @@ export const getMessages = (
 ) => {
   socket.on("getMessages", async (data) => {
     try {
-      const { conversationId, index } = data;
+      const { conversationId, timestamp } = data;
 
+      console.log(timestamp);
       const convo = await Conversation.findById(conversationId);
 
-      const message = await MessageContainer.findById({
-        _id: convo?.messages[index]
-      }).populate('messages');
+      const message = await MessageContainer.findOne({
+        _id: { $in: convo?.messages},
+        timeCreated: { $lt: timestamp }
+      }).sort({ timeCreated: -1 }).populate('messages');
 
       console.log(message?.messages);
 
@@ -84,7 +88,7 @@ export const getMessages = (
       socket.emit("gotMessage", {
         message: "Message Received",
         data: {
-          newIndex: index - 1,
+          timestamp: message?.timeCreated,
           messages: message?.messages,
         },
       });
@@ -129,7 +133,7 @@ export const editMessage = (
 
       let result = await socketsInConversation(conversation, connectedClients);
 
-      io.sockets.to(result as string[]).emit("editMessage", {
+      io.sockets.to(result as string[]).emit("editedMessage", {
         message: "Message Edited",
         data: message,
       });
