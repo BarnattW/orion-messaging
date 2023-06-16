@@ -9,6 +9,8 @@ import { friends } from "./routes/api/friends";
 import { createUser } from "./routes/api/user";
 import {consumer} from './routes/api/idkwhattonamethis/kafkaproducer'
 import { KafkaMessage } from "kafkajs";
+import { publishMessage } from "./routes/api/idkwhattonamethis/kafkaproducer";
+
 
 // import {
 // 	sendFriendRequest,
@@ -87,6 +89,11 @@ async function run() {
 					.save()
 					.then((savedUser: IUser) => {
 						console.log(`Saved user: ${savedUser}`);
+						const userData = {
+							username: savedUser.username,
+							userId: savedUser.userId
+						}
+						publishMessage("user-data", userData, "data");
 					})
 					.catch((error) => {
 						console.error("Error saving user:", error);
