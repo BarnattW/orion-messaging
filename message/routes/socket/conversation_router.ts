@@ -9,7 +9,6 @@ import { MessageContainer } from "../../models/MessageContainer";
 
 export const createConversation = (
   socket: Socket,
-  connectedClients: Map<string, Socket>
 ) => {
   socket.on("createConversation", async (data) => {
     try {
@@ -145,7 +144,6 @@ export const removeUser = (
 
 export const getUsers = (
   socket: Socket,
-  connectedClients: Map<string, Socket>
 ) => {
   socket.on("getUsers", async (data) => {
     try {
@@ -178,7 +176,7 @@ export const deleteConversation = (
       console.log(conversationId)
       const deletedConversation = await Conversation.deleteOne({_id: conversationId});
     } catch (e) {
-      console.log("Unable to delete conversation");
+      console.log("Unable to delete conversation", e);
       socket.emit("requestError", {
         message: "Server Error"
       })

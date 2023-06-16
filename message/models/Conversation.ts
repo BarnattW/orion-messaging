@@ -17,8 +17,7 @@ interface IConversation extends IConversationDocument {
 
 const ConversationSchema = new Schema<IConversation>({
   title: {
-    type: String,
-    default: "New Chat",
+    type: String
   },
   conversationType: {
     type: String,

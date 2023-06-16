@@ -61,7 +61,6 @@ export const sendMessage = (
 
 export const getMessages = (
   socket: Socket,
-  connectedClients: Map<string, Socket>
 ) => {
   socket.on("getMessages", async (data) => {
     try {

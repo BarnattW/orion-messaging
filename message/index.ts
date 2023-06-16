@@ -15,11 +15,11 @@ import {
 import { deleteMessage, editMessage, getMessages,
   sendMessage, } from "./routes/socket/message_router";
 import { messageConsumer } from "./kafka/kafka_consumer";
-
+import { getConversations } from "./routes/socket/user_router";
 
 mongoose
   .connect(
-    process.env.MONGO_URI
+    process.env.MONGO_URI as string
   )
   .then(() => {
     console.log("Connected to DB");
@@ -34,15 +34,10 @@ app.use(express.json());
 const server = http.createServer(app);
 
 const io = new Server(server, {
+  path: "/socket/message-socket"
 });
 
 const connectedClients: Map<string, Socket> = new Map();
-
-async function run(){
-  const consumer = new messageConsumer();
-  consumer.connect();
-}
-run();
 
 io.on("connection", async (socket: Socket) => {
 	console.log("Socket Connected " + socket.id);
@@ -62,18 +57,26 @@ io.on("connection", async (socket: Socket) => {
     if (result) connectedClients.delete(result);
   });
 
-  getMessages(socket, connectedClients);
+  getMessages(socket);
   sendMessage(io, socket, connectedClients);
   editMessage(io, socket, connectedClients);
   deleteMessage(io, socket, connectedClients);
 
-  createConversation(socket, connectedClients);
+  createConversation(socket);
   deleteConversation(io, socket, connectedClients);
   addUser(io, socket, connectedClients);
   removeUser(io, socket, connectedClients);
-  getUsers(socket, connectedClients);
+  getUsers(socket);
+
+  getConversations(socket)
 });
 
-server.listen(3000, function () {
+async function run(){
+  const consumer = new messageConsumer();
+  consumer.connect();
+}
+run();
+
+server.listen(8080, function () {
   console.log("Server connected");
 });
