@@ -16,11 +16,10 @@ import { deleteMessage, editMessage, getMessages,
   sendMessage, } from "./routes/socket/message_router";
 import { messageConsumer } from "./kafka/kafka_consumer";
 
-require("dotenv").config();
 
 mongoose
   .connect(
-    process.env.MONGO_URI as string
+    process.env.MONGO_URI
   )
   .then(() => {
     console.log("Connected to DB");
@@ -31,12 +30,6 @@ mongoose
 
 const app = express();
 app.use(express.json());
-
-app.set("view engine", "ejs");
-
-app.use("/", (req, res) => {
-  res.render("index");
-})
 
 const server = http.createServer(app);
 
