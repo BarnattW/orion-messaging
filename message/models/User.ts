@@ -9,6 +9,7 @@ interface IUser {
 const UserSchema = new Schema<IUser>({
   userId: {
     type: String,
+    index: true
   },
   username: {
     type: String,
