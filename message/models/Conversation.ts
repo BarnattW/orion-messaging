@@ -1,6 +1,6 @@
 import { Schema, model, Types, Model } from "mongoose";
 import { MessageContainer } from "./MessageContainer";
-import { Message } from "./Message";
+import { IMessage, Message } from "./Message";
 import { User } from "./User";
 
 interface IConversationDocument {
@@ -12,13 +12,12 @@ interface IConversationDocument {
 }
 
 interface IConversation extends IConversationDocument {
-  addMessage(message: Types.ObjectId): null;
+  addMessage(message: IMessage): null;
 }
 
 const ConversationSchema = new Schema<IConversation>({
   title: {
-    type: String,
-    default: "New Chat",
+    type: String
   },
   conversationType: {
     type: String,
@@ -33,6 +32,7 @@ const ConversationSchema = new Schema<IConversation>({
     {
         type: Schema.Types.ObjectId,
         ref: "MessageContainer",
+        index: true
     },
   ],
   latestMessage: {
@@ -48,13 +48,16 @@ ConversationSchema.virtual('conversationUsers', {
   justOne: false
 })
 
-ConversationSchema.method("addMessage", async function (message: Types.ObjectId) {
+ConversationSchema.method("addMessage", async function (message) {
   const latestContainer = await MessageContainer.findById(this.messages[this.messages.length - 1]);
   if (latestContainer && latestContainer.messages.length < 50) {
-    latestContainer.messages.push(message);
+    latestContainer.messages.push(message._id);
     await latestContainer.save();
   } else {
-    const container = new MessageContainer({messages: [message]});
+    const container = new MessageContainer({
+      messages: [message._id],
+      timeCreated: message.timestamp
+    });
     await container.save();
     this.messages.push(container);
     await this.save();

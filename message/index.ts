@@ -11,19 +11,22 @@ import {
   deleteConversation,
   getUsers,
   removeUser
-} from "./routes/conversation_router";
-import { createUser } from "./routes/user_router";
+} from "./routes/socket/conversation_router";
 import { deleteMessage, editMessage, getMessages,
-  sendMessage, } from "./routes/message_router";
+  sendMessage, } from "./routes/socket/message_router";
+import { messageConsumer } from "./kafka/kafka_consumer";
+import { getConversations } from "./routes/socket/user_router";
 
 mongoose
-	.connect(process.env.MONGO_URI!)
-	.then(() => {
-		console.log("Connected to DB");
-	})
-	.catch((err) => {
-		console.log(err.message);
-	});
+  .connect(
+    process.env.MONGO_URI as string
+  )
+  .then(() => {
+    console.log("Connected to DB");
+  })
+  .catch((err) => {
+    console.log(err.message);
+  });
 
 const app = express();
 app.use(express.json());
@@ -31,7 +34,7 @@ app.use(express.json());
 const server = http.createServer(app);
 
 const io = new Server(server, {
-	path: "/socket/message-socket",
+  path: "/socket/message-socket"
 });
 
 const connectedClients: Map<string, Socket> = new Map();
@@ -44,32 +47,35 @@ io.on("connection", async (socket: Socket) => {
 		});
 	});
 
-	socket.on("userId", async (userId) => {
-		connectedClients.set(userId, socket);
+  socket.on("userId", async (userId) => {
+    connectedClients.set(userId, socket);
+  });
 
-		// socket.on("disconnect", () => {
-		// 	console.log("Disconnected + socket.id");
-		// 	connectedClients.delete(userId);
-		// });
+  socket.on("disconnect", () => {
+    console.log("Disconnected");
+    const result = [...connectedClients].find(([key, value]) => socket === value)?.[0];
+    if (result) connectedClients.delete(result);
+  });
 
-		getMessages(socket, connectedClients);
-		sendMessage(io, socket, connectedClients);
-		editMessage(io, socket, connectedClients);
-		deleteMessage(io, socket, connectedClients);
+  getMessages(socket);
+  sendMessage(io, socket, connectedClients);
+  editMessage(io, socket, connectedClients);
+  deleteMessage(io, socket, connectedClients);
 
-		createConversation(socket, connectedClients);
-		deleteConversation(io, socket, connectedClients);
-		addUser(io, socket, connectedClients);
-		removeUser(io, socket, connectedClients);
-		getUsers(socket, connectedClients);
-	});
+  createConversation(socket);
+  deleteConversation(io, socket, connectedClients);
+  addUser(io, socket, connectedClients);
+  removeUser(io, socket, connectedClients);
+  getUsers(socket);
 
-	socket.on("disconnect", () => {
-		console.log("Disconnected " + socket.id);
-		//connectedClients.delete(userId);
-	});
-	createUser(socket, connectedClients);
+  getConversations(socket)
 });
+
+async function run(){
+  const consumer = new messageConsumer();
+  consumer.connect();
+}
+run();
 
 server.listen(8080, function () {
   console.log("Server connected");

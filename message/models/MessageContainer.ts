@@ -3,13 +3,17 @@ import { Conversation } from "./Conversation";
 
 interface IMessageContainer {
   messages: Array<Types.ObjectId>;
+  timeCreated: String
 }
 
 const MessageContainerSchema = new Schema<IMessageContainer>({
   messages: [{
     type: Schema.Types.ObjectId,
     ref: "Message"
-  }]
+  }],
+  timeCreated: {
+    type: String
+  }
 });
 
 MessageContainerSchema.post('findOneAndUpdate', async function(doc) {

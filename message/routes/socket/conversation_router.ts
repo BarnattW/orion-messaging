@@ -1,15 +1,14 @@
 import mongoose from "mongoose";
-import { User } from "../models/User";
-import { Message } from "../models/Message";
-import { Conversation, IConversation } from "../models/Conversation";
+import { User } from "../../models/User";
+import { Message } from "../../models/Message";
+import { Conversation, IConversation } from "../../models/Conversation";
 import express, { Request, Response } from "express";
 import { Server, Socket } from "socket.io";
-import { socketsInConversation } from "../lib/utils";
-import { MessageContainer } from "../models/MessageContainer";
+import { socketsInConversation } from "../../lib/utils";
+import { MessageContainer } from "../../models/MessageContainer";
 
 export const createConversation = (
   socket: Socket,
-  connectedClients: Map<string, Socket>
 ) => {
   socket.on("createConversation", async (data) => {
     try {
@@ -22,6 +21,10 @@ export const createConversation = (
       };
 
       const conv = await Conversation.create(newChat);
+      const user = await User.updateMany( 
+        { userId: { $in : users} },
+        { $push: { conversations: conv._id}}
+      )
 
       if (!conv) {
         socket.emit("requestError", {
@@ -32,7 +35,7 @@ export const createConversation = (
 
       console.log("Conversation Created");
 
-      socket.emit("messageSent", {
+      socket.emit("createdConversation", {
         message: `Conversation of Type ${conv.conversationType} created`,
         data: conv,
       });
@@ -50,7 +53,7 @@ export const addUser = (
   socket: Socket,
   connectedClients: Map<string, Socket>
 ) => {
-  socket.on("addUserToConvo", async (data) => {
+  socket.on("addUser", async (data) => {
     try {
       const { conversationId, userId } = data;
       console.log(data);
@@ -141,7 +144,6 @@ export const removeUser = (
 
 export const getUsers = (
   socket: Socket,
-  connectedClients: Map<string, Socket>
 ) => {
   socket.on("getUsers", async (data) => {
     try {
@@ -150,7 +152,7 @@ export const getUsers = (
       const conversation = await Conversation.findById(conversationId).populate('conversationUsers');
       const users = (conversation as any).conversationUsers;
 
-      socket.emit("gotUser", {
+      socket.emit("gotUsers", {
         message: `Users of conversation ${conversationId}`,
         data: users
       })
@@ -174,7 +176,7 @@ export const deleteConversation = (
       console.log(conversationId)
       const deletedConversation = await Conversation.deleteOne({_id: conversationId});
     } catch (e) {
-      console.log("Unable to delete conversation");
+      console.log("Unable to delete conversation", e);
       socket.emit("requestError", {
         message: "Server Error"
       })
