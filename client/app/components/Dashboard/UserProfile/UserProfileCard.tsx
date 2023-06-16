@@ -2,18 +2,11 @@ import { UserProfileCardProps } from "@/app/types/UserProfile";
 import Avatar from "../Avatar/Avatar";
 import MessageIcon from "../../Icons/MessageIcon";
 import Image from "next/image";
-import {
-	ForwardedRef,
-	forwardRef,
-	useContext,
-	useState,
-	useEffect,
-} from "react";
+import { ForwardedRef, forwardRef, useContext, useState } from "react";
 import ExitIcon from "../../Icons/ExitIcon";
 import OptionsIcon from "../../Icons/OptionsIcon";
 import OptionsPopout from "./OptionsPopout";
 import { UserContext } from "@/app/Context/UserContext";
-import messageSocket from "@/app/sockets/messageSocket";
 
 const UserProfileCard = forwardRef(function (
 	{ username, userId, imageUrl }: UserProfileCardProps,
