@@ -1,20 +1,13 @@
+"use client";
+
+import { useContext } from "react";
 import ListContainer from "../ListWrappers/ListContainer";
 import ListHeading from "../ListWrappers/ListHeading";
 import ConversationCard from "./ConversationCard";
+import { UserContext } from "@/app/Context/UserContext";
 
-interface Conversation {
-	conversationId: number;
-	users: string[];
-	conversationImageUrl: string;
-	conversationName: string;
-	type: string;
-}
-
-function ConversationList({
-	conversations,
-}: {
-	conversations: Conversation[];
-}) {
+function ConversationList() {
+	const { conversations } = useContext(UserContext);
 	return (
 		<ListContainer>
 			<ListHeading>Messages</ListHeading>
@@ -28,9 +21,9 @@ function ConversationList({
 								altText={"Conversation"}
 								//imageUrl={conversation.conversationImageUrl}
 								users={conversation.users}
-								key={conversation.conversationId}
-								type={conversation.type}
-								conversationName={conversation.conversationName}
+								key={conversation._id}
+								type={conversation.conversationType}
+								conversationName={conversation.title}
 							/>
 						);
 					})}
