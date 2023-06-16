@@ -15,6 +15,8 @@ export const sendRequest = async (
 	try {
 		const { senderUsername, receiverUsername } = req.body;
 
+		User.createIndexes();
+
 		const sender = await User.findOne({
 			username: senderUsername,
 		});
@@ -34,6 +36,8 @@ export const sendRequest = async (
 
 		//check if friendrequest is pending
 		const outgoingRequestIds = sender.outgoingrequests;
+		
+		request.createIndexes();
 
 		const outgoingRequests = await request.find({
 		  _id: { $in: outgoingRequestIds },
@@ -84,12 +88,17 @@ router.put(
 	"/api/connect/acceptFriendRequest/:requestId",
 	async (req: Request, res: Response) => {
 		try {
+
+			request.createIndexes();
+
 			const { requestId } = req.params;
 			const friendReq = await request.findById(requestId);
 
 			if (!friendReq) {
 				return res.status(404).json({ message: "Friend request not found" });
 			}
+
+			User.createIndexes();
 
 			const sender = await User.findOne({ userId: friendReq.senderId });
 			const receiver = await User.findOne({ userId: friendReq.receiverId });
@@ -104,35 +113,44 @@ router.put(
 			receiver.friends.push(sender.userId);
 
 			// //SORT
-			// const populatedSenderFriends = await User.find({
-			// 	userId: { $in: sender.friends },
-			// }).populate("friends");
-			// const sortedSenderFriends = insertionSort(
-			// 	populatedSenderFriends,
-			// 	"username"
-			// );
-			// const sortedSenderFriendIds = sortedSenderFriends.map(
-			// 	(friends) => friends.userId
-			// );
-			// sender.friends = sortedSenderFriendIds;
+			const populatedSenderFriends = await User.find({
+				userId: { $in: sender.friends },
+			  }).populate("friends", "username");
+			const sortedSenderFriends = insertionSort(
+				populatedSenderFriends,
+				"username"
+			);
+			const sortedSenderFriendIds = sortedSenderFriends.map(
+				(friends) => friends.userId
+			);
+			sender.friends = sortedSenderFriendIds;
 
-			// const populatedReceiverFriends = await User.find({
-			// 	userId: { $in: receiver.friends },
-			// }).populate("friends");
-			// const sortedReceiverFriends = insertionSort(
-			// 	populatedReceiverFriends,
-			// 	"username"
-			// );
-			// const sortedReceiverFriendIds = sortedReceiverFriends.map(
-			// 	(friends) => friends.userId
-			// );
-			// sender.friends = sortedReceiverFriendIds;
+			const populatedReceiverFriends = await User.find({
+				userId: { $in: sender.friends },
+			  }).populate("friends", "username");
+			const sortedReceiverFriends = insertionSort(
+				populatedReceiverFriends,
+				"username"
+			);
+
+			console.log("senderFriends" + sortedSenderFriends)
+			console.log("receiverFriends" + sortedReceiverFriends)
+
+			const sortedReceiverFriendIds = sortedReceiverFriends.map(
+				(friends) => friends.userId
+			);
+			receiver.friends = sortedReceiverFriendIds;
 
 			await sender.save();
 			await receiver.save();
+			
+			const data ={
+				receiverId: receiver.userId,
+				senderId: sender.userId
+			}
 
 			//publish to kafka
-			//await publishMessage("Friend request accepted", receiver.friends);
+			await publishMessage("friends", data, "request-accepted");
 
 			await request.findByIdAndDelete(requestId);
 
@@ -163,12 +181,17 @@ router.put(
 	"/api/connect/rejectFriendRequest/:requestId",
 	async (req: Request, res: Response) => {
 		try {
+
+			request.createIndexes();
+
 			const { requestId } = req.params;
 			const friendReq = await request.findById(requestId);
 
 			if (!friendReq) {
 				return res.status(404).json({ message: "Friend request not found" });
 			}
+
+			User.createIndexes();
 
 			const sender = await User.findOne({ userId: friendReq.senderId });
 			const receiver = await User.findOne({ userId: friendReq.receiverId });
@@ -215,6 +238,8 @@ export const getRequest = async (
 	try {
 		const { userId } = req.params;
 
+		User.createIndexes();
+
 		const user = await User.findOne({ userId: userId });
 		console.log(user);
 
@@ -223,6 +248,8 @@ export const getRequest = async (
 		}
 
 		const outgoingRequestIds = user.outgoingrequests;
+
+		request.createIndexes();
 
 		const outgoingRequests = await request.find({
 		  _id: { $in: outgoingRequestIds },
