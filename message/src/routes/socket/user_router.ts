@@ -10,12 +10,13 @@ import { MessageContainer } from "../../models/MessageContainer";
 export const getConversations = (socket: Socket) => {
   socket.on("getConversations", async (data) => {
     try {
-      const { userId } = data;
+      const { userId }: { userId: string} = data;
       const user = await User.findOne({ userId: userId }).populate(
         "conversations"
       );
 
       if (!user) {
+        console.log("Get Conversations: User not found")
         return socket.emit("requestError", {
           message: "User not found",
         });

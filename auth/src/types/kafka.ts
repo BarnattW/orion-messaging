@@ -6,6 +6,11 @@ export interface SimpleProducer {
 	disconnect(): Promise<void>;
 }
 
+const kafka = new Kafka({
+	clientId: "auth-service",
+	brokers: ["kafka-srv:9092"],
+});
+
 export class authProducer implements SimpleProducer {
 	private producer: Producer;
 
@@ -14,10 +19,6 @@ export class authProducer implements SimpleProducer {
 	}
 
 	private createProducer(): Producer {
-		const kafka = new Kafka({
-			clientId: "auth-service",
-			brokers: ["kafka-srv:9092"],
-		});
 		return kafka.producer();
 	}
 
