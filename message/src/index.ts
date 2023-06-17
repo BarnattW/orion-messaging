@@ -17,8 +17,6 @@ import { deleteMessage, editMessage, getMessages,
 import { messageConsumer } from "./kafka/kafka_consumer";
 import { getConversations } from "./routes/socket/user_router";
 
-require("dotenv").config()
-
 mongoose
   .connect(
     process.env.MONGO_URI!
