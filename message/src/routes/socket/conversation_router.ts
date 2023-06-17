@@ -11,7 +11,7 @@ export const createConversation = (
   io: Server,
   socket: Socket,
   connectedClients: Map<string, Socket>
-  ) => {
+) => {
   socket.on("createConversation", async (data) => {
     try {
       const {
@@ -33,6 +33,7 @@ export const createConversation = (
       );
 
       if (!conv) {
+        console.log("Create Conversation: Failed to create conversation");
         socket.emit("requestError", {
           message: `Failed to create conversation`,
         });
@@ -41,7 +42,7 @@ export const createConversation = (
 
       console.log("Conversation Created");
 
-      const result = await socketsInConversation(conv, connectedClients)
+      const result = await socketsInConversation(conv, connectedClients);
 
       io.to(result as string[]).emit("createdConversation", {
         message: `Conversation of Type ${conv.conversationType} created`,
@@ -63,18 +64,33 @@ export const addUser = (
 ) => {
   socket.on("addUser", async (data) => {
     try {
-      const { conversationId, userId } = data;
+      const {
+        conversationId,
+        userId,
+      }: { conversationId: Types.ObjectId; userId: string } = data;
       console.log(data);
+
       const conv = await Conversation.findById(conversationId);
       if (!conv) {
-        console.log("Did not find conversation");
-        return;
+        console.log("Add User: Conversation not found");
+        return socket.emit("requestError", {
+          message: "Conversation not found",
+        });
+      }
+
+      if (conv.users.includes(userId)) {
+        console.log("Add User: User already in conversation");
+        return socket.emit("requestError", {
+          message: "User already in conversation",
+        });
       }
 
       const user = await User.findOne({ userId: userId });
       if (!user) {
-        console.log("Did not find user");
-        return;
+        console.log("Add User: User not found");
+        return socket.emit("requestError", {
+          message: "User not found",
+        });
       }
 
       conv.users.push(userId);
@@ -83,7 +99,7 @@ export const addUser = (
       user.conversations.push(conversationId);
       user.save();
 
-      console.log("Added User");
+      console.log("");
 
       const result = await socketsInConversation(conv, connectedClients);
 
@@ -107,7 +123,10 @@ export const removeUser = (
 ) => {
   socket.on("removeUser", async (data) => {
     try {
-      const { conversationId, userId } = data;
+      const {
+        conversationId,
+        userId,
+      }: { conversationId: Types.ObjectId; userId: string } = data;
 
       const user = await User.findOneAndUpdate(
         { userId: userId },
@@ -115,7 +134,7 @@ export const removeUser = (
       );
 
       if (!user) {
-        console.log("User does not exist");
+        console.log("Remove User: User not found");
         return socket.emit("requestError", {
           message: "User does not exist",
         });
@@ -126,7 +145,7 @@ export const removeUser = (
       );
 
       if (!conversation) {
-        console.log("Conversation does not exist");
+        console.log("Remove User: Conversation not found");
         return socket.emit("requestError", {
           message: "Conversation does not exist",
         });
@@ -161,6 +180,10 @@ export const getUsers = (socket: Socket) => {
       const conversation: IConversation | null = await Conversation.findById(
         conversationId
       ).populate("conversationUsers");
+
+      if (!conversation) {
+        console.log("Get Users: Conversation not found");
+      }
       const users: IUser[] = (conversation as any).conversationUsers;
 
       socket.emit("gotUsers", {

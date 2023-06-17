@@ -14,20 +14,34 @@ export const sendMessage = (
 ) => {
   socket.on("sendMessage", async (data) => {
     try {
-      console.log("Event received");
-      const { conversationId, userId, message } = data;
+      const {
+        conversationId,
+        userId,
+        message,
+      }: { conversationId: Types.ObjectId; userId: string; message: string } = data;
+
       console.log(data);
       const conv = await Conversation.findById(conversationId);
 
       if (!conv) {
-        socket.emit("requestError", {
+        console.log("Send Message: No Conversation");
+        return socket.emit("requestError", {
           message: "Failed to Find Conversation",
         });
-        return;
+      }
+
+      const user = await User.findOne({ userId: userId });
+
+      if (!user) {
+        console.log("Send Message: No User");
+        return socket.emit("requestError", {
+          message: "Failed to find user",
+        });
       }
 
       const sentMessage = {
         senderId: userId,
+        senderUsername: user?.username,
         message: message,
         timestamp: Date.now(),
       };
@@ -35,7 +49,7 @@ export const sendMessage = (
       const createdMessage = await Message.create(sentMessage);
 
       if (!createdMessage) {
-        socket.emit("requestError", {
+        return socket.emit("requestError", {
           message: "Failed to Create Message",
         });
       }
@@ -81,10 +95,9 @@ export const getMessages = (socket: Socket) => {
 
       if (!convo) {
         console.log("No Conversation");
-        socket.emit("requestError", {
+        return socket.emit("requestError", {
           message: "Conversation Doesn't Exist",
         });
-        return;
       }
 
       socket.emit("gotMessage", {
@@ -114,8 +127,10 @@ export const editMessage = (
         data;
       const message = await Message.findById(messageId);
       if (!message) {
-        console.log("Message doesn't exist");
-        return;
+        console.log("Edit Message: Message doesn't exist");
+        return socket.emit("requestError", {
+          message: "Message doesn't exist",
+        });
       }
       message.message = text;
       message.save();
@@ -161,8 +176,10 @@ export const deleteMessage = (
       console.log(messageId);
       const message = await Message.findByIdAndDelete(messageId);
       if (!message) {
-        console.log("Message does not exist");
-        return;
+        console.log("Delete Message: Message does not exist");
+        return socket.emit("requestError", {
+          message: "Message doesn't exist",
+        });
       }
 
       const messageContainer = await MessageContainer.findOneAndUpdate(

@@ -3,12 +3,17 @@ import { Schema, model, Types } from "mongoose";
 interface IMessage {
   _id: Types.ObjectId;
   senderId: String;
+  senderUsername: String;
   message: String;
   timestamp: Number;
 }
 
 const MessageSchema = new Schema<IMessage>({
   senderId: {
+    type: String,
+    required: true
+  },
+  senderUsername: {
     type: String,
     required: true
   },
