@@ -21,7 +21,7 @@ require("dotenv").config()
 
 mongoose
   .connect(
-    process.env.MONGO_URI as string
+    process.env.MONGO_URI!
   )
   .then(() => {
     console.log("Connected to DB");
