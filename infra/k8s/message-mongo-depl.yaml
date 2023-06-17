@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: message-mongo-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels: 
+      app: message-mongo
+  template:
+    metadata:
+      labels:
+        app: message-mongo
+    spec:
+      containers:
+        - name: message-mongo
+          image: mongo
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: message-mongo-srv
+spec:
+  selector:
+    app: message-mongo
+  ports:
+    - name: db
+      protocol: TCP
+      port: 27017
+      targetPort: 27017

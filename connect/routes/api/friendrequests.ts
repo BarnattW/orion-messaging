@@ -1,147 +1,286 @@
 import mongoose from "mongoose";
-import {User} from '../../models/user'
+import { User } from "../../models/user";
 import { request } from "../../models/request";
-import express, {Request, Response} from 'express';
+import express, { Request, Response } from "express";
+import { publishMessage } from "./idkwhattonamethis/kafkaproducer";
+import { insertionSort } from "./idkwhattonamethis/sort";
 
 const router = express.Router();
-export const sendRequest = async (req: Request,  res: Response, requestType: String) =>{
-    try {
-        const {senderUsername, receiverUsername} = req.body;
-    
-        const sender = await User.findOne(
-            {
-                username: senderUsername
-            }
-        );
-        const receiver = await User.findOne(
-            {
-                username: receiverUsername
-            }
-        );
 
-        if (!sender|| !receiver) {
-            return res.status(404).json({ message: 'Sender or receiver not found' });
-        }
-    
-        const newRequest = new request({
-            senderId: sender._id,
-            receiverId: receiver._id,
-            requestType: requestType,
-            status: 'pending'
-        });
-    
-        await newRequest.save();
+export const sendRequest = async (
+	req: Request,
+	res: Response,
+	requestType: String
+) => {
+	try {
+		const { senderUsername, receiverUsername } = req.body;
 
-        sender.outgoingrequests.push(newRequest._id);
-        await sender.save();
+		User.createIndexes();
 
-        receiver.incomingrequests.push(newRequest._id);
-        await receiver.save();
-    
-        return res.status(201).json(
-            { 
-                message: '${requestType} request created' ,
-                data: newRequest
-            }
-            );
-        
-    } catch (error) {
-        console.error('Error creating friend request:', error);
+		const sender = await User.findOne({
+			username: senderUsername,
+		});
+		const receiver = await User.findOne({
+			username: receiverUsername,
+		});
+		if (!sender || !receiver) {
+			return res.status(404).json({ message: "Sender or receiver not found" });
+		}
 
-        return res.status(500).json({ message: 'Server error' });
-    }
+		//check if already friends
+		if (sender.friends.includes(receiver.userId)) {
+			return res
+			  .status(400)
+			  .json({ message: `${receiverUsername} is already your friend` });
+		  }
 
-}
+		//check if friendrequest is pending
+		const outgoingRequestIds = sender.outgoingrequests;
+		
+		request.createIndexes();
+
+		const outgoingRequests = await request.find({
+		  _id: { $in: outgoingRequestIds },
+		  requestType: requestType,
+		  receiverId: receiver.userId
+		});
+		console.log(outgoingRequests);
+		if (outgoingRequests.length > 0){
+			return res.status(400).json({ message: `Friend request to ${receiverUsername} is currently pending` });
+		}
 
 
-router.post('/api/sendFriendRequest', (req: Request, res: Response) =>
-  sendRequest(req, res, 'friend'));
+		const newRequest = new request({
+			receiverUsername: receiverUsername,
+			senderUsername: senderUsername,
+			senderId: sender.userId,
+			receiverId: receiver.userId,
+			requestType: requestType,
+			status: "pending",
+		});
 
-router.put('/api/acceptFriendRequest/:requestId', async (req: Request,  res: Response)=>{
-    try{
-        const {requestId} = req.params;
-        const friendReq = await request.findById(requestId);
+		await newRequest.save();
 
-        if (!friendReq){
-            return res.status(404).json({ message: 'Friend request not found' });
-        }
+		//await publishMessage(`${requestType}`, newRequest);
 
-        const sender = await User.findById(friendReq.senderId);
-        const receiver = await User.findById(friendReq.receiverId);
+		sender.outgoingrequests.push(newRequest._id);
+		await sender.save();
 
-        if (!sender || !receiver) {
-            return res.status(404).json({ message: 'Sender or receiver not found' });
-        }
+		receiver.incomingrequests.push(newRequest._id);
+		await receiver.save();
 
-        sender.friends.push(receiver._id);
-        receiver.friends.push(sender._id);
+		return res.status(201).json({
+			message: `${requestType} request created`,
+			data: newRequest,
+		});
+	} catch (error) {
+		console.error(`Error creating ${requestType} request:`, error);
 
-        await sender.save();
-        await receiver.save();
+		return res.status(500).json({ message: "Server error" });
+	}
+};
 
-        await request.findByIdAndDelete(requestId);
+router.post("/api/connect/sendFriendRequest", (req: Request, res: Response) =>
+	sendRequest(req, res, "friend")
+);
 
-        await User.findByIdAndUpdate(sender._id, {
-            $pull: { incomingrequests: requestId }
-        });
+router.put(
+	"/api/connect/acceptFriendRequest/:requestId",
+	async (req: Request, res: Response) => {
+		try {
 
-        await User.findByIdAndUpdate(receiver._id, {
-            $pull: { outgoingrequests: requestId }
-        });
+			request.createIndexes();
 
-        return res.status(200).json({ message: 'Friend request accepted' });
-        
-    } catch (error) {
-        console.error('Error creating friend request:', error);
+			const { requestId } = req.params;
+			const friendReq = await request.findById(requestId);
 
-        return res.status(500).json({ message: 'Server error' });
-    }
-})
+			if (!friendReq) {
+				return res.status(404).json({ message: "Friend request not found" });
+			}
 
-export const getRequest = async(req: Request,  res: Response, requestType: String) =>{
-    try{
-        const {userId} = req.params;
+			User.createIndexes();
 
-        const user = await User.findById(userId);
+			const sender = await User.findOne({ userId: friendReq.senderId });
+			const receiver = await User.findOne({ userId: friendReq.receiverId });
 
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
-        }
+			if (!sender || !receiver) {
+				return res
+					.status(404)
+					.json({ message: "Sender or receiver not found" });
+			}
 
-        const outgoingreqs = await User.find(
-            { 
-                Id: { $in: user.outgoingrequests } , 
-                outgoingrequests: {
-                    $elemMatch: {
-                        requestType: requestType
-                    }
-                }
-            }
-        );
-        const incomingreqs = await User.find(
-            { 
-                Id: { $in: user.incomingrequests } , 
-                incomingrequests: {
-                    $elemMatch: {
-                        requestType: requestType
-                    }
-                }
-            }
-        );
+			sender.friends.push(receiver.userId);
+			receiver.friends.push(sender.userId);
 
-        return res.status(200).json(
-            { 
-                outgoing: outgoingreqs ,
-                incoming: incomingreqs
-            }
-        );
-    } catch(error){
-        console.error('Error fetching friend requests:', error);
+			// //SORT
+			const populatedSenderFriends = await User.find({
+				userId: { $in: sender.friends },
+			  }).populate("friends", "username");
+			const sortedSenderFriends = insertionSort(
+				populatedSenderFriends,
+				"username"
+			);
+			const sortedSenderFriendIds = sortedSenderFriends.map(
+				(friends) => friends.userId
+			);
+			sender.friends = sortedSenderFriendIds;
 
-        return res.status(500).json({message: 'Server error'});
-    }
-}
-router.get('/api/:userId/getFriendReqs', (req: Request, res: Response) =>
-getRequest(req, res, 'friend'));
+			const populatedReceiverFriends = await User.find({
+				userId: { $in: sender.friends },
+			  }).populate("friends", "username");
+			const sortedReceiverFriends = insertionSort(
+				populatedReceiverFriends,
+				"username"
+			);
+
+			console.log("senderFriends" + sortedSenderFriends)
+			console.log("receiverFriends" + sortedReceiverFriends)
+
+			const sortedReceiverFriendIds = sortedReceiverFriends.map(
+				(friends) => friends.userId
+			);
+			receiver.friends = sortedReceiverFriendIds;
+
+			await sender.save();
+			await receiver.save();
+			
+			const data ={
+				receiverId: receiver.userId,
+				senderId: sender.userId
+			}
+
+			//publish to kafka
+			await publishMessage("friends", JSON.stringify(data), "request-accepted");
+
+			await request.findByIdAndDelete(requestId);
+
+			await User.findOneAndUpdate(
+				{ userId: receiver.userId },
+				{
+					$pull: { incomingrequests: requestId },
+				}
+			);
+
+			await User.findOneAndUpdate(
+				{ userId: sender.userId },
+				{
+					$pull: { outgoingrequests: requestId },
+				}
+			);
+
+			return res.status(200).json({ message: "Friend request accepted" });
+		} catch (error) {
+			console.error("Error creating friend request:", error);
+
+			return res.status(500).json({ message: "Server error" });
+		}
+	}
+);
+
+router.put(
+	"/api/connect/rejectFriendRequest/:requestId",
+	async (req: Request, res: Response) => {
+		try {
+
+			request.createIndexes();
+
+			const { requestId } = req.params;
+			const friendReq = await request.findById(requestId);
+
+			if (!friendReq) {
+				return res.status(404).json({ message: "Friend request not found" });
+			}
+
+			User.createIndexes();
+
+			const sender = await User.findOne({ userId: friendReq.senderId });
+			const receiver = await User.findOne({ userId: friendReq.receiverId });
+
+			if (!sender || !receiver) {
+				return res
+					.status(404)
+					.json({ message: "Sender or receiver not found" });
+			}
+
+			//publish to kafka
+			//await publishMessage("Friend request rejected", receiver.friends);
+
+			await request.findByIdAndDelete(requestId);
+
+			await User.findOneAndUpdate(
+				{ userId: receiver.userId },
+				{
+					$pull: { incomingrequests: requestId },
+				}
+			);
+
+			await User.findOneAndUpdate(
+				{ userId: sender.userId },
+				{
+					$pull: { outgoingrequests: requestId },
+				}
+			);
+
+			return res.status(200).json({ message: "Friend request rejected" });
+		} catch (error) {
+			console.error("Error deleting friend request:", error);
+
+			return res.status(500).json({ message: "Server error" });
+		}
+	}
+);
+
+export const getRequest = async (
+	req: Request,
+	res: Response,
+	requestType: String
+) => {
+	try {
+		const { userId } = req.params;
+
+		User.createIndexes();
+
+		const user = await User.findOne({ userId: userId });
+		console.log(user);
+
+		if (!user) {
+			return res.status(404).json({ message: "User not found" });
+		}
+
+		const outgoingRequestIds = user.outgoingrequests;
+
+		request.createIndexes();
+
+		const outgoingRequests = await request.find({
+		  _id: { $in: outgoingRequestIds },
+		  requestType: requestType,
+		});
+
+		const incomingRequestIds = user.incomingrequests;
+
+		const incomingRequests = await request.find({
+		  _id: { $in: incomingRequestIds },
+		  requestType: requestType,
+		});
+	
+	
+	
+
+		console.log(outgoingRequests, incomingRequests);
+
+		return res.status(200).json({
+			outgoing: outgoingRequests,
+			incoming: incomingRequests,
+		});
+	} catch (error) {
+		console.error("Error fetching friend requests:", error);
+
+		return res.status(500).json({ message: "Server error" });
+	}
+};
+router.get(
+	"/api/connect/:userId/getFriendReqs",
+	(req: Request, res: Response) => getRequest(req, res, "friend")
+);
 
 export const friendRequests = router;

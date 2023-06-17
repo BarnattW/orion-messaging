@@ -12,6 +12,7 @@ interface Message {
 
 interface SortedMessage extends Message {
 	renderUserMessage: boolean;
+	renderDatestamp: boolean;
 }
 
 const useUserMessages = () => {
@@ -21,7 +22,7 @@ const useUserMessages = () => {
 	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
-		(async () => {
+		async function getMessages() {
 			try {
 				const response: Message[] = await dummyMessages.messages;
 				setSortedUserMessages(sortMessagesByTimestamps(response));
@@ -30,7 +31,8 @@ const useUserMessages = () => {
 				console.error("Error retrieving messages:", error);
 				setLoading(false);
 			}
-		})();
+		}
+		getMessages();
 	}, []);
 
 	return { loading, sortedUserMessages };

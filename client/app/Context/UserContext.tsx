@@ -1,23 +1,10 @@
 "use client";
-import { createContext, useEffect, useState } from "react";
-
-interface friend {
-	friend: {
-		username: string;
-		userId: string;
-	};
-}
-
-interface UserContextProps {
-	userId: string | null;
-	setUserId: (userId: string | null) => void;
-	username: string | null;
-	setUsername: (username: string | null) => void;
-	friends: friend[];
-	setFriends: (friends: friend[]) => void;
-	activeConversation: string | null;
-	setActiveConversation: (activeConversation: string | null) => void;
-}
+import { createContext, useState } from "react";
+import {
+	UserContextProps,
+	Friend,
+	Conversation,
+} from "../types/UserContextTypes";
 
 export const UserContext = createContext<UserContextProps>({
 	userId: null,
@@ -28,17 +15,18 @@ export const UserContext = createContext<UserContextProps>({
 	setFriends: () => {},
 	activeConversation: null,
 	setActiveConversation: () => {},
-	//conversationData: {}, // acts like a cache, {conversationId: message[]}
-	//setConversationData: () => {},
+	conversations: [], // acts like a cache, {conversationId: message[]}
+	setConversations: () => {},
 });
 
 export function UserProvider({ children }: { children: React.ReactNode }) {
 	const [userId, setUserId] = useState<string | null>(null);
 	const [username, setUsername] = useState<string | null>(null);
-	const [friends, setFriends] = useState<friend[]>([]);
+	const [friends, setFriends] = useState<Friend[]>([]);
 	const [activeConversation, setActiveConversation] = useState<string | null>(
 		null
 	);
+	const [conversations, setConversations] = useState<Conversation[]>([]);
 
 	const value = {
 		userId,
@@ -49,6 +37,8 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
 		setFriends,
 		activeConversation,
 		setActiveConversation,
+		conversations,
+		setConversations,
 	};
 	return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 }

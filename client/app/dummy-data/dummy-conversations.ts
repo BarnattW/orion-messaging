@@ -11,7 +11,7 @@ export const dummyConversations = {
 			conversationId: 1231,
 			users: ["cat", "dog"],
 			conversationImageUrl: "/dada/da",
-			conversationName: "superduperlongnamefortesting",
+			conversationName: "superduperlongnamefortestinglet'skeep",
 			type: "friend",
 		},
 		{
