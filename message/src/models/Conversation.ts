@@ -9,7 +9,7 @@ interface IConversationDocument {
   conversationType: "group" | "individual";
   users: Types.Array<string>;
   messages: Types.Array<Types.Array<Types.ObjectId>>;
-  latestMessage: Types.ObjectId;
+  latestMessageTimestamp: Number;
 }
 
 interface IConversation extends IConversationDocument {
@@ -36,9 +36,8 @@ const ConversationSchema = new Schema<IConversation>({
         index: true
     },
   ],
-  latestMessage: {
-    type: Schema.Types.ObjectId,
-    ref: "Message"
+  latestMessageTimestamp: {
+    type: Number
   }
 });
 
@@ -61,8 +60,9 @@ ConversationSchema.method("addMessage", async function (message: IMessage) {
     });
     await container.save();
     this.messages.push(container);
-    await this.save();
   }
+  this.latestMessageTimestamp = message.timestamp;
+  await this.save()
 });
 
 ConversationSchema.pre('deleteOne', async function () {
