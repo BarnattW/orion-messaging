@@ -1,13 +1,19 @@
 import { Schema, model, Types } from "mongoose";
 
 interface IMessage {
+  _id: Types.ObjectId;
   senderId: String;
+  senderUsername: String;
   message: String;
-  timestamp: String;
+  timestamp: Number;
 }
 
 const MessageSchema = new Schema<IMessage>({
   senderId: {
+    type: String,
+    required: true
+  },
+  senderUsername: {
     type: String,
     required: true
   },
@@ -16,7 +22,7 @@ const MessageSchema = new Schema<IMessage>({
     required: true
   },
   timestamp: {
-    type: String,
+    type: Number,
     required: true
   },
 });

@@ -2,8 +2,9 @@ import { Schema, model, Types } from "mongoose";
 import { Conversation } from "./Conversation";
 
 interface IMessageContainer {
+  _id: Types.ObjectId;
   messages: Array<Types.ObjectId>;
-  timeCreated: String
+  timeCreated: Number
 }
 
 const MessageContainerSchema = new Schema<IMessageContainer>({
@@ -12,12 +13,12 @@ const MessageContainerSchema = new Schema<IMessageContainer>({
     ref: "Message"
   }],
   timeCreated: {
-    type: String
+    type: Number
   }
 });
 
-MessageContainerSchema.post('findOneAndUpdate', async function(doc) {
-  const messageContainer = await this.model.findOne({_id: doc._id});
+MessageContainerSchema.post('findOneAndUpdate', async function(doc: IMessageContainer) {
+  const messageContainer: IMessageContainer | null = await this.model.findOne({_id: doc._id});
 
   if (messageContainer && messageContainer.messages.length == 0) {
     await this.model.deleteOne({_id: messageContainer._id});
@@ -29,3 +30,4 @@ MessageContainerSchema.post('findOneAndUpdate', async function(doc) {
 })
 
 export const MessageContainer = model<IMessageContainer>("MessageContainer", MessageContainerSchema);
+export { IMessageContainer }

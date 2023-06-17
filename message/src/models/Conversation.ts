@@ -1,18 +1,19 @@
 import { Schema, model, Types, Model } from "mongoose";
-import { MessageContainer } from "./MessageContainer";
+import { IMessageContainer, MessageContainer } from "./MessageContainer";
 import { IMessage, Message } from "./Message";
 import { User } from "./User";
 
 interface IConversationDocument {
+  _id: Types.ObjectId;
   title: string;
   conversationType: "group" | "individual";
   users: Types.Array<string>;
   messages: Types.Array<Types.Array<Types.ObjectId>>;
-  latestMessage: Types.ObjectId;
+  latestMessageTimestamp: Number;
 }
 
 interface IConversation extends IConversationDocument {
-  addMessage(message: IMessage): null;
+  addMessage(message: IMessage): Promise<void>;
 }
 
 const ConversationSchema = new Schema<IConversation>({
@@ -35,9 +36,8 @@ const ConversationSchema = new Schema<IConversation>({
         index: true
     },
   ],
-  latestMessage: {
-    type: Schema.Types.ObjectId,
-    ref: "Message"
+  latestMessageTimestamp: {
+    type: Number
   }
 });
 
@@ -48,7 +48,7 @@ ConversationSchema.virtual('conversationUsers', {
   justOne: false
 })
 
-ConversationSchema.method("addMessage", async function (message) {
+ConversationSchema.method("addMessage", async function (message: IMessage) {
   const latestContainer = await MessageContainer.findById(this.messages[this.messages.length - 1]);
   if (latestContainer && latestContainer.messages.length < 50) {
     latestContainer.messages.push(message._id);
@@ -60,8 +60,9 @@ ConversationSchema.method("addMessage", async function (message) {
     });
     await container.save();
     this.messages.push(container);
-    await this.save();
   }
+  this.latestMessageTimestamp = message.timestamp;
+  await this.save()
 });
 
 ConversationSchema.pre('deleteOne', async function () {

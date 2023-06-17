@@ -19,7 +19,7 @@ import { getConversations } from "./routes/socket/user_router";
 
 mongoose
   .connect(
-    process.env.MONGO_URI as string
+    process.env.MONGO_URI!
   )
   .then(() => {
     console.log("Connected to DB");
@@ -62,7 +62,7 @@ io.on("connection", async (socket: Socket) => {
   editMessage(io, socket, connectedClients);
   deleteMessage(io, socket, connectedClients);
 
-  createConversation(socket);
+  createConversation(io, socket, connectedClients);
   deleteConversation(io, socket, connectedClients);
   addUser(io, socket, connectedClients);
   removeUser(io, socket, connectedClients);
