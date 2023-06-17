@@ -1,29 +1,32 @@
 import { Conversation } from "../../models/Conversation";
 import { User } from "../../models/User";
 
-export async function createConversation(data) {
-  try {
-    const { users } = data;
+export async function createConversation(data: any) {
+	try {
+		const { receiverId, senderId } = data;
 
-    const newChat = {
-      conversationType: "individual",
-      users: users,
-    };
+		const newChat = {
+			conversationType: "individual",
+			users: [receiverId, senderId],
+		};
+		console.log(newChat);
 
-    const conv = await Conversation.create(newChat);
-    const user = await User.updateMany(
-      { userId: { $in: users } },
-      { $push: { conversations: conv._id } }
-    );
+		const users = [receiverId, senderId];
 
-    if (!conv) {
-      return console.log("Failed to create conversation");
-    }
+		const conv = await Conversation.create(newChat);
+		const user = await User.updateMany(
+			{ userId: { $in: users } },
+			{ $push: { conversations: conv._id } }
+		);
 
-    console.log("Conversation Created");
+		if (!conv) {
+			return console.log("Failed to create conversation");
+		}
 
-    console.log(`Conversation of Type ${conv.conversationType} created`, conv);
-  } catch (e) {
-    console.log("Unable to create: ", e);
-  }
+		console.log("Conversation Created");
+
+		console.log(`Conversation of Type ${conv.conversationType} created`, conv);
+	} catch (e) {
+		console.log("Unable to create: ", e);
+	}
 }
