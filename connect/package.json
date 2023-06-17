@@ -1,7 +1,7 @@
 {
 	"name": "connections",
 	"scripts": {
-		"start": "ts-node-dev --poll app.ts",
+		"start": "ts-node-dev --poll src/index.ts",
 		"test": "jest --rootDir=tests --testMatch='**/*.test.ts' --preset='ts-jest'"
 	},
 	"dependencies": {

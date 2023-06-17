@@ -2,8 +2,8 @@ import mongoose from "mongoose";
 import { User } from "../../models/user";
 import { request } from "../../models/request";
 import express, { Request, Response } from "express";
-import { publishMessage } from "./idkwhattonamethis/kafkaproducer";
-import { insertionSort } from "./idkwhattonamethis/sort";
+import { publishMessage } from "./kafka-ops/kafkaproducer";
+import { insertionSort } from "./functions/sort";
 
 import { sendRequest } from "./friendrequests";
 
