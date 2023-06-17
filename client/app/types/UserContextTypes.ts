@@ -8,8 +8,26 @@ export interface Conversation {
 	conversationType: string;
 	users: string[];
 	messages: string[];
-	latestMessage: string;
+	latestMessageTimestamp: Date;
 	_id: string;
+}
+
+export interface ActiveConversation {
+	title: string;
+	conversationId: string;
+	latestMessageTimestamp: Date;
+}
+
+export interface Message {
+	senderId: string;
+	senderUsername: string;
+	message: string;
+	timestamp: Date;
+	_id: string;
+}
+
+export interface Messages {
+	[conversationId: string]: Message[];
 }
 
 export interface UserContextProps {
@@ -19,8 +37,12 @@ export interface UserContextProps {
 	setUsername: (username: string | null) => void;
 	friends: Friend[];
 	setFriends: (friends: Friend[]) => void;
-	activeConversation: string | null;
-	setActiveConversation: (activeConversation: string | null) => void;
-	conversations: Conversation[]; // acts like a cache, {conversationId: message[]}
+	activeConversation: ActiveConversation | null;
+	setActiveConversation: React.Dispatch<
+		React.SetStateAction<ActiveConversation | null>
+	>;
+	conversations: Conversation[];
 	setConversations: (conversations: Conversation[]) => void;
+	messages: Messages;
+	setMessages: React.Dispatch<React.SetStateAction<Messages>>;
 }

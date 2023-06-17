@@ -18,12 +18,14 @@ function ConversationList() {
 
 						return (
 							<ConversationCard
-								altText={"Conversation"}
+								altText={conversation.title}
 								//imageUrl={conversation.conversationImageUrl}
 								users={conversation.users}
 								key={conversation._id}
 								type={conversation.conversationType}
 								conversationName={conversation.title}
+								conversationId={conversation._id}
+								latestMessageTimestamp={conversation.latestMessageTimestamp}
 							/>
 						);
 					})}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import React from "react";
 import UserMessages from "./UserMessages";
 import { debounce } from "lodash";
@@ -8,11 +8,37 @@ import DownArrowIcon from "@/app/components/Icons/DownArrowIcon";
 import SentMessage from "./SentMessage";
 import useUserMessages from "@/app/custom-hooks/useUserMessages";
 import ChatDate from "./ChatDate";
+import messageSocket from "@/app/sockets/messageSocket";
+import { UserContext } from "@/app/Context/UserContext";
+import { Messages } from "@/app/types/UserContextTypes";
 
 function ChatMessages() {
 	const scrollRef = useRef<HTMLDivElement>(null);
 	const [showScrollButton, setShowScrollButton] = useState(false);
 	const { sortedUserMessages, loading } = useUserMessages();
+	const { activeConversation, setMessages } = useContext(UserContext);
+
+	messageSocket.on("sentMessage", (socketEvent) => {
+		if (socketEvent.data) {
+			const { message, conversationId } = socketEvent.data;
+
+			if (!activeConversation) return;
+
+			if (activeConversation.conversationId === conversationId) {
+				setMessages((prevMessages: Messages) => {
+					let activeMessages = prevMessages[activeConversation.conversationId];
+					activeMessages.push(socketEvent.data.message);
+
+					const updatedMessages: Messages = {
+						...prevMessages,
+						[activeConversation.conversationId]: activeMessages,
+					};
+					return updatedMessages;
+				});
+			}
+			return;
+		}
+	});
 
 	function scrollToBottom() {
 		if (scrollRef.current) {
@@ -65,39 +91,39 @@ function ChatMessages() {
 			{sortedUserMessages.map((message) => {
 				if (message.renderUserMessage && message.renderDatestamp) {
 					return (
-						<React.Fragment key={message.timeStamp.getTime()}>
+						<React.Fragment key={message.timestamp.getTime()}>
 							<ChatDate
-								timeStamp={message.timeStamp}
-								key={message.timeStamp.getTime()}
+								timeStamp={message.timestamp}
+								key={message.timestamp.getTime()}
 							/>
 							<UserMessages
-								sender={message.sender}
-								receiver={message.receiver}
+								senderUsername={message.senderUsername}
+								senderId={message.senderId}
 								message={message.message}
-								messageId={message.messageId}
-								timeStamp={message.timeStamp}
-								key={message.messageId}
+								_id={message._id}
+								timestamp={message.timestamp}
+								key={message._id}
 							/>
 						</React.Fragment>
 					);
 				}
 				return message.renderUserMessage ? (
 					<UserMessages
-						sender={message.sender}
-						receiver={message.receiver}
+						senderUsername={message.senderUsername}
+						senderId={message.senderId}
 						message={message.message}
-						messageId={message.messageId}
-						timeStamp={message.timeStamp}
-						key={message.messageId}
+						_id={message._id}
+						timestamp={message.timestamp}
+						key={message._id}
 					/>
 				) : (
 					<SentMessage
-						sender={message.sender}
-						receiver={message.receiver}
+						senderUsername={message.senderUsername}
+						senderId={message.senderId}
 						message={message.message}
-						messageId={message.messageId}
-						timeStamp={message.timeStamp}
-						key={message.messageId}
+						_id={message._id}
+						timestamp={message.timestamp}
+						key={message._id}
 						type="consecutiveMessage"
 					/>
 				);

@@ -1,18 +1,15 @@
 "use client";
 
-import {
-	useRef,
-	useState,
-	useEffect,
-	useContext,
-	ChangeEvent,
-	KeyboardEvent,
-} from "react";
+import { useRef, useState, useEffect, useContext } from "react";
 import EmojiIcon from "../../Icons/EmojiIcon";
 import FileClipIcon from "../../Icons/FileClipIcon";
 import SendIcon from "../../Icons/SendIcon";
+import messageSocket from "@/app/sockets/messageSocket";
+import { UserContext } from "@/app/Context/UserContext";
 
 function ChatInput() {
+	const { activeConversation, userId } = useContext(UserContext);
+
 	const inputRef = useRef<HTMLTextAreaElement>(null);
 	const [inputValue, setInputValue] = useState("");
 	const [isScrollbarVisible, setIsScrollbarVisible] = useState(false);
@@ -41,9 +38,24 @@ function ChatInput() {
 		if (event.key === "Enter") {
 			event.preventDefault();
 			// Handle submission logic here
+			sendMessage();
 			setInputValue("");
 		}
 	};
+
+	async function sendMessage() {
+		if (activeConversation) {
+			try {
+				messageSocket.emit("sendMessage", {
+					conversationId: activeConversation?.conversationId,
+					userId: userId,
+					message: inputValue,
+				});
+			} catch (error) {
+				console.log(error);
+			}
+		}
+	}
 
 	return (
 		<div className="mx-5 rounded-xl bg-zinc-700 my-3 flex items-end">
@@ -62,7 +74,7 @@ function ChatInput() {
 				value={inputValue}
 			/>
 
-			<button className="px-3 pb-2">
+			<button className="px-3 pb-2" onClick={sendMessage}>
 				<SendIcon className={iconClassNames} />
 			</button>
 		</div>
