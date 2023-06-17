@@ -61,9 +61,9 @@ export const sendMessage = (
       let result = await socketsInConversation(conv, connectedClients);
 
       io.sockets.to(result as string[]).emit("sentMessage", {
-        message: "Message Sent",
-        data: createdMessage,
-      });
+				message: "Message Sent",
+				data: { message: createdMessage, conversationId },
+			});
     } catch (e) {
       socket.emit("requestError", {
         message: "Server Error (Send Message)",

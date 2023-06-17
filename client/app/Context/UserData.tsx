@@ -55,7 +55,7 @@ export function UserData({ children }: { children: React.ReactNode }) {
 	}, [usernameSWR, setUsername, setFriends, userIdSWR]);
 
 	useEffect(() => {
-		async function getUserConversations() {
+		function getUserConversations() {
 			try {
 				messageSocket.emit("getConversations", {
 					userId: userIdSWR,
