@@ -8,7 +8,7 @@ export interface SimpleProducer {
 
 const kafka = new Kafka({
 	clientId: "auth-service",
-	brokers: ["localhost:9092"],
+	brokers: ["kafka-srv:9092"],
 });
 
 export class authProducer implements SimpleProducer {
