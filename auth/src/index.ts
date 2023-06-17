@@ -13,7 +13,7 @@ import mongoose from "mongoose";
 import cors from "cors";
 
 const app = express();
-require("dotenv").config({path: "../.env"});
+require("dotenv").config();
 
 PassportConfig(passport);
 
