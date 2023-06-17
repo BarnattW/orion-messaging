@@ -1,7 +1,5 @@
 import {
   Consumer,
-  ConsumerSubscribeTopics,
-  EachBatchPayload,
   EachMessagePayload,
 } from "kafkajs";
 import { kafka } from "./kafka";

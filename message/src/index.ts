@@ -17,6 +17,8 @@ import { deleteMessage, editMessage, getMessages,
 import { messageConsumer } from "./kafka/kafka_consumer";
 import { getConversations } from "./routes/socket/user_router";
 
+require("dotenv").config()
+
 mongoose
   .connect(
     process.env.MONGO_URI as string
@@ -62,7 +64,7 @@ io.on("connection", async (socket: Socket) => {
   editMessage(io, socket, connectedClients);
   deleteMessage(io, socket, connectedClients);
 
-  createConversation(socket);
+  createConversation(io, socket, connectedClients);
   deleteConversation(io, socket, connectedClients);
   addUser(io, socket, connectedClients);
   removeUser(io, socket, connectedClients);

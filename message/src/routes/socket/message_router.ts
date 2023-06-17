@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Types } from "mongoose";
 import { User } from "../../models/User";
 import { Message } from "../../models/Message";
 import { Conversation } from "../../models/Conversation";
@@ -14,9 +14,9 @@ export const sendMessage = (
 ) => {
   socket.on("sendMessage", async (data) => {
     try {
-      console.log("Event received")
+      console.log("Event received");
       const { conversationId, userId, message } = data;
-      console.log(data)
+      console.log(data);
       const conv = await Conversation.findById(conversationId);
 
       if (!conv) {
@@ -59,20 +59,23 @@ export const sendMessage = (
   });
 };
 
-export const getMessages = (
-  socket: Socket,
-) => {
+export const getMessages = (socket: Socket) => {
   socket.on("getMessages", async (data) => {
     try {
-      const { conversationId, timestamp } = data;
+      const {
+        conversationId,
+        timestamp,
+      }: { conversationId: Types.ObjectId; timestamp: number } = data;
 
       console.log(timestamp);
       const convo = await Conversation.findById(conversationId);
 
       const message = await MessageContainer.findOne({
-        _id: { $in: convo?.messages},
-        timeCreated: { $lt: timestamp }
-      }).sort({ timeCreated: -1 }).populate('messages');
+        _id: { $in: convo?.messages },
+        timeCreated: { $lt: timestamp },
+      })
+        .sort({ timeCreated: -1 })
+        .populate("messages");
 
       console.log(message?.messages);
 
@@ -94,8 +97,8 @@ export const getMessages = (
     } catch (e) {
       console.log("Unable to get messages: ", e);
       socket.emit("requestError", {
-        message: "Server Error (Get Message)"
-      })
+        message: "Server Error (Get Message)",
+      });
     }
   });
 };
@@ -107,7 +110,8 @@ export const editMessage = (
 ) => {
   socket.on("editMessage", async (data) => {
     try {
-      const { messageId, text } = data;
+      const { messageId, text }: { messageId: Types.ObjectId; text: string } =
+        data;
       const message = await Message.findById(messageId);
       if (!message) {
         console.log("Message doesn't exist");
@@ -139,8 +143,8 @@ export const editMessage = (
     } catch (e) {
       console.log("Unable to edit message");
       socket.emit("requestError", {
-        message: "Server Error (Edit Message)"
-      })
+        message: "Server Error (Edit Message)",
+      });
     }
   });
 };
@@ -152,7 +156,7 @@ export const deleteMessage = (
 ) => {
   socket.on("deleteMessage", async (data) => {
     try {
-      const { messageId } = data;
+      const { messageId }: { messageId: Types.ObjectId } = data;
 
       console.log(messageId);
       const message = await Message.findByIdAndDelete(messageId);
@@ -166,24 +170,31 @@ export const deleteMessage = (
         { $pull: { messages: messageId } }
       );
 
-      const conversation = await Conversation.findOne({ messages: messageContainer?._id})
+      const conversation = await Conversation.findOne({
+        messages: messageContainer?._id,
+      });
 
       if (!conversation) {
-        console.log("Message in messageContainer does not exist in a conversation");
+        console.log(
+          "Message in messageContainer does not exist in a conversation"
+        );
         return;
       }
 
-      const result = await socketsInConversation(conversation, connectedClients);
+      const result = await socketsInConversation(
+        conversation,
+        connectedClients
+      );
 
       io.to(result as string[]).emit("deletedMessage", {
         message: `Delete message ${messageId}`,
-        data: message
-      })
+        data: message,
+      });
     } catch (e) {
       console.log("Unable to delete message: ", e);
       socket.emit("requestError", {
-        message: "Server Error (Delete Message)"
-      })
+        message: "Server Error (Delete Message)",
+      });
     }
   });
 };
