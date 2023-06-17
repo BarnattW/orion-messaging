@@ -44,22 +44,23 @@ export class messageConsumer implements SimpleConsumer {
   }
 
   public async handle(messagePayload: EachMessagePayload): Promise<void> {
-    const { topic, partition, message } = messagePayload;
-    const value = message.value?.toString();
-    console.log(value);
+		const { topic, partition, message } = messagePayload;
+		console.log(messagePayload);
+		//@ts-ignore
+		const customMessage = JSON.parse(message.value?.toString());
 
-    const parsedMessage = JSON.parse(value as string);
-    const messageType = parsedMessage.messageType;
-    const data = parsedMessage.data;
+		const { value, messageType } = customMessage;
 
-    if (topic == "user-data" && messageType == "data") {
-      createUser(data);
-    }
-    
-    if (topic == "friends" && messageType == "request-accepted") {
-      createConversation(data);
-    }
-  }
+		console.log(customMessage, messageType);
+
+		if (topic == "user-data" && messageType == "data") {
+			createUser(value);
+		}
+
+		if (topic == "friends" && messageType == "request-accepted") {
+			createConversation(value);
+		}
+	}
 
   public async disconnect(): Promise<void> {
     try {

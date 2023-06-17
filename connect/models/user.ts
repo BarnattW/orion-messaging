@@ -39,7 +39,7 @@ const UserSchema = new Schema<IUser>({
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Request",
 		},
-	],
+	]
 });
 
 UserSchema.pre('save', function (next) {
