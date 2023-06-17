@@ -5,7 +5,7 @@ function ReceivedRequestCard(friendRequestCardProps: RequestCardProps) {
 	async function acceptRequest() {
 		try {
 			const response = await fetch(
-				`/api/connect/acceptFriendRequest/:requestId`,
+				`/api/connect/acceptFriendRequest/${friendRequestCardProps.requestId}`,
 				{
 					method: "PUT",
 					headers: {
@@ -51,7 +51,9 @@ function ReceivedRequestCard(friendRequestCardProps: RequestCardProps) {
 				<div className="relative z-0">
 					<Avatar
 						imageUrl="/friend-icon.svg"
-						altText={friendRequestCardProps.altText}
+						altText={friendRequestCardProps.username}
+						username={friendRequestCardProps.username}
+						type="default"
 					/>
 				</div>
 				<div className="flex-1 overflow-hidden">

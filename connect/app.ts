@@ -91,9 +91,9 @@ async function run() {
 						console.log(`Saved user: ${savedUser}`);
 						const userData = {
 							username: savedUser.username,
-							userId: savedUser.userId
-						}
-						publishMessage("user-data", userData, "data");
+							userId: savedUser.userId,
+						};
+						publishMessage("user-data", JSON.stringify(userData), "data");
 					})
 					.catch((error) => {
 						console.error("Error saving user:", error);

@@ -24,7 +24,6 @@ function FriendRequests() {
 						"Content-Type": "application/json",
 					},
 				});
-				console.log(response);
 
 				if (!response.ok) {
 					// update with common error handling
@@ -32,10 +31,9 @@ function FriendRequests() {
 				}
 
 				const friendRequests = await response.json();
-				console.log(friendRequests);
 				setFriendRequests({
-					receivedRequests: friendRequests.outgoing,
-					sentRequests: friendRequests.incoming,
+					receivedRequests: friendRequests.incoming,
+					sentRequests: friendRequests.outgoing,
 				});
 			} catch (error) {
 				console.log(error);

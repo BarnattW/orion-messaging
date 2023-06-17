@@ -70,10 +70,9 @@ router.get(
 			const friends = await User.find({ userId: { $in: user.friends } }).exec();
 
 			// Extract only the usernames from the friends array
-			const friendUsernames = friends.map((friend) => friend.username);
+			//const friendUsernames = friends.map((friend) => friend.username);
 
-			return res.status(200).json({ friends: friendUsernames });
-			
+			return res.status(200).json({ friends });
 		} catch (error) {
 			console.error("Error getting friends:", error);
 
