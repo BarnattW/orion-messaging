@@ -1,4 +1,4 @@
-/// <reference path="../environment.d.ts" />
+/// <reference path="../../environment.d.ts" />
 
 import passport from "passport";
 import { User } from "../models/User";

@@ -3,17 +3,17 @@ import cookieParser from 'cookie-parser';
 import cookieSession from 'cookie-session';
 import cookie from "cookie-parser";
 import passport from "passport";
-import { googleRouter } from "./routes/google_router";
-import { PassportConfig } from "./config/passport_config";
-import { facebookRouter } from "./routes/facebook_router";
-import { githubRouter } from "./routes/github_router";
-import { userRouter } from "./routes/user_router";
-import { logoutRouter } from "./routes/logout_router";
+import { googleRouter } from "../src/routes/google_router";
+import { PassportConfig } from "../src/config/passport_config";
+import { facebookRouter } from "../src/routes/facebook_router";
+import { githubRouter } from "../src/routes/github_router";
+import { userRouter } from "../src/routes/user_router";
+import { logoutRouter } from "../src/routes/logout_router";
 import mongoose from "mongoose";
 import cors from "cors";
 
 const app = express();
-require("dotenv").config();
+require("dotenv").config({path: "../.env"});
 
 PassportConfig(passport);
 
