@@ -17,28 +17,29 @@ interface IConversation extends IConversationDocument {
 }
 
 const ConversationSchema = new Schema<IConversation>({
-  title: {
-    type: String
-  },
-  conversationType: {
-    type: String,
-    enum: ["group", "individual"],
-  },
-  users: [
-    {
-      type: String
-    },
-  ],
-  messages: [
-    {
-        type: Schema.Types.ObjectId,
-        ref: "MessageContainer",
-        index: true
-    },
-  ],
-  latestMessageTimestamp: {
-    type: Number
-  }
+	title: {
+		type: String,
+	},
+	conversationType: {
+		type: String,
+		enum: ["group", "individual"],
+	},
+	users: [
+		{
+			type: String,
+		},
+	],
+	messages: [
+		{
+			type: Schema.Types.ObjectId,
+			ref: "MessageContainer",
+			index: true,
+		},
+	],
+	latestMessageTimestamp: {
+		type: Number,
+		default: Date.now(),
+	},
 });
 
 ConversationSchema.virtual('conversationUsers', {

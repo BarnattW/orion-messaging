@@ -16,13 +16,14 @@ const useUserMessages = () => {
 	useEffect(() => {
 		function getMessages() {
 			if (activeConversation) {
+				console.log(activeConversation);
 				try {
 					messageSocket.emit("getMessages", {
 						conversationId: activeConversation.conversationId,
 						timestamp: activeConversation.latestMessageTimestamp,
 					});
 					messageSocket.on("gotMessages", (socketEvent) => {
-						console.log(socketEvent);
+						console.log(socketEvent, "hello");
 						if (socketEvent.data) {
 							setMessages((prevMessages: Messages) => {
 								const updatedMessages: Messages = {

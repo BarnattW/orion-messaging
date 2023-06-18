@@ -100,13 +100,13 @@ export const getMessages = (socket: Socket) => {
         });
       }
 
-      socket.emit("gotMessage", {
-        message: "Message Received",
-        data: {
-          timestamp: message?.timeCreated,
-          messages: message?.messages,
-        },
-      });
+      socket.emit("gotMessages", {
+				message: "Message Received",
+				data: {
+					timestamp: message?.timeCreated,
+					messages: message?.messages,
+				},
+			});
     } catch (e) {
       console.log("Unable to get messages: ", e);
       socket.emit("requestError", {

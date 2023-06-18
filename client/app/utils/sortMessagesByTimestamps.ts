@@ -1,6 +1,9 @@
 import { Message } from "../types/UserContextTypes";
 
 const sortMessagesByTimestamps = function (userMessages: Message[]) {
+	if (userMessages === undefined) {
+		return [];
+	}
 	const sortedMessages = userMessages.map((message, i) => {
 		const currentTime = message.timestamp.getTime();
 		const prevMessageTime = i > 0 ? userMessages[i - 1].timestamp.getTime() : 0;
