@@ -100,6 +100,12 @@ export const getMessages = (socket: Socket) => {
         });
       }
 
+      if (!message?.messages){
+        return socket.emit("gotMessages", {
+          message: "No messages left"
+        })
+      }
+      
       socket.emit("gotMessages", {
 				message: "Message Received",
 				data: {
