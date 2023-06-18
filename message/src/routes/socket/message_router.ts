@@ -43,7 +43,7 @@ export const sendMessage = (
         senderId: userId,
         senderUsername: user?.username,
         message: message,
-        timestamp: Date.now(),
+        timestamp: new Date()
       };
 
       const createdMessage = await Message.create(sentMessage);
@@ -79,7 +79,7 @@ export const getMessages = (socket: Socket) => {
       const {
         conversationId,
         timestamp,
-      }: { conversationId: Types.ObjectId; timestamp: number } = data;
+      }: { conversationId: Types.ObjectId; timestamp: Date } = data;
 
       console.log(timestamp);
       const convo = await Conversation.findById(conversationId);
@@ -105,7 +105,7 @@ export const getMessages = (socket: Socket) => {
           message: "No messages left"
         })
       }
-      
+
       socket.emit("gotMessages", {
 				message: "Message Received",
 				data: {

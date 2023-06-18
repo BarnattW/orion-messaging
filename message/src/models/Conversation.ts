@@ -9,7 +9,7 @@ interface IConversationDocument {
   conversationType: "group" | "individual";
   users: Types.Array<string>;
   messages: Types.Array<Types.Array<Types.ObjectId>>;
-  latestMessageTimestamp: Number;
+  latestMessageTimestamp: Date;
 }
 
 interface IConversation extends IConversationDocument {
@@ -37,8 +37,8 @@ const ConversationSchema = new Schema<IConversation>({
 		},
 	],
 	latestMessageTimestamp: {
-		type: Number,
-		default: Date.now(),
+		type: Date,
+		default: new Date(),
 	},
 });
 
