@@ -1,34 +1,48 @@
-import mongoose from "mongoose";
-import { User } from "../../models/user";
-import { request } from "../../models/request";
+import { IUser, User } from "../../models/user";
 import express, { Request, Response } from "express";
-import { insertionSort } from "./idkwhattonamethis/sort";
+import { insertionSort } from "./functions/sort";
+import { consumer } from "./kafka-ops/kafkaproducer";
+import { publishMessage } from "./kafka-ops/kafkaproducer";
+import { KafkaMessage } from "kafkajs";
 
 const router = express.Router();
 
-router.post("/api/connect/createUser", async (req: Request, res: Response) => {
-	try {
-		const { userId } = req.body;
+export async function createUser() {
+	await consumer.connect();
+	await consumer.subscribe({
+		topic: "user-created",
+		fromBeginning: true,
+	});
 
-		const newUser = new User({
-			onlineStatus: true,
-			userId: userId,
-			friends: [],
-			incomingrequests: [],
-			outgoingrequests: [],
-		});
-
-		await newUser.save();
-		return res.status(201).json({
-			message: "user ${username} created",
-			data: newUser,
-		});
-	} catch (error) {
-		console.error("Error creating user:", error);
-
-		return res.status(500).json({ message: "Server error" });
-	}
-});
+	await consumer.run({
+		eachMessage: async ({ topic, partition, message }: {
+			topic: string,
+			partition: number,
+			message: KafkaMessage
+		  }) => {
+			if (message.value){
+				console.log(`Received message: ${message.value}`);
+				const newUser = new User();
+				//@ts-ignore
+				newUser.userId = message.value; //assuming message is a json with userId
+				newUser
+					.save()
+					.then((savedUser: IUser) => {
+						console.log(`Saved user: ${savedUser}`);
+						const userData = {
+							username: savedUser.username,
+							userId: savedUser.userId,
+						};
+						publishMessage("user-data", userData, "data");
+					})
+					.catch((error) => {
+						console.error("Error saving user:", error);
+					});
+			}
+			
+		},
+	});
+}
 
 router.put("/api/connect/onlineStatus", async (req: Request, res: Response) => {
 	try {
@@ -88,6 +102,7 @@ router.get(
 	async (req: Request, res: Response) => {
 		try {
 			const { userId } = req.params;
+			console.log(userId);
 
 			const user = await User.findOne({ userId: userId });
 			console.log(user);
@@ -102,4 +117,4 @@ router.get(
 	}
 );
 
-export const createUser = router;
+export const userOps = router;

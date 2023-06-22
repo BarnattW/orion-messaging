@@ -2,11 +2,11 @@ import { UserProfileCardProps } from "@/app/types/UserProfile";
 import Avatar from "../Avatar/Avatar";
 import MessageIcon from "../../Icons/MessageIcon";
 import Image from "next/image";
-import { ForwardedRef, forwardRef, useContext, useState } from "react";
+import { ForwardedRef, forwardRef, useState } from "react";
 import ExitIcon from "../../Icons/ExitIcon";
 import OptionsIcon from "../../Icons/OptionsIcon";
 import OptionsPopout from "./OptionsPopout";
-import { UserContext } from "@/app/Context/UserContext";
+import { useUserStore } from "@/app/store/userStore";
 
 const UserProfileCard = forwardRef(function (
 	{ username, userId, imageUrl }: UserProfileCardProps,
@@ -15,8 +15,8 @@ const UserProfileCard = forwardRef(function (
 	const iconClassNames: string =
 		"fill-neutral-200 hover:fill-gray-400 h-8 w-8 hover:cursor-pointer";
 	const [toggleOptionsPopout, setToggleOptionsPopout] = useState(false);
-	const currentUsername = useContext(UserContext).username;
-	const currentUserId = useContext(UserContext).userId;
+	const currentUsername = useUserStore((state) => state.username);
+	const currentUserId = useUserStore((state) => state.userId);
 	// implement userId props and fetch data that way
 	function closeProfile() {
 		if (ref && "current" in ref && ref.current) {

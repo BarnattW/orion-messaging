@@ -1,18 +1,23 @@
 "use client";
 
-import {
-	useRef,
-	useState,
-	useEffect,
-	useContext,
-	ChangeEvent,
-	KeyboardEvent,
-} from "react";
+import { useRef, useState, useEffect } from "react";
 import EmojiIcon from "../../Icons/EmojiIcon";
 import FileClipIcon from "../../Icons/FileClipIcon";
 import SendIcon from "../../Icons/SendIcon";
+import messageSocket from "@/app/sockets/messageSocket";
+import { useUserStore } from "@/app/store/userStore";
+import { shallow } from "zustand/shallow";
+import EmojiPicker from "emoji-picker-react";
 
 function ChatInput() {
+	const { activeConversation, userId } = useUserStore(
+		(state) => ({
+			activeConversation: state.activeConversation,
+			userId: state.userId,
+		}),
+		shallow
+	);
+
 	const inputRef = useRef<HTMLTextAreaElement>(null);
 	const [inputValue, setInputValue] = useState("");
 	const [isScrollbarVisible, setIsScrollbarVisible] = useState(false);
@@ -41,20 +46,41 @@ function ChatInput() {
 		if (event.key === "Enter") {
 			event.preventDefault();
 			// Handle submission logic here
-			setInputValue("");
+			sendMessage();
 		}
 	};
+
+	function toggleEmojiPicker() {
+		console.log("toggle");
+	}
+
+	async function sendMessage() {
+		if (activeConversation) {
+			try {
+				messageSocket.emit("sendMessage", {
+					conversationId: activeConversation?.conversationId,
+					userId: userId,
+					message: inputValue,
+				});
+				setInputValue("");
+			} catch (error) {
+				console.log(error);
+			}
+		}
+	}
 
 	return (
 		<div className="mx-5 rounded-xl bg-zinc-700 my-3 flex items-end">
 			<div className="flex px-3 gap-3 pb-2">
 				<FileClipIcon className={iconClassNames} />
-				<EmojiIcon className={iconClassNames} />
+				<div onClick={toggleEmojiPicker}>
+					<EmojiIcon className={iconClassNames} />
+				</div>
 			</div>
 			<textarea
 				ref={inputRef}
 				rows={1}
-				className={`grow max-h-[50vh] overflow-y-auto bg-zinc-700 rounded-xl outline-none px-3 py-2 scrollbar-thin resize-none ${
+				className={`grow max-h-[50vh] overflow-y-auto bg-zinc-700 rounded-xl outline-none px-3 py-2 scrollbar-thin resize-none w-full ${
 					isScrollbarVisible ? "scrollbar-thumb-neutral-800" : "scrollbar-none"
 				}`}
 				onInput={handleInput}
@@ -62,7 +88,7 @@ function ChatInput() {
 				value={inputValue}
 			/>
 
-			<button className="px-3 pb-2">
+			<button className="px-3 pb-2" onClick={sendMessage}>
 				<SendIcon className={iconClassNames} />
 			</button>
 		</div>

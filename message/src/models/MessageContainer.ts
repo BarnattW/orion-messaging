@@ -4,7 +4,7 @@ import { Conversation } from "./Conversation";
 interface IMessageContainer {
   _id: Types.ObjectId;
   messages: Array<Types.ObjectId>;
-  timeCreated: Number
+  timeCreated: Date
 }
 
 const MessageContainerSchema = new Schema<IMessageContainer>({
@@ -13,7 +13,7 @@ const MessageContainerSchema = new Schema<IMessageContainer>({
     ref: "Message"
   }],
   timeCreated: {
-    type: Number
+    type: Date
   }
 });
 

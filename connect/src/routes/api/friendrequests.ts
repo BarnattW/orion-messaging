@@ -2,8 +2,8 @@ import mongoose from "mongoose";
 import { User } from "../../models/user";
 import { request } from "../../models/request";
 import express, { Request, Response } from "express";
-import { publishMessage } from "./idkwhattonamethis/kafkaproducer";
-import { insertionSort } from "./idkwhattonamethis/sort";
+import { publishMessage } from "./kafka-ops/kafkaproducer";
+import { insertionSort } from "./functions/sort";
 
 const router = express.Router();
 
@@ -28,27 +28,29 @@ export const sendRequest = async (
 		}
 
 		//check if already friends
-		if (sender.friends.includes(receiver.userId)) {
-			return res
-			  .status(400)
-			  .json({ message: `${receiverUsername} is already your friend` });
-		  }
-
-		//check if friendrequest is pending
-		const outgoingRequestIds = sender.outgoingrequests;
-		
-		request.createIndexes();
-
-		const outgoingRequests = await request.find({
-		  _id: { $in: outgoingRequestIds },
-		  requestType: requestType,
-		  receiverId: receiver.userId
-		});
-		console.log(outgoingRequests);
-		if (outgoingRequests.length > 0){
-			return res.status(400).json({ message: `Friend request to ${receiverUsername} is currently pending` });
+		if (requestType === "friend"){
+			if (sender.friends.includes(receiver.userId)) {
+				return res
+				  .status(400)
+				  .json({ message: `${receiverUsername} is already your friend` });
+			  }
+	
+			//check if friendrequest is pending
+			const outgoingRequestIds = sender.outgoingrequests;
+			
+			request.createIndexes();
+	
+			const outgoingRequests = await request.find({
+			  _id: { $in: outgoingRequestIds },
+			  requestType: requestType,
+			  receiverId: receiver.userId
+			});
+			console.log(outgoingRequests);
+			if (outgoingRequests.length > 0){
+				return res.status(400).json({ message: `Friend request to ${receiverUsername} is currently pending` });
+			}
+	
 		}
-
 
 		const newRequest = new request({
 			receiverUsername: receiverUsername,
@@ -113,33 +115,33 @@ router.put(
 			receiver.friends.push(sender.userId);
 
 			// //SORT
-			const populatedSenderFriends = await User.find({
-				userId: { $in: sender.friends },
-			  }).populate("friends", "username");
-			const sortedSenderFriends = insertionSort(
-				populatedSenderFriends,
-				"username"
-			);
-			const sortedSenderFriendIds = sortedSenderFriends.map(
-				(friends) => friends.userId
-			);
-			sender.friends = sortedSenderFriendIds;
+			// const populatedSenderFriends = await User.find({
+			// 	userId: { $in: sender.friends },
+			//   }).populate("friends", "username");
+			// const sortedSenderFriends = insertionSort(
+			// 	populatedSenderFriends,
+			// 	"username"
+			// );
+			// const sortedSenderFriendIds = sortedSenderFriends.map(
+			// 	(friends) => friends.userId
+			// );
+			// sender.friends = sortedSenderFriendIds;
 
-			const populatedReceiverFriends = await User.find({
-				userId: { $in: sender.friends },
-			  }).populate("friends", "username");
-			const sortedReceiverFriends = insertionSort(
-				populatedReceiverFriends,
-				"username"
-			);
+			// const populatedReceiverFriends = await User.find({
+			// 	userId: { $in: sender.friends },
+			//   }).populate("friends", "username");
+			// const sortedReceiverFriends = insertionSort(
+			// 	populatedReceiverFriends,
+			// 	"username"
+			// );
 
-			console.log("senderFriends" + sortedSenderFriends)
-			console.log("receiverFriends" + sortedReceiverFriends)
+			// console.log("senderFriends" + sortedSenderFriends)
+			// console.log("receiverFriends" + sortedReceiverFriends)
 
-			const sortedReceiverFriendIds = sortedReceiverFriends.map(
-				(friends) => friends.userId
-			);
-			receiver.friends = sortedReceiverFriendIds;
+			// const sortedReceiverFriendIds = sortedReceiverFriends.map(
+			// 	(friends) => friends.userId
+			// );
+			// receiver.friends = sortedReceiverFriendIds;
 
 			await sender.save();
 			await receiver.save();
@@ -150,7 +152,7 @@ router.put(
 			}
 
 			//publish to kafka
-			await publishMessage("friends", JSON.stringify(data), "request-accepted");
+			await publishMessage("friends", data, "request-accepted");
 
 			await request.findByIdAndDelete(requestId);
 
@@ -203,7 +205,7 @@ router.put(
 			}
 
 			//publish to kafka
-			//await publishMessage("Friend request rejected", receiver.friends);
+			await publishMessage("friends", receiver, "reject");
 
 			await request.findByIdAndDelete(requestId);
 

@@ -5,7 +5,7 @@ interface IMessage {
   senderId: String;
   senderUsername: String;
   message: String;
-  timestamp: Number;
+  timestamp: Date;
 }
 
 const MessageSchema = new Schema<IMessage>({
@@ -22,7 +22,7 @@ const MessageSchema = new Schema<IMessage>({
     required: true
   },
   timestamp: {
-    type: Number,
+    type: Date,
     required: true
   },
 });

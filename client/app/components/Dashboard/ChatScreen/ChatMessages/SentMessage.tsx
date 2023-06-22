@@ -1,15 +1,7 @@
 import { memo, useState } from "react";
+import { SentMessage } from "@/app/types/Messages";
 
-interface Message {
-	sender: string;
-	receiver: string;
-	message: string;
-	messageId: string;
-	timeStamp: Date;
-	type?: string;
-}
-
-const SentMessage = memo(function SentMessage(message: Message) {
+const SentMessage = memo(function SentMessage(message: SentMessage) {
 	const [showTimestamp, setShowTimestamp] = useState(false);
 
 	const handleMouseEnter = () => {
@@ -32,7 +24,7 @@ const SentMessage = memo(function SentMessage(message: Message) {
 					style={{ whiteSpace: "nowrap" }}
 				>
 					{showTimestamp &&
-						message.timeStamp.toLocaleString(undefined, {
+						message.timestamp.toLocaleString(undefined, {
 							hour: "numeric",
 							minute: "numeric",
 						})}
@@ -47,9 +39,9 @@ const SentMessage = memo(function SentMessage(message: Message) {
 	return (
 		<div className="flex flex-col text-sm ">
 			<div className="flex gap-5">
-				<p className="font-semibold">{message.sender}</p>
+				<p className="font-semibold">{message.senderUsername}</p>
 				<p className="text-xs mt-1 text-neutral-400 shrink-0">
-					{message.timeStamp.toLocaleString(undefined, {
+					{message.timestamp.toLocaleString(undefined, {
 						year: "numeric",
 						month: "long",
 						day: "numeric",

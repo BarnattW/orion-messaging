@@ -1,14 +1,7 @@
 import { memo } from "react";
 import SentMessage from "./SentMessage";
 import UserProfile from "../../UserProfile/UserProfile";
-
-interface Message {
-	sender: string;
-	receiver: string;
-	message: string;
-	messageId: string;
-	timeStamp: Date;
-}
+import { Message } from "@/app/types/UserContextTypes";
 
 const UserMessages = memo(function UserMessages(message: Message) {
 	return (
@@ -16,8 +9,8 @@ const UserMessages = memo(function UserMessages(message: Message) {
 			<div className="mt-1">
 				<UserProfile
 					imageUrl="/friend-icon.png"
-					username={message.sender}
-					userId={message.sender}
+					username={message.senderUsername}
+					userId={message.senderId}
 					type="message"
 				/>
 			</div>

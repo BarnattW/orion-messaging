@@ -8,13 +8,19 @@ import FriendAddIcon from "../Icons/FriendAddIcon";
 import { usePathname, useRouter } from "next/navigation";
 import LogoutIcon from "../Icons/LogoutIcon";
 import Tooltip from "../Tooltip";
-import { useContext } from "react";
-import { UserContext } from "@/app/Context/UserContext";
 import UserProfile from "./UserProfile/UserProfile";
 import Notifications from "./Notifications/Notifications";
+import { useUserStore } from "@/app/store/userStore";
+import { shallow } from "zustand/shallow";
 
 function Sidebar() {
-	const { userId, username } = useContext(UserContext);
+	const { userId, username } = useUserStore(
+		(state) => ({
+			userId: state.userId,
+			username: state.username,
+		}),
+		shallow
+	);
 	const iconClassNames: string = "fill-neutral-500 hover:fill-gray-400 h-6 w-6";
 	const activeIconClassNames: string = "fill-gray-100 h-6 w-6";
 	const pathname = usePathname();

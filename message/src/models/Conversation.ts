@@ -9,7 +9,7 @@ interface IConversationDocument {
   conversationType: "group" | "individual";
   users: Types.Array<string>;
   messages: Types.Array<Types.Array<Types.ObjectId>>;
-  latestMessageTimestamp: Number;
+  latestMessageTimestamp: Date;
 }
 
 interface IConversation extends IConversationDocument {
@@ -17,28 +17,29 @@ interface IConversation extends IConversationDocument {
 }
 
 const ConversationSchema = new Schema<IConversation>({
-  title: {
-    type: String
-  },
-  conversationType: {
-    type: String,
-    enum: ["group", "individual"],
-  },
-  users: [
-    {
-      type: String
-    },
-  ],
-  messages: [
-    {
-        type: Schema.Types.ObjectId,
-        ref: "MessageContainer",
-        index: true
-    },
-  ],
-  latestMessageTimestamp: {
-    type: Number
-  }
+	title: {
+		type: String,
+	},
+	conversationType: {
+		type: String,
+		enum: ["group", "individual"],
+	},
+	users: [
+		{
+			type: String,
+		},
+	],
+	messages: [
+		{
+			type: Schema.Types.ObjectId,
+			ref: "MessageContainer",
+			index: true,
+		},
+	],
+	latestMessageTimestamp: {
+		type: Date,
+		default: new Date(),
+	},
 });
 
 ConversationSchema.virtual('conversationUsers', {
