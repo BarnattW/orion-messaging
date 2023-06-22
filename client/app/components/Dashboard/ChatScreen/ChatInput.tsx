@@ -7,6 +7,7 @@ import SendIcon from "../../Icons/SendIcon";
 import messageSocket from "@/app/sockets/messageSocket";
 import { useUserStore } from "@/app/store/userStore";
 import { shallow } from "zustand/shallow";
+import EmojiPicker from "emoji-picker-react";
 
 function ChatInput() {
 	const { activeConversation, userId } = useUserStore(
@@ -49,6 +50,10 @@ function ChatInput() {
 		}
 	};
 
+	function toggleEmojiPicker() {
+		console.log("toggle");
+	}
+
 	async function sendMessage() {
 		if (activeConversation) {
 			try {
@@ -68,7 +73,9 @@ function ChatInput() {
 		<div className="mx-5 rounded-xl bg-zinc-700 my-3 flex items-end">
 			<div className="flex px-3 gap-3 pb-2">
 				<FileClipIcon className={iconClassNames} />
-				<EmojiIcon className={iconClassNames} />
+				<div onClick={toggleEmojiPicker}>
+					<EmojiIcon className={iconClassNames} />
+				</div>
 			</div>
 			<textarea
 				ref={inputRef}

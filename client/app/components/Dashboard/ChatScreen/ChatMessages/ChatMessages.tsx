@@ -146,17 +146,8 @@ function ChatMessages() {
 			return;
 		}
 
-		console.log(
-			scrollRef.current.scrollTop,
-			scrollRef.current.scrollHeight,
-			scrollRef.current.clientHeight
-		);
 		// show scroll button
-		if (
-			scrollRef.current &&
-			scrollRef.current.scrollTop >
-				scrollRef.current.scrollHeight - scrollRef.current.clientHeight - 100
-		) {
+		if (scrollRef.current && scrollRef.current.scrollTop < -100) {
 			setShowScrollButton(true);
 		} else {
 			setShowScrollButton(false);
