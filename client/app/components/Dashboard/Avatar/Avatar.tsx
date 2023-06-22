@@ -18,7 +18,7 @@ function Avatar({ imageUrl, altText, size = 300, type }: AvatarProps) {
 					src={imageUrl}
 					width={size}
 					height={size}
-					alt={altText}
+					alt={altText || "messages"}
 					className="rounded-full"
 				/>
 			</div>

@@ -13,9 +13,23 @@ export interface Conversation {
 }
 
 export interface ActiveConversation {
-	title: string;
+	title?: string;
 	conversationId: string;
 	latestMessageTimestamp: Date;
+	hasMore: boolean;
+	lastScrollTop: number | null;
+	canLoad: boolean;
+	initialLoadComplete?: boolean;
+}
+
+export interface ActiveConversationFields {
+	title?: string;
+	conversationId?: string;
+	latestMessageTimestamp?: Date;
+	hasMore?: boolean;
+	lastScrollTop?: number | null;
+	canLoad?: boolean;
+	initialLoadComplete?: boolean;
 }
 
 export interface Message {
@@ -24,10 +38,26 @@ export interface Message {
 	message: string;
 	timestamp: Date;
 	_id: string;
+	renderUserMessage?: boolean;
+	renderDatestamp?: boolean;
 }
 
 export interface Messages {
-	[conversationId: string]: Message[];
+	[conversationId: string]: {
+		messages?: Message[];
+		hasMore?: boolean | null;
+		latestMessageTimestamp?: Date;
+		lastScrollTop?: number | null;
+		initialLoadComplete?: boolean;
+	};
+}
+
+export interface MessageFields {
+	messages?: Message[];
+	hasMore?: boolean | null;
+	latestMessageTimestamp?: Date | null;
+	lastScrollTop?: number | null;
+	initialLoadComplete?: boolean;
 }
 
 export interface UserContextProps {

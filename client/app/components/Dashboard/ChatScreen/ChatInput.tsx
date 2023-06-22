@@ -1,14 +1,21 @@
 "use client";
 
-import { useRef, useState, useEffect, useContext } from "react";
+import { useRef, useState, useEffect } from "react";
 import EmojiIcon from "../../Icons/EmojiIcon";
 import FileClipIcon from "../../Icons/FileClipIcon";
 import SendIcon from "../../Icons/SendIcon";
 import messageSocket from "@/app/sockets/messageSocket";
-import { UserContext } from "@/app/Context/UserContext";
+import { useUserStore } from "@/app/store/userStore";
+import { shallow } from "zustand/shallow";
 
 function ChatInput() {
-	const { activeConversation, userId } = useContext(UserContext);
+	const { activeConversation, userId } = useUserStore(
+		(state) => ({
+			activeConversation: state.activeConversation,
+			userId: state.userId,
+		}),
+		shallow
+	);
 
 	const inputRef = useRef<HTMLTextAreaElement>(null);
 	const [inputValue, setInputValue] = useState("");
@@ -39,7 +46,6 @@ function ChatInput() {
 			event.preventDefault();
 			// Handle submission logic here
 			sendMessage();
-			setInputValue("");
 		}
 	};
 
@@ -51,6 +57,7 @@ function ChatInput() {
 					userId: userId,
 					message: inputValue,
 				});
+				setInputValue("");
 			} catch (error) {
 				console.log(error);
 			}
@@ -66,7 +73,7 @@ function ChatInput() {
 			<textarea
 				ref={inputRef}
 				rows={1}
-				className={`grow max-h-[50vh] overflow-y-auto bg-zinc-700 rounded-xl outline-none px-3 py-2 scrollbar-thin resize-none ${
+				className={`grow max-h-[50vh] overflow-y-auto bg-zinc-700 rounded-xl outline-none px-3 py-2 scrollbar-thin resize-none w-full ${
 					isScrollbarVisible ? "scrollbar-thumb-neutral-800" : "scrollbar-none"
 				}`}
 				onInput={handleInput}

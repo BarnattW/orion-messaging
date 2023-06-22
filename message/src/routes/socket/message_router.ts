@@ -74,52 +74,65 @@ export const sendMessage = (
 };
 
 export const getMessages = (socket: Socket) => {
-  socket.on("getMessages", async (data) => {
-    try {
-      const {
-        conversationId,
-        timestamp,
-      }: { conversationId: Types.ObjectId; timestamp: Date } = data;
+	socket.on("getMessages", async (data) => {
+		try {
+			const {
+				conversationId,
+				timestamp,
+			}: { conversationId: Types.ObjectId; timestamp: Date } = data;
 
-      console.log(timestamp);
-      const convo = await Conversation.findById(conversationId);
+			console.log(timestamp);
+			const convo = await Conversation.findById(conversationId);
 
-      const message = await MessageContainer.findOne({
-        _id: { $in: convo?.messages },
-        timeCreated: { $lt: timestamp },
-      })
-        .sort({ timeCreated: -1 })
-        .populate("messages");
+			if (!convo) {
+				console.log("No Conversation");
+				return socket.emit("requestError", {
+					message: "Conversation Doesn't Exist",
+				});
+			}
 
-      console.log(message?.messages);
+			const message = await MessageContainer.findOne({
+				_id: { $in: convo?.messages },
+				timeCreated: { $lt: timestamp },
+			})
+				.sort({ timeCreated: -1 })
+				.populate("messages");
 
-      if (!convo) {
-        console.log("No Conversation");
-        return socket.emit("requestError", {
-          message: "Conversation Doesn't Exist",
-        });
-      }
+			console.log(message?.messages);
 
-      if (!message?.messages){
-        return socket.emit("gotMessages", {
-          message: "No messages left"
-        })
-      }
+			let messages: Types.ObjectId[] = [];
+			let timeCreated = timestamp;
+			let hasMore = false;
 
-      socket.emit("gotMessages", {
+			if (message?.messages) {
+				messages = message.messages;
+				timeCreated = message.timeCreated;
+			}
+
+			const test = await MessageContainer.findOne({
+				_id: { $in: convo?.messages },
+				timeCreated: { $lt: message?.timeCreated },
+			}).sort({ timeCreated: -1 });
+
+			if (test) {
+				hasMore = true;
+			}
+
+			socket.emit("gotMessages", {
 				message: "Message Received",
 				data: {
-					timestamp: message?.timeCreated,
-					messages: message?.messages,
+					timestamp: timeCreated,
+					messages,
+					hasMore,
 				},
 			});
-    } catch (e) {
-      console.log("Unable to get messages: ", e);
-      socket.emit("requestError", {
-        message: "Server Error (Get Message)",
-      });
-    }
-  });
+		} catch (e) {
+			console.log("Unable to get messages: ", e);
+			socket.emit("requestError", {
+				message: "Server Error (Get Message)",
+			});
+		}
+	});
 };
 
 export const editMessage = (

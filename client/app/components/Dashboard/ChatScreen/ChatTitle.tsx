@@ -1,10 +1,15 @@
 "use client";
 
-import { UserContext } from "@/app/Context/UserContext";
-import { useContext } from "react";
+import { useUserStore } from "@/app/store/userStore";
+import { shallow } from "zustand/shallow";
 
 function ChatTitle() {
-	const { activeConversation } = useContext(UserContext);
+	const { activeConversation } = useUserStore(
+		(state) => ({
+			activeConversation: state.activeConversation,
+		}),
+		shallow
+	);
 	const title = activeConversation?.title;
 
 	return (

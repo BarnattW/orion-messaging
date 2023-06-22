@@ -1,11 +1,15 @@
 "use client";
-import { RefObject, useRef, useContext } from "react";
-import { UserContext } from "@/app/Context/UserContext";
+import { RefObject, useRef } from "react";
 import ListHeading from "../ListWrappers/ListHeading";
+import { useUserStore } from "@/app/store/userStore";
+import { shallow } from "zustand/shallow";
 
 function AddFriend() {
 	const addUsername: RefObject<HTMLInputElement> = useRef(null);
-	const { username } = useContext(UserContext);
+	const { username } = useUserStore(
+		(state) => ({ username: state.username }),
+		shallow
+	);
 
 	// submitting friend requests
 	function keyDownHandler(event: React.KeyboardEvent<HTMLInputElement>) {

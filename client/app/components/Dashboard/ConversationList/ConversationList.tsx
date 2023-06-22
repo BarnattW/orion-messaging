@@ -1,13 +1,18 @@
 "use client";
 
-import { useContext } from "react";
+import { useUserStore } from "@/app/store/userStore";
 import ListContainer from "../ListWrappers/ListContainer";
 import ListHeading from "../ListWrappers/ListHeading";
 import ConversationCard from "./ConversationCard";
-import { UserContext } from "@/app/Context/UserContext";
+import { shallow } from "zustand/shallow";
 
 function ConversationList() {
-	const { conversations } = useContext(UserContext);
+	const { conversations } = useUserStore(
+		(state) => ({
+			conversations: state.conversations,
+		}),
+		shallow
+	);
 	return (
 		<ListContainer>
 			<ListHeading>Messages</ListHeading>
