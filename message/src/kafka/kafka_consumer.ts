@@ -5,6 +5,7 @@ import {
 import { kafka } from "./kafka";
 import { createUser } from "../routes/kafka/user_router";
 import { createConversation } from "../routes/kafka/conversation_router";
+import { Socket } from "socket.io";
 
 export interface SimpleConsumer {
   connect(): Promise<void>;
@@ -14,9 +15,11 @@ export interface SimpleConsumer {
 
 export class messageConsumer implements SimpleConsumer {
   private consumer: Consumer;
+  private connectedClients: Map<string, Socket>
 
-  constructor() {
+  constructor(connectedClients: Map<string, Socket>) {
     this.consumer = this.createConsumer();
+    this.connectedClients = connectedClients
   }
 
   private createConsumer(): Consumer {

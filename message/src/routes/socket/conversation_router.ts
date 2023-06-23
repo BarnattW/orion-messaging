@@ -14,6 +14,8 @@ export const createConversation = (
 ) => {
   socket.on("createConversation", async (data) => {
     try {
+
+      // Destructures data to get necessary values
       const {
         title,
         conversationType,
@@ -26,6 +28,7 @@ export const createConversation = (
         users: users,
       };
 
+      // Creates conversation and adds the conversation id to users
       const conv = await Conversation.create(newChat);
       const user = await User.updateMany(
         { userId: { $in: users } },
@@ -42,6 +45,7 @@ export const createConversation = (
 
       console.log("Conversation Created");
 
+      // Finds users connected and emits an event
       const result = await socketsInConversation(conv, connectedClients);
 
       io.to(result as string[]).emit("createdConversation", {
@@ -64,12 +68,15 @@ export const addUser = (
 ) => {
   socket.on("addUser", async (data) => {
     try {
+
+      // Destructures data to get necessary values
       const {
         conversationId,
         userId,
       }: { conversationId: Types.ObjectId; userId: string } = data;
       console.log(data);
 
+      // Finds conversation by given id
       const conv = await Conversation.findById(conversationId);
       if (!conv) {
         console.log("Add User: Conversation not found");
@@ -78,6 +85,7 @@ export const addUser = (
         });
       }
 
+      // Checks if user is already in the conversation
       if (conv.users.includes(userId)) {
         console.log("Add User: User already in conversation");
         return socket.emit("requestError", {
@@ -85,6 +93,7 @@ export const addUser = (
         });
       }
 
+      // Finds the user given userId
       const user = await User.findOne({ userId: userId });
       if (!user) {
         console.log("Add User: User not found");
@@ -93,6 +102,8 @@ export const addUser = (
         });
       }
 
+      // Adds user id to conversation and conversation id
+      // to user
       conv.users.push(userId);
       conv.save();
 
@@ -101,6 +112,7 @@ export const addUser = (
 
       console.log("");
 
+      // Finds users connected and emits an event
       const result = await socketsInConversation(conv, connectedClients);
 
       io.to(result as string[]).emit("addedUser", {
@@ -123,11 +135,15 @@ export const removeUser = (
 ) => {
   socket.on("removeUser", async (data) => {
     try {
+
+      // Destructures data to get necessary values
       const {
         conversationId,
         userId,
       }: { conversationId: Types.ObjectId; userId: string } = data;
 
+      // Finds a user and removes the conversation id from
+      // list of conversations
       const user = await User.findOneAndUpdate(
         { userId: userId },
         { $pull: { conversations: conversationId } }
@@ -139,6 +155,9 @@ export const removeUser = (
           message: "User does not exist",
         });
       }
+
+      // Finds the conversation and removes the user id from
+      // list of users
       const conversation = await Conversation.findOneAndUpdate(
         { _id: conversationId },
         { $pull: { users: userId } }
@@ -151,6 +170,7 @@ export const removeUser = (
         });
       }
 
+      // Finds users connected and emits an event 
       const result = await socketsInConversation(
         conversation,
         connectedClients
@@ -175,8 +195,11 @@ export const removeUser = (
 export const getUsers = (socket: Socket) => {
   socket.on("getUsers", async (data) => {
     try {
+
+      // Destructures data to get necessary values
       const { conversationId }: { conversationId: Types.ObjectId } = data;
 
+      // Finds and populates a conversation's users given conversation id
       const conversation: IConversation | null = await Conversation.findById(
         conversationId
       ).populate("conversationUsers");
@@ -186,6 +209,7 @@ export const getUsers = (socket: Socket) => {
       }
       const users: IUser[] = (conversation as any).conversationUsers;
 
+      // Emits event to socket
       socket.emit("gotUsers", {
         message: `Users of conversation ${conversationId}`,
         data: users,

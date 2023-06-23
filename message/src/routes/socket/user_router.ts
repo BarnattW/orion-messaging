@@ -21,7 +21,7 @@ export const getConversations = (socket: Socket) => {
           message: "User not found",
         });
       }
-
+      
       console.log(user);
 
       socket.emit("gotConversations", {
