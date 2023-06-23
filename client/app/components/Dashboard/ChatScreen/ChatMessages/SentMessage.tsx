@@ -1,4 +1,5 @@
 import { memo, useState } from "react";
+
 import { SentMessage } from "@/app/types/Messages";
 
 const SentMessage = memo(function SentMessage(message: SentMessage) {

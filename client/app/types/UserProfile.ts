@@ -14,6 +14,7 @@ export interface AvatarProps {
 	imageUrl: string;
 	size?: number;
 	type: string;
+	username?: string;
 }
 
 export interface UserProfileCardProps extends UserDetails {

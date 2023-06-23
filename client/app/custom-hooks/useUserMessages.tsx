@@ -1,8 +1,9 @@
-import { useEffect, useState, useRef } from "react";
-import sortMessagesByTimestamps from "../utils/sortMessagesByTimestamps";
+import { useEffect, useRef, useState } from "react";
+import { shallow } from "zustand/shallow";
+
 import messageSocket from "../sockets/messageSocket";
 import { useUserStore } from "../store/userStore";
-import { shallow } from "zustand/shallow";
+import sortMessagesByTimestamps from "../utils/sortMessagesByTimestamps";
 
 const useUserMessages = () => {
 	const [loading, setLoading] = useState(true);

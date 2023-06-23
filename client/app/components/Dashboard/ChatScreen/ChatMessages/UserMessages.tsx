@@ -1,7 +1,9 @@
 import { memo } from "react";
-import SentMessage from "./SentMessage";
-import UserProfile from "../../UserProfile/UserProfile";
+
 import { Message } from "@/app/types/UserContextTypes";
+
+import UserProfile from "../../UserProfile/UserProfile";
+import SentMessage from "./SentMessage";
 
 const UserMessages = memo(function UserMessages(message: Message) {
 	return (
