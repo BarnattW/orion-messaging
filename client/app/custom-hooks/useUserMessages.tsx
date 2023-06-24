@@ -57,11 +57,18 @@ const useUserMessages = () => {
 					if (!socketEvent.data) return;
 					const latestTimestamp = socketEvent.data.timestamp;
 
+					const messagesArray = messages[activeConversationId]?.messages ?? [];
+					const messagesLength = messagesArray.length;
+					const startIndex = messagesLength > 0 ? messagesLength - 1 : 0;
 					const updatedFields = {
-						messages: sortMessagesByTimestamps([
-							...socketEvent.data.messages,
-							...(messages[activeConversationId]?.messages || []),
-						]),
+						messages: sortMessagesByTimestamps(
+							[
+								...socketEvent.data.messages,
+								...(messages[activeConversationId]?.messages || []),
+							],
+							startIndex,
+							messagesLength + socketEvent.data.messages.length
+						),
 						hasMore: socketEvent.data.hasMore,
 						latestMessageTimestamp: latestTimestamp,
 						initialLoadComplete: true,

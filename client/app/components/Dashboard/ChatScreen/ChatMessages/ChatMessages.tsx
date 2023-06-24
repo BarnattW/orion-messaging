@@ -1,21 +1,23 @@
 "use client";
 
 import { debounce } from "lodash";
-import { useCallback, useEffect, useRef, useState } from "react";
-import React from "react";
+import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import { shallow } from "zustand/shallow";
 
-import DownArrowIcon from "@/app/components/Icons/DownArrowIcon";
 import useUserMessages from "@/app/custom-hooks/useUserMessages";
 import messageSocket from "@/app/sockets/messageSocket";
 import { useUserStore } from "@/app/store/userStore";
 import { Message } from "@/app/types/UserContextTypes";
+import { findMessageByTimestamps } from "@/app/utils/findMessageByTimestamps";
 import sortMessagesByTimestamps from "@/app/utils/sortMessagesByTimestamps";
 
 import ChatDate from "./ChatDate";
 import ScrollButton from "./ScrollButton";
 import SentMessage from "./SentMessage";
 import UserMessages from "./UserMessages";
+
+const renderStateClassName =
+	"flex grow items-center justify-center text-center text-xl";
 
 function ChatMessages() {
 	const scrollRef = useRef<HTMLDivElement>(null);
@@ -96,7 +98,7 @@ function ChatMessages() {
 		const handleSentMessage = (socketEvent: {
 			data: { message: Message; conversationId: string };
 		}) => {
-			if (!socketEvent || !activeConversation?.conversationId) {
+			if (!socketEvent) {
 				return;
 			}
 
@@ -112,7 +114,11 @@ function ChatMessages() {
 				message,
 			];
 			const updatedFields = {
-				messages: sortMessagesByTimestamps(updatedMessages),
+				messages: sortMessagesByTimestamps(
+					updatedMessages,
+					updatedMessages.length - 1,
+					updatedMessages.length
+				),
 			};
 			setMessages(conversationId, updatedFields);
 
@@ -124,12 +130,89 @@ function ChatMessages() {
 		return () => {
 			messageSocket.off("sentMessage", handleSentMessage);
 		};
-	}, [
-		activeConversation?.conversationId,
-		setMessages,
-		messages,
-		scrollToBottom,
-	]);
+	}, [setMessages, messages, scrollToBottom]);
+
+	useEffect(() => {
+		const handleEditedMessage = (socketEvent: {
+			data: { message: Message; conversationId: string };
+		}) => {
+			if (!socketEvent) {
+				return;
+			}
+
+			const { message, conversationId } = socketEvent.data;
+			if (
+				!messages[conversationId] &&
+				!messages[conversationId]?.initialLoadComplete
+			)
+				return;
+
+			// perform binary search then update messages if message is cached
+			const messageIndex = findMessageByTimestamps(
+				message,
+				messages[conversationId].messages
+			);
+
+			if (messageIndex !== -1) {
+				// @ts-ignore
+				const updatedMessages = [...messages[conversationId].messages];
+				// @ts-ignore
+				updatedMessages[messageIndex] = message;
+				setMessages(conversationId, { messages: updatedMessages });
+			} else return;
+		};
+
+		messageSocket.on("editedMessage", handleEditedMessage);
+
+		return () => {
+			messageSocket.off("editedMessage", handleEditedMessage);
+		};
+	}, [activeConversation?.conversationId, setMessages, messages]);
+
+	useEffect(() => {
+		const handleDeletedMessage = (socketEvent: {
+			data: { message: Message; conversationId: string };
+		}) => {
+			if (!socketEvent) {
+				return;
+			}
+
+			const { message, conversationId } = socketEvent.data;
+			if (
+				!messages[conversationId] &&
+				!messages[conversationId]?.initialLoadComplete
+			)
+				return;
+
+			// perform binary search then update messages if message is cached
+			const messageIndex = findMessageByTimestamps(
+				message,
+				messages[conversationId].messages
+			);
+
+			if (messageIndex && messageIndex != -1) {
+				// @ts-ignore
+				const updatedMessages = messages[conversationId].splice(
+					messageIndex,
+					1
+				);
+				const updatedFields = {
+					messages: sortMessagesByTimestamps(
+						updatedMessages,
+						messageIndex - 1,
+						messageIndex
+					),
+				};
+				setMessages(conversationId, updatedFields);
+			} else return;
+		};
+
+		messageSocket.on("editedMessage", handleDeletedMessage);
+
+		return () => {
+			messageSocket.off("editedMessage", handleDeletedMessage);
+		};
+	}, [activeConversation?.conversationId, setMessages, messages]);
 
 	useEffect(() => {
 		function setScrollTop() {
@@ -174,7 +257,7 @@ function ChatMessages() {
 	// render states
 	if (activeConversation == null) {
 		return (
-			<div className="flex grow items-center justify-center text-center">
+			<div className={renderStateClassName}>
 				<p>Start messaging a friend</p>
 			</div>
 		);
@@ -185,7 +268,7 @@ function ChatMessages() {
 
 	if (conversationMessages?.length === 0) {
 		return (
-			<div className="flex grow items-center justify-center text-center">
+			<div className={renderStateClassName}>
 				<p>No messages found. Try sending some!</p>
 			</div>
 		);
@@ -208,7 +291,7 @@ function ChatMessages() {
 					const isConsecutiveMessage = message.renderDatestamp;
 
 					return (
-						<React.Fragment key={message._id}>
+						<Fragment key={message._id}>
 							{i === 0 && <div ref={loadMoreMessages}></div>}
 							{isConsecutiveMessage && isUserMessage && (
 								<ChatDate
@@ -217,14 +300,17 @@ function ChatMessages() {
 								/>
 							)}
 							{isUserMessage ? (
-								<UserMessages
-									senderUsername={message.senderUsername}
-									senderId={message.senderId}
-									message={message.message}
-									_id={message._id}
-									timestamp={message.timestamp}
-									key={message._id}
-								/>
+								<>
+									<div className="pt-3"></div>
+									<UserMessages
+										senderUsername={message.senderUsername}
+										senderId={message.senderId}
+										message={message.message}
+										_id={message._id}
+										timestamp={message.timestamp}
+										key={message._id}
+									/>
+								</>
 							) : (
 								<SentMessage
 									senderUsername={message.senderUsername}
@@ -236,7 +322,7 @@ function ChatMessages() {
 									type="consecutiveMessage"
 								/>
 							)}
-						</React.Fragment>
+						</Fragment>
 					);
 				})}
 				<ScrollButton

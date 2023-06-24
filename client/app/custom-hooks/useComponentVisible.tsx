@@ -7,7 +7,7 @@ export default function useComponentVisible(initialIsVisible: boolean) {
 	const handleClickOutside = useCallback(
 		(event: MouseEvent) => {
 			// @ts-ignore
-			if (!ref.current && ref.current.contains(event.target as Node)) return;
+			if (ref.current && ref.current.contains(event.target as Node)) return;
 			if (isComponentVisible) {
 				setIsComponentVisible(false);
 			}
