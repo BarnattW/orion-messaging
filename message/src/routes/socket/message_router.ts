@@ -80,7 +80,6 @@ export const sendMessage = (
 export const getMessages = (socket: Socket) => {
   socket.on("getMessages", async (data) => {
     try {
-
       // Destructures data to get necessary values
       const {
         conversationId,
@@ -119,8 +118,9 @@ export const getMessages = (socket: Socket) => {
       };
 
       // Checks if there are any batches of messages left
-      const next = await MessageContainer.findOne(query)
-        .sort({ timeCreated: -1 })
+      const next = await MessageContainer.findOne(query).sort({
+        timeCreated: -1,
+      });
 
       const hasMore = next !== null;
 
@@ -148,7 +148,6 @@ export const editMessage = (
 ) => {
   socket.on("editMessage", async (data) => {
     try {
-
       // Destructures data to get necessary values
       const { messageId, text }: { messageId: Types.ObjectId; text: string } =
         data;
@@ -183,7 +182,6 @@ export const editMessage = (
         message: "Message Edited",
         data: message,
       });
-
     } catch (e) {
       console.log("Unable to edit message");
       socket.emit("requestError", {
@@ -200,9 +198,11 @@ export const deleteMessage = (
 ) => {
   socket.on("deleteMessage", async (data) => {
     try {
-
       // Destructures to obtain messageId
-      const { messageId }: { messageId: Types.ObjectId } = data;
+      const {
+        conversationId,
+        messageId,
+      }: { conversationId: Types.ObjectId; messageId: Types.ObjectId } = data;
       console.log(messageId);
 
       // Finds the message by id and deletes it
@@ -240,7 +240,10 @@ export const deleteMessage = (
 
       io.to(result as string[]).emit("deletedMessage", {
         message: `Delete message ${messageId}`,
-        data: message,
+        data: {
+          message,
+          conversationId,
+        },
       });
     } catch (e) {
       console.log("Unable to delete message: ", e);
