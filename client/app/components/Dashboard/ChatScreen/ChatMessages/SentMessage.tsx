@@ -1,4 +1,5 @@
 import { memo, useState } from "react";
+import { shallow } from "zustand/shallow";
 
 import DeleteIcon from "@/app/components/Icons/DeleteIcon";
 import EditIcon from "@/app/components/Icons/EditIcon";
@@ -10,7 +11,13 @@ const iconClassNames: string = "fill-gray-100 h-5 w-5 m-1";
 const maxCharacters: number = 2000;
 
 const SentMessage = memo(function SentMessage(message: SentMessage) {
-	const activeConversation = useUserStore((state) => state.activeConversation);
+	const { activeConversation, userId } = useUserStore(
+		(state) => ({
+			activeConversation: state.activeConversation,
+			userId: state.userId,
+		}),
+		shallow
+	);
 	const [showDetails, setDetails] = useState(false);
 	const [isEditing, setIsEditing] = useState(false);
 	const [messageValue, setMessageValue] = useState(message.message);
@@ -102,7 +109,7 @@ const SentMessage = memo(function SentMessage(message: SentMessage) {
 					<p>{message.message}</p>
 				)}
 
-				{showDetails && (
+				{showDetails && message.senderId === userId && (
 					<div className="absolute -top-5 right-8 rounded border-2 border-zinc-800 bg-zinc-700">
 						<div className="flex">
 							<div onClick={toggleEditingMode} className="hover:cursor-pointer">
@@ -149,8 +156,8 @@ const SentMessage = memo(function SentMessage(message: SentMessage) {
 				) : (
 					<p>{message.message}</p>
 				)}
-				{showDetails && (
-					<div className="absolute -top-5 right-4 rounded border-2 border-zinc-800 bg-zinc-700">
+				{showDetails && message.senderId === userId && (
+					<div className="absolute -top-5 right-3 rounded border-2 border-zinc-800 bg-zinc-700">
 						<div className="flex">
 							<div onClick={toggleEditingMode} className="hover:cursor-pointer">
 								<EditIcon className={iconClassNames} />

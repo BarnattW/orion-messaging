@@ -13,17 +13,22 @@ const sortMessagesByTimestamps = function (
 	const sortedMessages = slicedArray.map((message, i) => {
 		message.timestamp = new Date(message.timestamp);
 		const currentDate = message.timestamp.getDate();
-		const prevMessageDate = i > 0 ? userMessages[i - 1].timestamp.getDate() : 0;
+		const prevMessageDate =
+			userMessages[startIndex + i - 1] !== undefined
+				? userMessages[startIndex + i - 1].timestamp.getDate()
+				: 0;
 		const renderUserMessage =
-			i === 0 ||
-			message.senderId !== userMessages[i - 1].senderId ||
-			message.timestamp.getTime() - userMessages[i - 1].timestamp.getTime() >=
+			userMessages[startIndex + i - 1] === undefined ||
+			message.senderId !== userMessages[startIndex + i - 1].senderId ||
+			message.timestamp.getTime() -
+				userMessages[startIndex + i - 1].timestamp.getTime() >=
 				300000; // set to 5 minutes
-		const renderDatestamp = i === 0 || currentDate !== prevMessageDate;
+		const renderDatestamp =
+			startIndex + i === 0 || currentDate !== prevMessageDate;
 		return { ...message, renderUserMessage, renderDatestamp };
 	});
-	userMessages.splice(startIndex, slicedArray.length, ...slicedArray);
-	return sortedMessages;
+	userMessages.splice(startIndex, sortedMessages.length, ...sortedMessages);
+	return userMessages;
 };
 
 export default sortMessagesByTimestamps;

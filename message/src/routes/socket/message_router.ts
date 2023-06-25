@@ -149,43 +149,54 @@ export const editMessage = (
   socket.on("editMessage", async (data) => {
     try {
       // Destructures data to get necessary values
-      const { messageId, text }: { messageId: Types.ObjectId; text: string } =
-        data;
+      const {
+				messageId,
+				text,
+				conversationId,
+			}: {
+				messageId: Types.ObjectId;
+				text: string;
+				conversationId: Types.ObjectId;
+			} = data;
 
-      // Finds message with given messageId
-      const message = await Message.findById(messageId);
-      if (!message) {
-        console.log("Edit Message: Message doesn't exist");
-        return socket.emit("requestError", {
-          message: "Message doesn't exist",
-        });
-      }
-      message.message = text;
-      message.save();
-      console.log(message);
+			// Finds message with given messageId
+			const message = await Message.findById(messageId);
+			if (!message) {
+				console.log("Edit Message: Message doesn't exist");
+				return socket.emit("requestError", {
+					message: "Message doesn't exist",
+				});
+			}
+			message.message = text;
+			message.save();
+			console.log(message);
 
-      // Finds the conversation message is in
-      const messageContainer = await MessageContainer.findOne({
-        messages: messageId,
-      });
-      const conversation = await Conversation.findOne({
-        messages: messageContainer?._id,
-      });
-      if (!conversation) {
-        console.log("Message doesn't exist in a conversation");
-        return;
-      }
+			// Finds the conversation message is in
+			const messageContainer = await MessageContainer.findOne({
+				messages: messageId,
+			});
+			const conversation = await Conversation.findOne({
+				messages: messageContainer?._id,
+			});
+			if (!conversation) {
+				console.log("Message doesn't exist in a conversation");
+				return;
+			}
 
-      // Finds users connected and emits an event
-      let result = await socketsInConversation(conversation, connectedClients);
-      io.sockets.to(result as string[]).emit("editedMessage", {
-        message: "Message Edited",
-        data: message,
-      });
+			// Finds users connected and emits an event
+			let result = await socketsInConversation(conversation, connectedClients);
+			io.sockets.to(result as string[]).emit("editedMessage", {
+				message: "Message Edited",
+				data: {
+					message,
+					conversationId,
+				},
+			});
     } catch (e) {
       console.log("Unable to edit message");
       socket.emit("requestError", {
         message: "Server Error (Edit Message)",
+
       });
     }
   });

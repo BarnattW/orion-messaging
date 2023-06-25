@@ -64,7 +64,6 @@ function ChatMessages() {
 					entries[0].isIntersecting &&
 					messages[activeConversation.conversationId].hasMore
 				) {
-					console.log("updaing timestamps", entries);
 					if (
 						messages[activeConversation.conversationId].latestMessageTimestamp
 					) {
@@ -152,12 +151,19 @@ function ChatMessages() {
 				message,
 				messages[conversationId].messages
 			);
-
+			console.log(messageIndex);
 			if (messageIndex !== -1) {
 				// @ts-ignore
 				const updatedMessages = [...messages[conversationId].messages];
+				const currentDatestamp = updatedMessages[messageIndex].renderDatestamp;
+				const currentRenderUserMessage =
+					updatedMessages[messageIndex].renderUserMessage;
 				// @ts-ignore
-				updatedMessages[messageIndex] = message;
+				updatedMessages[messageIndex] = {
+					...message,
+					renderUserMessage: currentRenderUserMessage,
+					renderDatestamp: currentDatestamp,
+				};
 				setMessages(conversationId, { messages: updatedMessages });
 			} else return;
 		};
@@ -192,25 +198,22 @@ function ChatMessages() {
 
 			if (messageIndex && messageIndex != -1) {
 				// @ts-ignore
-				const updatedMessages = messages[conversationId].splice(
-					messageIndex,
-					1
-				);
+				messages[conversationId].messages.splice(messageIndex, 1);
 				const updatedFields = {
 					messages: sortMessagesByTimestamps(
-						updatedMessages,
-						messageIndex - 1,
-						messageIndex
+						messages[conversationId].messages,
+						messageIndex,
+						messageIndex + 1
 					),
 				};
 				setMessages(conversationId, updatedFields);
 			} else return;
 		};
 
-		messageSocket.on("editedMessage", handleDeletedMessage);
+		messageSocket.on("deletedMessage", handleDeletedMessage);
 
 		return () => {
-			messageSocket.off("editedMessage", handleDeletedMessage);
+			messageSocket.off("deletedMessage", handleDeletedMessage);
 		};
 	}, [activeConversation?.conversationId, setMessages, messages]);
 
