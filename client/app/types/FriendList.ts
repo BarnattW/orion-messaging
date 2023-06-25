@@ -1,4 +1,4 @@
-export interface FriendListInter {
+export interface FriendList {
 	onlineFriends: string[];
 	offlineFriends: string[];
 }

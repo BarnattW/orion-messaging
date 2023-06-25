@@ -1,10 +1,12 @@
 "use client";
 
+import { shallow } from "zustand/shallow";
+
 import { useUserStore } from "@/app/store/userStore";
+
 import ListContainer from "../ListWrappers/ListContainer";
 import ListHeading from "../ListWrappers/ListHeading";
 import ConversationCard from "./ConversationCard";
-import { shallow } from "zustand/shallow";
 
 function ConversationList() {
 	const { conversations } = useUserStore(

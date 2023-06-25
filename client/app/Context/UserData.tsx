@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect } from "react";
-import { useUserStore } from "../store/userStore";
-import useSWR from "swr";
-import messageSocket from "../sockets/messageSocket";
-import { shallow } from "zustand/shallow";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import useSWR from "swr";
+import { shallow } from "zustand/shallow";
+
+import messageSocket from "../sockets/messageSocket";
+import { useUserStore } from "../store/userStore";
 
 const fetcher = (url: string) => fetch(url).then((response) => response.json());
 
@@ -42,7 +43,6 @@ export function UserData({ children }: { children: React.ReactNode }) {
 			});
 			console.log(response);
 			if (response.status === 401) {
-				console.log("yep 401");
 				router.push("/");
 			}
 			const userId = await response.json();

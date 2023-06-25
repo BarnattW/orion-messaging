@@ -1,12 +1,14 @@
 "use client";
-import ListContainer from "../ListWrappers/ListContainer";
 import { useEffect, useState } from "react";
-import ReceivedFriendRequests from "./ReceivedFriendRequests";
-import AddFriend from "./AddFriend";
-import SentFriendRequests from "./SentFriendRequests";
-import { FriendRequests } from "@/app/types/FriendRequests";
-import { useUserStore } from "@/app/store/userStore";
 import { shallow } from "zustand/shallow";
+
+import { useUserStore } from "@/app/store/userStore";
+import { FriendRequests } from "@/app/types/FriendRequests";
+
+import ListContainer from "../ListWrappers/ListContainer";
+import AddFriend from "./AddFriend";
+import ReceivedFriendRequests from "./ReceivedFriendRequests";
+import SentFriendRequests from "./SentFriendRequests";
 
 function FriendRequests() {
 	const { userId } = useUserStore(

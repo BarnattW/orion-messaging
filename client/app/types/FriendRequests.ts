@@ -13,7 +13,7 @@ export interface FriendRequests {
 	sentRequests?: Request[];
 }
 
-export interface receviedRequestsProps {
+export interface ReceviedRequestsProps {
 	receivedRequests?: Request[];
 }
 

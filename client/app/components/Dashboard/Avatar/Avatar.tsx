@@ -1,4 +1,5 @@
 import Image from "next/image";
+
 import { AvatarProps } from "@/app/types/UserProfile";
 
 function Avatar({ imageUrl, altText, size = 300, type }: AvatarProps) {

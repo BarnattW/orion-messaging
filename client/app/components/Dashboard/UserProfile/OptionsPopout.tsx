@@ -1,5 +1,6 @@
-import { useUserStore } from "@/app/store/userStore";
 import { shallow } from "zustand/shallow";
+
+import { useUserStore } from "@/app/store/userStore";
 import { OptionsPopoutProps } from "@/app/types/UserProfile";
 
 function OptionsPopout({
@@ -67,15 +68,11 @@ function OptionsPopout({
 		return <div className="relative">{children}</div>;
 	}
 
-	if (currentUserId === userId) {
-		return <div className="relative">{children}</div>;
-	}
-
 	if (isFriends) {
 		return (
 			<div className="relative">
 				{children}
-				<div className="absolute bg-zinc-900 hover:bg-red-700 text-white px-2 py-2 rounded text-sm top-3/4 left-40 outline-none select-none">
+				<div className="absolute left-40 top-3/4 select-none rounded bg-zinc-900 px-2 py-2 text-sm text-white outline-none hover:bg-red-700">
 					<button onClick={deleteFriend}>Delete Friend</button>
 				</div>
 			</div>
@@ -84,13 +81,12 @@ function OptionsPopout({
 		return (
 			<div className="relative">
 				{children}
-				<div className="absolute bg-zinc-900 hover:bg-red-700 text-white px-2 py-2 rounded text-sm top-3/4 left-40">
+				<div className="absolute left-40 top-3/4 rounded bg-zinc-900 px-2 py-2 text-sm text-white hover:bg-red-700">
 					<button onClick={addFriend}>Add Friend</button>
 				</div>
 			</div>
 		);
 	}
-	return <div className="relative">{children}</div>;
 }
 
 export default OptionsPopout;

@@ -1,11 +1,12 @@
 import { create } from "zustand";
+
 import {
-	Friend,
 	ActiveConversation,
 	ActiveConversationFields,
 	Conversation,
-	Messages,
+	Friend,
 	MessageFields,
+	Messages,
 } from "../types/UserContextTypes";
 
 type UserState = {
