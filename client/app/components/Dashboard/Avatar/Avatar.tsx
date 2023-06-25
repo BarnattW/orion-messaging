@@ -1,4 +1,5 @@
 import Image from "next/image";
+
 import { AvatarProps } from "@/app/types/UserProfile";
 
 function Avatar({ imageUrl, altText, size = 300, type }: AvatarProps) {
@@ -18,7 +19,7 @@ function Avatar({ imageUrl, altText, size = 300, type }: AvatarProps) {
 					src={imageUrl}
 					width={size}
 					height={size}
-					alt={altText}
+					alt={altText || "messages"}
 					className="rounded-full"
 				/>
 			</div>

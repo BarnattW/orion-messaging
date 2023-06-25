@@ -1,24 +1,34 @@
-interface Message {
-	sender: string;
-	receiver: string;
-	message: string;
-	messageId: string;
-	timeStamp: Date;
-}
+import { Message } from "../types/UserContextTypes";
 
-const sortMessagesByTimestamps = function (userMessages: Message[]) {
-	const sortedMessages = userMessages.map((message, i) => {
-		const currentTime = message.timeStamp.getTime();
-		const prevMessageTime = i > 0 ? userMessages[i - 1].timeStamp.getTime() : 0;
-		const timeDifference = currentTime - prevMessageTime;
+const sortMessagesByTimestamps = function (
+	userMessages: Message[],
+	startIndex: number,
+	endIndex: number
+) {
+	if (userMessages === undefined) {
+		return [];
+	}
+
+	const slicedArray = userMessages.slice(startIndex, endIndex);
+	const sortedMessages = slicedArray.map((message, i) => {
+		message.timestamp = new Date(message.timestamp);
+		const currentDate = message.timestamp.getDate();
+		const prevMessageDate =
+			userMessages[startIndex + i - 1] !== undefined
+				? userMessages[startIndex + i - 1].timestamp.getDate()
+				: 0;
 		const renderUserMessage =
-			i === 0 ||
-			message.sender !== userMessages[i - 1].sender ||
-			timeDifference >= 300000;
-		const renderDatestamp = i === 0 || timeDifference >= 86400000;
+			userMessages[startIndex + i - 1] === undefined ||
+			message.senderId !== userMessages[startIndex + i - 1].senderId ||
+			message.timestamp.getTime() -
+				userMessages[startIndex + i - 1].timestamp.getTime() >=
+				300000; // set to 5 minutes
+		const renderDatestamp =
+			startIndex + i === 0 || currentDate !== prevMessageDate;
 		return { ...message, renderUserMessage, renderDatestamp };
 	});
-	return sortedMessages;
+	userMessages.splice(startIndex, sortedMessages.length, ...sortedMessages);
+	return userMessages;
 };
 
 export default sortMessagesByTimestamps;

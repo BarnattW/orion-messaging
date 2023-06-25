@@ -1,12 +1,12 @@
 "use client";
-import { useContext } from "react";
+import { useUserStore } from "@/app/store/userStore";
+
 import ListContainer from "../ListWrappers/ListContainer";
 import ListHeading from "../ListWrappers/ListHeading";
 import FriendCard from "./FriendCard";
-import { UserContext } from "@/app/Context/UserContext";
 
 function FriendList() {
-	const { friends } = useContext(UserContext);
+	const { friends } = useUserStore((state) => ({ friends: state.friends }));
 
 	return (
 		<ListContainer>

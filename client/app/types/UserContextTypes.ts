@@ -8,8 +8,56 @@ export interface Conversation {
 	conversationType: string;
 	users: string[];
 	messages: string[];
-	latestMessage: string;
+	latestMessageTimestamp: Date;
 	_id: string;
+}
+
+export interface ActiveConversation {
+	title?: string;
+	conversationId: string;
+	latestMessageTimestamp: Date;
+	hasMore: boolean;
+	lastScrollTop: number | null;
+	canLoad: boolean;
+	initialLoadComplete?: boolean;
+}
+
+export interface ActiveConversationFields {
+	title?: string;
+	conversationId?: string;
+	latestMessageTimestamp?: Date;
+	hasMore?: boolean;
+	lastScrollTop?: number | null;
+	canLoad?: boolean;
+	initialLoadComplete?: boolean;
+}
+
+export interface Message {
+	senderId: string;
+	senderUsername: string;
+	message: string;
+	timestamp: Date;
+	_id: string;
+	renderUserMessage?: boolean;
+	renderDatestamp?: boolean;
+}
+
+export interface Messages {
+	[conversationId: string]: {
+		messages?: Message[];
+		hasMore?: boolean | null;
+		latestMessageTimestamp?: Date;
+		lastScrollTop?: number | null;
+		initialLoadComplete?: boolean;
+	};
+}
+
+export interface MessageFields {
+	messages?: Message[];
+	hasMore?: boolean | null;
+	latestMessageTimestamp?: Date | null;
+	lastScrollTop?: number | null;
+	initialLoadComplete?: boolean;
 }
 
 export interface UserContextProps {
@@ -19,8 +67,12 @@ export interface UserContextProps {
 	setUsername: (username: string | null) => void;
 	friends: Friend[];
 	setFriends: (friends: Friend[]) => void;
-	activeConversation: string | null;
-	setActiveConversation: (activeConversation: string | null) => void;
-	conversations: Conversation[]; // acts like a cache, {conversationId: message[]}
+	activeConversation: ActiveConversation | null;
+	setActiveConversation: React.Dispatch<
+		React.SetStateAction<ActiveConversation | null>
+	>;
+	conversations: Conversation[];
 	setConversations: (conversations: Conversation[]) => void;
+	messages: Messages;
+	setMessages: React.Dispatch<React.SetStateAction<Messages>>;
 }

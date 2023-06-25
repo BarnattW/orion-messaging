@@ -1,14 +1,20 @@
 "use client";
-import ListContainer from "../ListWrappers/ListContainer";
-import { useContext, useEffect, useState } from "react";
-import { UserContext } from "@/app/Context/UserContext";
-import ReceivedFriendRequests from "./ReceivedFriendRequests";
-import AddFriend from "./AddFriend";
-import SentFriendRequests from "./SentFriendRequests";
+import { useEffect, useState } from "react";
+import { shallow } from "zustand/shallow";
+
+import { useUserStore } from "@/app/store/userStore";
 import { FriendRequests } from "@/app/types/FriendRequests";
 
+import ListContainer from "../ListWrappers/ListContainer";
+import AddFriend from "./AddFriend";
+import ReceivedFriendRequests from "./ReceivedFriendRequests";
+import SentFriendRequests from "./SentFriendRequests";
+
 function FriendRequests() {
-	const { userId } = useContext(UserContext);
+	const { userId } = useUserStore(
+		(state) => ({ userId: state.userId }),
+		shallow
+	);
 	const [friendRequests, setFriendRequests] = useState<FriendRequests>({
 		receivedRequests: [],
 		sentRequests: [],

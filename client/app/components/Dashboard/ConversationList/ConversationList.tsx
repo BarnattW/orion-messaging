@@ -1,13 +1,20 @@
 "use client";
 
-import { useContext } from "react";
+import { shallow } from "zustand/shallow";
+
+import { useUserStore } from "@/app/store/userStore";
+
 import ListContainer from "../ListWrappers/ListContainer";
 import ListHeading from "../ListWrappers/ListHeading";
 import ConversationCard from "./ConversationCard";
-import { UserContext } from "@/app/Context/UserContext";
 
 function ConversationList() {
-	const { conversations } = useContext(UserContext);
+	const { conversations } = useUserStore(
+		(state) => ({
+			conversations: state.conversations,
+		}),
+		shallow
+	);
 	return (
 		<ListContainer>
 			<ListHeading>Messages</ListHeading>
@@ -18,12 +25,14 @@ function ConversationList() {
 
 						return (
 							<ConversationCard
-								altText={"Conversation"}
+								altText={conversation.title}
 								//imageUrl={conversation.conversationImageUrl}
 								users={conversation.users}
 								key={conversation._id}
 								type={conversation.conversationType}
 								conversationName={conversation.title}
+								conversationId={conversation._id}
+								latestMessageTimestamp={conversation.latestMessageTimestamp}
 							/>
 						);
 					})}

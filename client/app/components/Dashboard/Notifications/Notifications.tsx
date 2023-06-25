@@ -3,7 +3,8 @@ import NotificationWrapper from "./NotificationWrapper";
 import { useState } from "react";
 
 function Notifications() {
-	const iconClassNames: string = "fill-neutral-500 hover:fill-gray-400 h-6 w-6";
+	const iconClassNames: string =
+		"fill-neutral-500 hover:fill-gray-400 h-6 w-6 hover: cursor-pointer";
 	const [toggleNotifications, setToggleNotifications] = useState(false);
 
 	function handleNotificationClick() {

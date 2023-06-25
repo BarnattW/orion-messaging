@@ -1,11 +1,13 @@
 "use client";
-import { RefObject, useRef, useContext } from "react";
-import { UserContext } from "@/app/Context/UserContext";
+import { RefObject, useRef } from "react";
+
+import { useUserStore } from "@/app/store/userStore";
+
 import ListHeading from "../ListWrappers/ListHeading";
 
 function AddFriend() {
 	const addUsername: RefObject<HTMLInputElement> = useRef(null);
-	const { username } = useContext(UserContext);
+	const username = useUserStore((state) => state.username);
 
 	// submitting friend requests
 	function keyDownHandler(event: React.KeyboardEvent<HTMLInputElement>) {
@@ -44,12 +46,12 @@ function AddFriend() {
 			<ListHeading>Add Friends</ListHeading>
 			<input
 				ref={addUsername}
-				className="mx-5 bg-zinc-700 outline-none rounded-md p-1"
+				className="mx-5 rounded-md bg-zinc-700 p-1 outline-none"
 				placeholder="Search username"
 				onKeyDown={keyDownHandler}
 			></input>
 			<button
-				className="mx-10 py-1 rounded-md bg-indigo-600 hover:bg-indigo-500 bg- text-md"
+				className="bg- text-md mx-10 rounded-md bg-indigo-600 py-1 hover:bg-indigo-500"
 				onClick={submitFriendRequest}
 			>
 				Send Friend Request
