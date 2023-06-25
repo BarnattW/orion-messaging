@@ -1,4 +1,4 @@
-import mongoose, { Types } from "mongoose";
+import mongoose, { ObjectId, Types } from "mongoose";
 import { User } from "../../models/User";
 import { Message } from "../../models/Message";
 import { Conversation } from "../../models/Conversation";
@@ -14,13 +14,17 @@ export const sendMessage = (
 ) => {
   socket.on("sendMessage", async (data) => {
     try {
+      // Destructures data to get necessary values
       const {
         conversationId,
         userId,
         message,
-      }: { conversationId: Types.ObjectId; userId: string; message: string } = data;
+      }: { conversationId: Types.ObjectId; userId: string; message: string } =
+        data;
 
       console.log(data);
+
+      // Finds a conversation with given id
       const conv = await Conversation.findById(conversationId);
 
       if (!conv) {
@@ -30,8 +34,8 @@ export const sendMessage = (
         });
       }
 
-      const user = await User.findOne({ userId: userId });
-
+      // Finds a user with given id
+      const user = await User.findOne({ userId });
       if (!user) {
         console.log("Send Message: No User");
         return socket.emit("requestError", {
@@ -43,11 +47,11 @@ export const sendMessage = (
         senderId: userId,
         senderUsername: user?.username,
         message: message,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
 
+      // Creates a message with given information
       const createdMessage = await Message.create(sentMessage);
-
       if (!createdMessage) {
         return socket.emit("requestError", {
           message: "Failed to Create Message",
@@ -58,12 +62,12 @@ export const sendMessage = (
 
       conv.addMessage(createdMessage);
 
+      // Finds users connected and emits an event
       let result = await socketsInConversation(conv, connectedClients);
-
       io.sockets.to(result as string[]).emit("sentMessage", {
-				message: "Message Sent",
-				data: { message: createdMessage, conversationId },
-			});
+        message: "Message Sent",
+        data: { message: createdMessage, conversationId },
+      });
     } catch (e) {
       socket.emit("requestError", {
         message: "Server Error (Send Message)",
@@ -74,65 +78,67 @@ export const sendMessage = (
 };
 
 export const getMessages = (socket: Socket) => {
-	socket.on("getMessages", async (data) => {
-		try {
-			const {
-				conversationId,
-				timestamp,
-			}: { conversationId: Types.ObjectId; timestamp: Date } = data;
+  socket.on("getMessages", async (data) => {
+    try {
+      // Destructures data to get necessary values
+      const {
+        conversationId,
+        timestamp,
+      }: { conversationId: Types.ObjectId; timestamp: Date } = data;
+      console.log(timestamp);
 
-			console.log(timestamp);
-			const convo = await Conversation.findById(conversationId);
+      // Finds a conversation with given id
+      const convo = await Conversation.findById(conversationId);
+      if (!convo) {
+        console.log("No Conversation");
+        return socket.emit("requestError", {
+          message: "Conversation Doesn't Exist",
+        });
+      }
 
-			if (!convo) {
-				console.log("No Conversation");
-				return socket.emit("requestError", {
-					message: "Conversation Doesn't Exist",
-				});
-			}
+      // Finds the first batch of messages was created before
+      // the given timestamp and populates it
+      const message = await MessageContainer.findOne({
+        _id: { $in: convo.messages },
+        timeCreated: { $lt: timestamp },
+      })
+        .sort({ timeCreated: -1 })
+        .populate("messages");
 
-			const message = await MessageContainer.findOne({
-				_id: { $in: convo?.messages },
-				timeCreated: { $lt: timestamp },
-			})
-				.sort({ timeCreated: -1 })
-				.populate("messages");
+      console.log(message?.messages);
 
-			console.log(message?.messages);
+      // Destructures the batch for messages and timestamp. If batch
+      // is not found then messages defaults to blank array and
+      // timeCreated defaults to given timestamp
+      const { messages = [], timeCreated = timestamp } = message ?? {};
 
-			let messages: Types.ObjectId[] = [];
-			let timeCreated = timestamp;
-			let hasMore = false;
+      const query = {
+        _id: { $in: convo.messages },
+        timeCreated: { $lt: timeCreated },
+      };
 
-			if (message?.messages) {
-				messages = message.messages;
-				timeCreated = message.timeCreated;
-			}
+      // Checks if there are any batches of messages left
+      const next = await MessageContainer.findOne(query).sort({
+        timeCreated: -1,
+      });
 
-			const test = await MessageContainer.findOne({
-				_id: { $in: convo?.messages },
-				timeCreated: { $lt: message?.timeCreated },
-			}).sort({ timeCreated: -1 });
+      const hasMore = next !== null;
 
-			if (test) {
-				hasMore = true;
-			}
-
-			socket.emit("gotMessages", {
-				message: "Message Received",
-				data: {
-					timestamp: timeCreated,
-					messages,
-					hasMore,
-				},
-			});
-		} catch (e) {
-			console.log("Unable to get messages: ", e);
-			socket.emit("requestError", {
-				message: "Server Error (Get Message)",
-			});
-		}
-	});
+      socket.emit("gotMessages", {
+        message: "Message Received",
+        data: {
+          timestamp: timeCreated,
+          messages,
+          hasMore,
+        },
+      });
+    } catch (e) {
+      console.log("Unable to get messages: ", e);
+      socket.emit("requestError", {
+        message: "Server Error (Get Message)",
+      });
+    }
+  });
 };
 
 export const editMessage = (
@@ -142,8 +148,11 @@ export const editMessage = (
 ) => {
   socket.on("editMessage", async (data) => {
     try {
+      // Destructures data to get necessary values
       const { messageId, text }: { messageId: Types.ObjectId; text: string } =
         data;
+
+      // Finds message with given messageId
       const message = await Message.findById(messageId);
       if (!message) {
         console.log("Edit Message: Message doesn't exist");
@@ -155,21 +164,20 @@ export const editMessage = (
       message.save();
       console.log(message);
 
+      // Finds the conversation message is in
       const messageContainer = await MessageContainer.findOne({
         messages: messageId,
       });
-
       const conversation = await Conversation.findOne({
         messages: messageContainer?._id,
       });
-
       if (!conversation) {
         console.log("Message doesn't exist in a conversation");
         return;
       }
 
+      // Finds users connected and emits an event
       let result = await socketsInConversation(conversation, connectedClients);
-
       io.sockets.to(result as string[]).emit("editedMessage", {
         message: "Message Edited",
         data: message,
@@ -190,9 +198,14 @@ export const deleteMessage = (
 ) => {
   socket.on("deleteMessage", async (data) => {
     try {
-      const { messageId }: { messageId: Types.ObjectId } = data;
-
+      // Destructures to obtain messageId
+      const {
+        conversationId,
+        messageId,
+      }: { conversationId: Types.ObjectId; messageId: Types.ObjectId } = data;
       console.log(messageId);
+
+      // Finds the message by id and deletes it
       const message = await Message.findByIdAndDelete(messageId);
       if (!message) {
         console.log("Delete Message: Message does not exist");
@@ -201,11 +214,13 @@ export const deleteMessage = (
         });
       }
 
+      // Removes the message from the message container associated
       const messageContainer = await MessageContainer.findOneAndUpdate(
         { messages: messageId },
         { $pull: { messages: messageId } }
       );
 
+      // Finds the conversation with the message container
       const conversation = await Conversation.findOne({
         messages: messageContainer?._id,
       });
@@ -217,6 +232,7 @@ export const deleteMessage = (
         return;
       }
 
+      // Finds users connected and emits an event
       const result = await socketsInConversation(
         conversation,
         connectedClients
@@ -224,7 +240,10 @@ export const deleteMessage = (
 
       io.to(result as string[]).emit("deletedMessage", {
         message: `Delete message ${messageId}`,
-        data: message,
+        data: {
+          message,
+          conversationId,
+        },
       });
     } catch (e) {
       console.log("Unable to delete message: ", e);
