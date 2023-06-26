@@ -23,6 +23,7 @@ function ReceivedFriendRequests({ receivedRequests }: ReceviedRequestsProps) {
 						username={ReceivedRequest.senderUsername}
 						requestId={ReceivedRequest._id}
 						key={ReceivedRequest._id}
+						requestType={ReceivedRequest.requestType}
 					/>
 				);
 			})}
