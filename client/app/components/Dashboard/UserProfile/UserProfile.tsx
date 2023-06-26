@@ -1,7 +1,9 @@
-import UserProfileCard from "../UserProfile/UserProfileCard";
-import Avatar from "../Avatar/Avatar";
-import { UserProfile } from "@/app/types/UserProfile";
 import { useRef } from "react";
+
+import { UserProfile } from "@/app/types/UserProfile";
+
+import Avatar from "../Avatar/Avatar";
+import UserProfileCard from "../UserProfile/UserProfileCard";
 import classes from "./UserProfile.module.css";
 
 function UserProfile({
@@ -32,7 +34,7 @@ function UserProfile({
 		<>
 			<dialog
 				ref={userProfileCardRef}
-				className={`${classes.userProfileModal} w-max sm:w-72 bg-zinc-800 rounded-xl outline-none p-0`}
+				className={`${classes.userProfileModal} w-max rounded-xl bg-zinc-800 p-0 outline-none sm:w-72`}
 				onClick={closeProfile}
 			>
 				<UserProfileCard

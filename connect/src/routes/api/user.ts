@@ -102,6 +102,7 @@ router.get(
 	async (req: Request, res: Response) => {
 		try {
 			const { userId } = req.params;
+			console.log(userId);
 
 			const user = await User.findOne({ userId: userId });
 			console.log(user);
