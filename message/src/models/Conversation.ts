@@ -6,7 +6,8 @@ import { User } from "./User";
 interface IConversationDocument {
   _id: Types.ObjectId;
   title: string;
-  conversationType: "group" | "individual";
+  conversationType: "group" | "friends";
+  groupId: Types.ObjectId
   users: Types.Array<string>;
   messages: Types.Array<Types.Array<Types.ObjectId>>;
   latestMessageTimestamp: Date;
@@ -22,8 +23,11 @@ const ConversationSchema = new Schema<IConversation>({
 	},
 	conversationType: {
 		type: String,
-		enum: ["group", "individual"],
+		enum: ["group", "friends"],
 	},
+  groupId: {
+    type: Schema.Types.ObjectId
+  },
 	users: [
 		{
 			type: String,

@@ -72,7 +72,7 @@ io.on("connection", async (socket: Socket) => {
 });
 
 async function run(){
-  const consumer = new messageConsumer(connectedClients);
+  const consumer = new messageConsumer(io, connectedClients);
   consumer.connect();
 }
 run();
