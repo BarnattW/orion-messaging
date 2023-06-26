@@ -1,18 +1,23 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
-import React from "react";
-import UserMessages from "./UserMessages";
 import { debounce } from "lodash";
-import DownArrowIcon from "@/app/components/Icons/DownArrowIcon";
-import SentMessage from "./SentMessage";
-import useUserMessages from "@/app/custom-hooks/useUserMessages";
-import ChatDate from "./ChatDate";
-import messageSocket from "@/app/sockets/messageSocket";
-import { Message } from "@/app/types/UserContextTypes";
-import sortMessagesByTimestamps from "@/app/utils/sortMessagesByTimestamps";
-import { useUserStore } from "@/app/store/userStore";
+import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import { shallow } from "zustand/shallow";
+
+import useUserMessages from "@/app/custom-hooks/useUserMessages";
+import messageSocket from "@/app/sockets/messageSocket";
+import { useUserStore } from "@/app/store/userStore";
+import { Message } from "@/app/types/UserContextTypes";
+import { findMessageByTimestamps } from "@/app/utils/findMessageByTimestamps";
+import sortMessagesByTimestamps from "@/app/utils/sortMessagesByTimestamps";
+
+import ChatDate from "./ChatDate";
+import ScrollButton from "./ScrollButton";
+import SentMessage from "./SentMessage";
+import UserMessages from "./UserMessages";
+
+const renderStateClassName =
+	"flex grow items-center justify-center text-center text-xl";
 
 function ChatMessages() {
 	const scrollRef = useRef<HTMLDivElement>(null);
@@ -31,6 +36,17 @@ function ChatMessages() {
 
 	console.log("messages: ", messages, activeConversation);
 
+	const scrollToBottom = useCallback(() => {
+		if (scrollRef.current) {
+			const { scrollHeight } = scrollRef.current;
+			setShowScrollButton(false);
+			scrollRef.current.scrollTo({
+				top: scrollHeight,
+				behavior: "smooth",
+			});
+		}
+	}, []);
+
 	const observer = useRef<IntersectionObserver>();
 	const loadMoreMessages = useCallback(
 		(node: Element | null) => {
@@ -48,7 +64,6 @@ function ChatMessages() {
 					entries[0].isIntersecting &&
 					messages[activeConversation.conversationId].hasMore
 				) {
-					console.log("updaing timestamps", entries);
 					if (
 						messages[activeConversation.conversationId].latestMessageTimestamp
 					) {
@@ -82,25 +97,29 @@ function ChatMessages() {
 		const handleSentMessage = (socketEvent: {
 			data: { message: Message; conversationId: string };
 		}) => {
-			if (!socketEvent || !activeConversation?.conversationId) {
+			if (!socketEvent) {
 				return;
 			}
 
 			const { message, conversationId } = socketEvent.data;
-			const activeConversationId = activeConversation.conversationId;
-
-			if (activeConversationId !== conversationId) {
+			if (
+				!messages[conversationId] &&
+				!messages[conversationId]?.initialLoadComplete
+			)
 				return;
-			}
 
 			const updatedMessages = [
-				...(messages[activeConversationId]?.messages || []),
+				...(messages[conversationId]?.messages || []),
 				message,
 			];
 			const updatedFields = {
-				messages: sortMessagesByTimestamps(updatedMessages),
+				messages: sortMessagesByTimestamps(
+					updatedMessages,
+					updatedMessages.length - 1,
+					updatedMessages.length
+				),
 			};
-			setMessages(activeConversationId, updatedFields);
+			setMessages(conversationId, updatedFields);
 
 			scrollToBottom();
 		};
@@ -110,21 +129,97 @@ function ChatMessages() {
 		return () => {
 			messageSocket.off("sentMessage", handleSentMessage);
 		};
+	}, [setMessages, messages, scrollToBottom]);
+
+	useEffect(() => {
+		const handleEditedMessage = (socketEvent: {
+			data: { message: Message; conversationId: string };
+		}) => {
+			if (!socketEvent) {
+				return;
+			}
+
+			const { message, conversationId } = socketEvent.data;
+			if (
+				!messages[conversationId] &&
+				!messages[conversationId]?.initialLoadComplete
+			)
+				return;
+
+			// perform binary search then update messages if message is cached
+			const messageIndex = findMessageByTimestamps(
+				message,
+				messages[conversationId].messages
+			);
+			console.log(messageIndex);
+			if (messageIndex !== -1) {
+				// @ts-ignore
+				const updatedMessages = [...messages[conversationId].messages];
+				const currentDatestamp = updatedMessages[messageIndex].renderDatestamp;
+				const currentRenderUserMessage =
+					updatedMessages[messageIndex].renderUserMessage;
+				// @ts-ignore
+				updatedMessages[messageIndex] = {
+					...message,
+					renderUserMessage: currentRenderUserMessage,
+					renderDatestamp: currentDatestamp,
+				};
+				setMessages(conversationId, { messages: updatedMessages });
+			} else return;
+		};
+
+		messageSocket.on("editedMessage", handleEditedMessage);
+
+		return () => {
+			messageSocket.off("editedMessage", handleEditedMessage);
+		};
 	}, [activeConversation?.conversationId, setMessages, messages]);
 
-	function scrollToBottom() {
-		if (scrollRef.current) {
-			const { scrollHeight } = scrollRef.current;
-			setShowScrollButton(false);
-			scrollRef.current.scrollTo({
-				top: scrollHeight,
-				behavior: "smooth",
-			});
-		}
-	}
+	useEffect(() => {
+		const handleDeletedMessage = (socketEvent: {
+			data: { message: Message; conversationId: string };
+		}) => {
+			if (!socketEvent) {
+				return;
+			}
+
+			const { message, conversationId } = socketEvent.data;
+			if (
+				!messages[conversationId] &&
+				!messages[conversationId]?.initialLoadComplete
+			)
+				return;
+
+			// perform binary search then update messages if message is cached
+			const messageIndex = findMessageByTimestamps(
+				message,
+				messages[conversationId].messages
+			);
+
+			if (messageIndex && messageIndex != -1) {
+				// @ts-ignore
+				messages[conversationId].messages.splice(messageIndex, 1);
+				const updatedFields = {
+					messages: sortMessagesByTimestamps(
+						messages[conversationId].messages,
+						messageIndex,
+						messageIndex + 1
+					),
+				};
+				setMessages(conversationId, updatedFields);
+			} else return;
+		};
+
+		messageSocket.on("deletedMessage", handleDeletedMessage);
+
+		return () => {
+			messageSocket.off("deletedMessage", handleDeletedMessage);
+		};
+	}, [activeConversation?.conversationId, setMessages, messages]);
 
 	useEffect(() => {
 		function setScrollTop() {
+			// sets position of scroll top when swapping between conversations
 			const activeConversationId = activeConversation?.conversationId;
 			if (!activeConversationId) return;
 
@@ -165,7 +260,7 @@ function ChatMessages() {
 	// render states
 	if (activeConversation == null) {
 		return (
-			<div className="flex items-center justify-center grow text-center">
+			<div className={renderStateClassName}>
 				<p>Start messaging a friend</p>
 			</div>
 		);
@@ -176,7 +271,7 @@ function ChatMessages() {
 
 	if (conversationMessages?.length === 0) {
 		return (
-			<div className="flex items-center justify-center grow text-center">
+			<div className={renderStateClassName}>
 				<p>No messages found. Try sending some!</p>
 			</div>
 		);
@@ -184,13 +279,13 @@ function ChatMessages() {
 
 	return (
 		<div
-			className="flex flex-col-reverse grow overflow-auto scrollbar-thin scrollbar-thumb-neutral-700"
+			className="flex grow flex-col-reverse overflow-auto scrollbar-thin scrollbar-thumb-neutral-700"
 			ref={scrollRef}
 			onScroll={handleScroll}
 		>
-			<div className="">
+			<div>
 				{!messages[activeConversation.conversationId].hasMore && (
-					<div className="flex justify-center items-center text-sm pt-4 pb-2">
+					<div className="flex items-center justify-center pb-2 pt-4 text-sm">
 						Beginning of messages
 					</div>
 				)}
@@ -199,7 +294,7 @@ function ChatMessages() {
 					const isConsecutiveMessage = message.renderDatestamp;
 
 					return (
-						<React.Fragment key={message.timestamp.getTime()}>
+						<Fragment key={message._id}>
 							{i === 0 && <div ref={loadMoreMessages}></div>}
 							{isConsecutiveMessage && isUserMessage && (
 								<ChatDate
@@ -208,14 +303,17 @@ function ChatMessages() {
 								/>
 							)}
 							{isUserMessage ? (
-								<UserMessages
-									senderUsername={message.senderUsername}
-									senderId={message.senderId}
-									message={message.message}
-									_id={message._id}
-									timestamp={message.timestamp}
-									key={message._id}
-								/>
+								<>
+									<div className="pt-3"></div>
+									<UserMessages
+										senderUsername={message.senderUsername}
+										senderId={message.senderId}
+										message={message.message}
+										_id={message._id}
+										timestamp={message.timestamp}
+										key={message._id}
+									/>
+								</>
 							) : (
 								<SentMessage
 									senderUsername={message.senderUsername}
@@ -227,19 +325,13 @@ function ChatMessages() {
 									type="consecutiveMessage"
 								/>
 							)}
-						</React.Fragment>
+						</Fragment>
 					);
 				})}
-				<button
-					onClick={scrollToBottom}
-					className={
-						showScrollButton
-							? "absolute bg-gray-100 px-2 py-2 rounded-full text-sm z-20 bottom-20 right-6 hover:bg-gray-300"
-							: "hidden"
-					}
-				>
-					<DownArrowIcon />
-				</button>
+				<ScrollButton
+					scrollToBottom={scrollToBottom}
+					showScrollButton={showScrollButton}
+				/>
 			</div>
 		</div>
 	);

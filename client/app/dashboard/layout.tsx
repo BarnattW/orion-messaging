@@ -1,6 +1,7 @@
-import { redirect } from "next/navigation";
-import { UserData } from "../Context/UserData";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+
+import { UserData } from "../Context/UserData";
 
 async function fetchUserId() {
 	try {

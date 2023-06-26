@@ -1,11 +1,12 @@
-import Link from "next/link";
 import Image from "next/image";
+
+import SignInProvider from "./SignInProvider";
 
 function AuthForm() {
 	return (
-		<div className="bg-gradient-to-r from-zinc-800 to-neutral-800 h-full min-h-full">
-			<div className="items-center flex h-full">
-				<div className="items-center justify-center flex flex-col grow drop-shadow-lg rounded md:m-auto md:mt-1/2 md:max-w-lg h-full md:h-2/3 bg-zinc-800">
+		<div className="h-full min-h-full bg-gradient-to-r from-zinc-800 to-neutral-800">
+			<div className="flex h-full items-center">
+				<div className="md:mt-1/2 flex h-full grow flex-col items-center justify-center rounded bg-zinc-800 drop-shadow-lg md:m-auto md:h-2/3 md:max-w-lg">
 					<div className="mb-6">
 						<Image
 							src="/orion-logo2.svg"
@@ -14,51 +15,28 @@ function AuthForm() {
 							alt="Orion Messaging Logo"
 						/>
 					</div>
-					<div className="flex flex-col gap-3 mb-12 w-2/3">
-						<Link
-							href="/api/auth/facebook"
-							type="button"
-							className="py-2 px-4 flex justify-center items-center  bg-blue-600 hover:bg-blue-700 w-full transition ease-in duration-200 text-center text-base font-semibold rounded-lg"
-						>
-							<Image
-								src="/fb-icon.svg"
-								width={20}
-								height={20}
-								alt="Authenticate with Facebook"
-								className="ml-4 mr-2"
-							/>
-							Sign in with Facebook
-						</Link>
-
-						<Link
-							href="/api/auth/google"
-							type="button"
-							className="py-2 px-4 flex justify-center items-center  bg-red-600 hover:bg-red-700 w-full transition ease-in duration-200 text-center text-base font-semibold rounded-lg"
-						>
-							<Image
-								src="/google-icon.svg"
-								width={20}
-								height={20}
-								alt="Authenticate with Google"
-								className="mr-2"
-							/>
-							Sign in with Google
-						</Link>
-
-						<Link
-							href="/api/auth/github"
-							type="button"
-							className="py-2 px-4 flex justify-center items-center  bg-gray-600 hover:bg-gray-700 w-full transition ease-in duration-200 text-center text-base font-semibold rounded-lg "
-						>
-							<Image
-								src="/github-icon.svg"
-								width={20}
-								height={20}
-								alt="Authenticate with Github"
-								className="mr-2"
-							/>
-							Sign in with Github
-						</Link>
+					<div className="mb-12 flex w-2/3 flex-col gap-3">
+						<SignInProvider
+							apiURL="/api/auth/facebook"
+							colorsClassName="bg-blue-600 hover:bg-blue-700"
+							iconURL="/fb-icon.svg"
+							imageClassName="ml-4 mr-2"
+							providerName="Facebook"
+						/>
+						<SignInProvider
+							apiURL="/api/auth/google"
+							colorsClassName="bg-red-600 hover:bg-red-700"
+							iconURL="/google-icon.svg"
+							imageClassName="mr-2"
+							providerName="Google"
+						/>
+						<SignInProvider
+							apiURL="/api/auth/github"
+							colorsClassName="bg-gray-600 hover:bg-gray-700"
+							iconURL="/github-icon.svg"
+							imageClassName="mr-2"
+							providerName="Github"
+						/>
 					</div>
 				</div>
 			</div>

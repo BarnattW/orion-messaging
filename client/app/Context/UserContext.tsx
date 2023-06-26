@@ -1,11 +1,12 @@
 "use client";
 import { createContext, useState } from "react";
+
 import {
-	UserContextProps,
-	Friend,
-	Conversation,
 	ActiveConversation,
+	Conversation,
+	Friend,
 	Messages,
+	UserContextProps,
 } from "../types/UserContextTypes";
 
 export const UserContext = createContext<UserContextProps>({

@@ -1,12 +1,15 @@
 "use client";
-import ListContainer from "../ListWrappers/ListContainer";
 import { useEffect, useState } from "react";
-import ReceivedFriendRequests from "./ReceivedFriendRequests";
-import AddFriend from "./AddFriend";
-import SentFriendRequests from "./SentFriendRequests";
-import { FriendRequests } from "@/app/types/FriendRequests";
-import { useUserStore } from "@/app/store/userStore";
 import { shallow } from "zustand/shallow";
+
+import { useUserStore } from "@/app/store/userStore";
+import { FriendRequests } from "@/app/types/FriendRequests";
+
+import ListContainer from "../ListWrappers/ListContainer";
+import AddFriend from "./AddFriend";
+import ReceivedFriendRequests from "./ReceivedFriendRequests";
+import ReceivedGroupRequests from "./ReceivedGroupRequests";
+import SentFriendRequests from "./SentFriendRequests";
 
 function FriendRequests() {
 	const { userId } = useUserStore(
@@ -14,6 +17,10 @@ function FriendRequests() {
 		shallow
 	);
 	const [friendRequests, setFriendRequests] = useState<FriendRequests>({
+		receivedRequests: [],
+		sentRequests: [],
+	});
+	const [groupRequests, setGroupRequests] = useState<FriendRequests>({
 		receivedRequests: [],
 		sentRequests: [],
 	});
@@ -39,6 +46,26 @@ function FriendRequests() {
 					receivedRequests: friendRequests.incoming,
 					sentRequests: friendRequests.outgoing,
 				});
+
+				const responseGroup = await fetch(
+					`/api/connect/${userId}/getGroupReqs`,
+					{
+						method: "GET",
+						headers: {
+							"Content-Type": "application/json",
+						},
+					}
+				);
+
+				if (!response.ok) {
+					// update with common error handling
+					console.log(response);
+				}
+				const groupRequests = await responseGroup.json();
+				setGroupRequests({
+					receivedRequests: groupRequests.incoming,
+					sentRequests: groupRequests.outgoing,
+				});
 			} catch (error) {
 				console.log(error);
 			}
@@ -54,6 +81,9 @@ function FriendRequests() {
 				receivedRequests={friendRequests.receivedRequests}
 			/>
 			<SentFriendRequests sentRequests={friendRequests.sentRequests} />
+			<ReceivedGroupRequests
+				receivedRequests={groupRequests.receivedRequests}
+			/>
 		</ListContainer>
 	);
 }

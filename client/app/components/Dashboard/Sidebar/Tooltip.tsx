@@ -25,7 +25,7 @@ function Tooltip({
 		>
 			{children}
 			{showTooltip && (
-				<div className="absolute bg-gray-800 text-white px-2 py-1 rounded text-sm z-20 left-full ml-2 -my-7">
+				<div className="absolute left-full z-20 -my-7 ml-2 rounded bg-gray-800 px-2 py-1 text-sm text-white">
 					{content}
 				</div>
 			)}

@@ -7,6 +7,7 @@ interface IRequest{
     status: 'pending' | 'accepted' | 'rejected';
     senderUsername: string;
     receiverUsername: string;
+    groupId: mongoose.Types.ObjectId;
 }
 
 const RequestSchema = new Schema<IRequest>({
@@ -32,6 +33,10 @@ const RequestSchema = new Schema<IRequest>({
     requestType: {
         type: String,
         enum: ['friend', 'group'],
+    },
+    groupId:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Group'
     }
 });
 

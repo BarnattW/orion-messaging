@@ -1,5 +1,6 @@
-import AuthForm from "@/app/components/AuthForm/AuthForm";
 import { Metadata } from "next";
+
+import AuthForm from "@/app/components/AuthForm/AuthForm";
 
 export const metadata: Metadata = {
 	title: "Orion Messaging Login",
