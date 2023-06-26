@@ -19,6 +19,7 @@ router.post("/api/connect/createGroup", async(req: Request, res: Response)=>{
 
 		const newGroup = new Group();
 		newGroup.name = groupName;
+		newGroup.creator = userId;
 		newGroup.users.push(userId);
 
 		newGroup.save();
@@ -293,3 +294,5 @@ router.get(
 		}
 	}
 );
+
+export const groupRoutes = router;
