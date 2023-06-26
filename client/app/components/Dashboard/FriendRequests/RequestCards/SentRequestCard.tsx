@@ -5,19 +5,37 @@ import Avatar from "../../Avatar/Avatar";
 function SentRequestCard(friendRequestCardProps: RequestCardProps) {
 	async function deleteRequest() {
 		try {
-			const response = await fetch(
-				`/api/connect/rejectFriendRequest/${friendRequestCardProps.requestId}`,
-				{
-					method: "PUT",
-					headers: {
-						"Content-Type": "application/json",
-					},
-				}
-			);
+			if (friendRequestCardProps.requestType === "friend") {
+				const response = await fetch(
+					`/api/connect/rejectFriendRequest/${friendRequestCardProps.requestId}`,
+					{
+						method: "PUT",
+						headers: {
+							"Content-Type": "application/json",
+						},
+					}
+				);
 
-			if (!response.ok) {
-				// update with common error handling
-				console.log(response);
+				if (!response.ok) {
+					// update with common error handling
+					console.log(response);
+				}
+			}
+			if (friendRequestCardProps.requestType === "group") {
+				const response = await fetch(
+					`/api/connect/rejectGroupRequest/${friendRequestCardProps.requestId}`,
+					{
+						method: "PUT",
+						headers: {
+							"Content-Type": "application/json",
+						},
+					}
+				);
+
+				if (!response.ok) {
+					// update with common error handling
+					console.log(response);
+				}
 			}
 		} catch (error) {
 			console.log(error);

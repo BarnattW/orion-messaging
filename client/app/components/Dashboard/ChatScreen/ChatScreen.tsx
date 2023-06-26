@@ -5,7 +5,7 @@ import ChatTitle from "./ChatTitle";
 function ChatScreen() {
 	return (
 		<div
-			className="h-full flex-col grow flex"
+			className="flex h-full grow flex-col overflow-auto"
 			style={{ wordBreak: "break-word" }}
 		>
 			<ChatTitle />
