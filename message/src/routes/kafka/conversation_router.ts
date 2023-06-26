@@ -8,6 +8,7 @@ export async function createConversation(data: any, type: string, io: Server, co
   try {
     let newChat: any = {}
     if (type == "friends") {
+      console.log("Friend is being created")
       const { receiverId, senderId }: { receiverId: string; senderId: string } =
         data;
 
@@ -18,15 +19,17 @@ export async function createConversation(data: any, type: string, io: Server, co
       }
     }
 
-    if (type == "groups") {
+    if (type == "group") {
+      console.log("Group is being created")
       const { _id, name, user }: { _id: Types.ObjectId, name: string, user: string} =
         data;
 
       const users = user;
       newChat = {
         groupId: _id,
+        conversationType: type,
         title: name,
-        users: user
+        users: users
       }
     }
 
