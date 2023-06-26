@@ -5,6 +5,7 @@ import { friendRequests } from "../src/routes/api/friendrequests";
 import { friends } from "../src/routes/api/friends";
 import { createUser } from "../src/routes/api/user";
 import { userOps } from "../src/routes/api/user";
+import { groupRoutes } from "./routes/api/groups";
 
 
 const app = express();
@@ -22,6 +23,7 @@ app.use(express.json());
 app.use(friendRequests);
 app.use(userOps);
 app.use(friends);
+app.use(groupRoutes);
 
 createUser();
 
