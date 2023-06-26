@@ -34,7 +34,7 @@ export class messageConsumer implements SimpleConsumer {
         .connect()
         .then(() => this.consumer.subscribe({ topic: "user-data" }))
         .then(() => this.consumer.subscribe({ topic: "friends" }))
-        .then(() => this.consumer.subscribe({ topic: "groups" }))
+        .then(() => this.consumer.subscribe({ topic: "group" }))
         .then(() =>
           this.consumer.run({
             eachMessage: async (messagePayload: EachMessagePayload) => {
