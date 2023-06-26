@@ -4,8 +4,8 @@ import {
 } from "kafkajs";
 import { kafka } from "./kafka";
 import { createUser } from "../routes/kafka/user_router";
-import { createConversation } from "../routes/kafka/conversation_router";
-import { Socket } from "socket.io";
+import { addUser, createConversation } from "../routes/kafka/conversation_router";
+import { Server, Socket } from "socket.io";
 
 export interface SimpleConsumer {
   connect(): Promise<void>;
@@ -14,10 +14,12 @@ export interface SimpleConsumer {
 }
 
 export class messageConsumer implements SimpleConsumer {
+  private io: Server;
   private consumer: Consumer;
   private connectedClients: Map<string, Socket>
 
-  constructor(connectedClients: Map<string, Socket>) {
+  constructor(io: Server, connectedClients: Map<string, Socket>) {
+    this.io = io;
     this.consumer = this.createConsumer();
     this.connectedClients = connectedClients
   }
@@ -32,6 +34,7 @@ export class messageConsumer implements SimpleConsumer {
         .connect()
         .then(() => this.consumer.subscribe({ topic: "user-data" }))
         .then(() => this.consumer.subscribe({ topic: "friends" }))
+        .then(() => this.consumer.subscribe({ topic: "groups" }))
         .then(() =>
           this.consumer.run({
             eachMessage: async (messagePayload: EachMessagePayload) => {
@@ -59,8 +62,16 @@ export class messageConsumer implements SimpleConsumer {
 		}
 
 		if (topic == "friends" && messageType == "request-accepted") {
-			createConversation(value);
+			createConversation(value, topic, this.io, this.connectedClients);
 		}
+
+    if (topic == "group" && messageType == "create") {
+      createConversation(value, topic, this.io, this.connectedClients)
+    }
+
+    if (topic == "group" && messageType == "accept") {
+      addUser(value, this.io, this.connectedClients)
+    }
 	}
 
   public async disconnect(): Promise<void> {
