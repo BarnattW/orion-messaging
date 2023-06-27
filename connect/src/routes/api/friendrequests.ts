@@ -62,7 +62,7 @@ router.post("/api/connect/sendFriendRequest", async(req: Request, res: Response)
 		receiver.incomingrequests.push(newRequest._id);
 		await receiver.save();
 		
-		await publishMessage("friend", newRequest, "requestCreated")
+		await publishMessage("friends", newRequest, "requestCreated")
 
 		return res.status(201).json({
 			message: `friend request created`,

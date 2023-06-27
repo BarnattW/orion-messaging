@@ -102,7 +102,7 @@ router.post("/api/connect/sendGroupRequest", async(req: Request, res: Response) 
 		receiver.incomingrequests.push(newRequest._id);
 		await receiver.save();
 		
-		await publishMessage("group", newRequest, "create")
+		//await publishMessage("group", newRequest, "create")
 
 		return res.status(201).json({
 			message: `group request created`,
