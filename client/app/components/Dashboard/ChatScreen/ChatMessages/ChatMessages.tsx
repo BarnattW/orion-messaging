@@ -196,7 +196,7 @@ function ChatMessages() {
 				messages[conversationId].messages
 			);
 
-			if (messageIndex && messageIndex != -1) {
+			if (messageIndex != undefined && messageIndex != -1) {
 				// @ts-ignore
 				messages[conversationId].messages.splice(messageIndex, 1);
 				const updatedFields = {

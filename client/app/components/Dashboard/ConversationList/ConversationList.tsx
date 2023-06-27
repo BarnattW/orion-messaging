@@ -28,15 +28,15 @@ function ConversationList() {
 						<div onClick={toggleCreateGroup}>
 							<AddIcon className={iconClassNames} />
 						</div>
-						{isComponentVisible && <CreateGroupChat />}
+						{isComponentVisible && (
+							<CreateGroupChat setIsComponentVisible={setIsComponentVisible} />
+						)}
 					</div>
 				</div>
 			</ListHeading>
-			<div>
+			<div className="overflow-y-scroll scrollbar-thin">
 				{conversations.length > 0 &&
 					conversations.map((conversation) => {
-						//const isActive = conversation.conversationId === activeConversationId;
-
 						return (
 							<ConversationCard
 								altText={conversation.title}
@@ -50,6 +50,15 @@ function ConversationList() {
 							/>
 						);
 					})}
+				<ConversationCard
+					altText="vany"
+					//imageUrl={conversation.conversationImageUrl}
+					users={["vany"]}
+					type="group"
+					conversationName="AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+					conversationId="vany"
+					latestMessageTimestamp={new Date()}
+				/>
 			</div>
 		</ListContainer>
 	);
