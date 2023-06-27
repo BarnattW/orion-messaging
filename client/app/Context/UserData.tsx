@@ -41,9 +41,9 @@ export function UserData({ children }: { children: React.ReactNode }) {
 					"Content-Type": "application/json",
 				},
 			});
-			console.log(response);
+
 			if (response.status === 401) {
-				router.push("/");
+				router.push("/auth/login");
 			}
 			const userId = await response.json();
 			setUserId(userId);

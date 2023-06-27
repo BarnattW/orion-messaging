@@ -27,4 +27,5 @@ export interface RequestCardProps {
 	userId: string;
 	username: string;
 	requestId: string;
+	requestType: string;
 }

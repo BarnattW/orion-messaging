@@ -8,6 +8,7 @@ import { FriendRequests } from "@/app/types/FriendRequests";
 import ListContainer from "../ListWrappers/ListContainer";
 import AddFriend from "./AddFriend";
 import ReceivedFriendRequests from "./ReceivedFriendRequests";
+import ReceivedGroupRequests from "./ReceivedGroupRequests";
 import SentFriendRequests from "./SentFriendRequests";
 
 function FriendRequests() {
@@ -16,6 +17,10 @@ function FriendRequests() {
 		shallow
 	);
 	const [friendRequests, setFriendRequests] = useState<FriendRequests>({
+		receivedRequests: [],
+		sentRequests: [],
+	});
+	const [groupRequests, setGroupRequests] = useState<FriendRequests>({
 		receivedRequests: [],
 		sentRequests: [],
 	});
@@ -41,6 +46,26 @@ function FriendRequests() {
 					receivedRequests: friendRequests.incoming,
 					sentRequests: friendRequests.outgoing,
 				});
+
+				const responseGroup = await fetch(
+					`/api/connect/${userId}/getGroupReqs`,
+					{
+						method: "GET",
+						headers: {
+							"Content-Type": "application/json",
+						},
+					}
+				);
+
+				if (!responseGroup.ok) {
+					// update with common error handling
+					console.log(responseGroup);
+				}
+				const groupRequests = await responseGroup.json();
+				setGroupRequests({
+					receivedRequests: groupRequests.incoming,
+					sentRequests: groupRequests.outgoing,
+				});
 			} catch (error) {
 				console.log(error);
 			}
@@ -56,6 +81,9 @@ function FriendRequests() {
 				receivedRequests={friendRequests.receivedRequests}
 			/>
 			<SentFriendRequests sentRequests={friendRequests.sentRequests} />
+			<ReceivedGroupRequests
+				receivedRequests={groupRequests.receivedRequests}
+			/>
 		</ListContainer>
 	);
 }
