@@ -21,10 +21,9 @@ export async function createConversation(data: any, type: string, io: Server, co
 
     if (type == "group") {
       console.log("Group is being created")
-      const { _id, name, user }: { _id: Types.ObjectId, name: string, user: string} =
+      const { _id, name, users }: { _id: Types.ObjectId, name: string, users: string} =
         data;
 
-      const users = user;
       newChat = {
         groupId: _id,
         conversationType: type,
