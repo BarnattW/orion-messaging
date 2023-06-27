@@ -42,7 +42,10 @@ export const useUserStore = create<UserState>((set) => ({
 			},
 		})),
 	conversations: [],
-	setConversations: (conversations) => set(() => ({ conversations })),
+	setConversations: (newConversations) =>
+		set((state) => ({
+			conversations: state.conversations.concat(newConversations),
+		})),
 	messages: {},
 	setMessages: (conversationId, updatedFields) =>
 		set((state) => ({

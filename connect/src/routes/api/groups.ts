@@ -70,11 +70,11 @@ router.post(
 				users: { $in: [receiver.userId] },
 			});
 
-			if (inGroup.length !== 0) {
-				return res
-					.status(400)
-					.json({ message: `${receiverUsername} is already in your group` });
-			}
+			// if (inGroup.length !== 0) {
+			// 	return res
+			// 		.status(400)
+			// 		.json({ message: `${receiverUsername} is already in your group` });
+			// }
 
 			//check if friendrequest is pending
 			const outgoingRequestIds = sender.outgoingrequests;
@@ -105,10 +105,10 @@ router.post(
 			});
 
 			await newRequest.save();
-      
-      receiver.incomingrequests.push(newRequest._id);
-      await receiver.save();
-		
+
+			receiver.incomingrequests.push(newRequest._id);
+			await receiver.save();
+
 			sender.outgoingrequests.push(newRequest._id);
 			await sender.save();
 
