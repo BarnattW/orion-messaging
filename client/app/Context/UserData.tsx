@@ -78,10 +78,10 @@ export function UserData({ children }: { children: React.ReactNode }) {
 					messageSocket.emit("getConversations", {
 						userId: userId,
 					});
-					messageSocket.on("gotConversations", (message) => {
-						if (message.data) {
-							setConversations(message.data);
-							console.log(message.data)
+					messageSocket.on("gotConversations", (conversation) => {
+						if (conversation.data) {
+							setConversations(conversation.data);
+							console.log(conversation.data);
 						}
 					});
 				} catch (error) {

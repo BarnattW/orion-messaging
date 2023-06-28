@@ -31,8 +31,6 @@ function ConversationCard({
 	const conversationTitle =
 		type === "individual" ? users.find((id) => id != userId) : conversationName;
 
-	console.log(conversationTitle);
-
 	function changeActiveConversation() {
 		if (activeConversation?.conversationId != conversationId) {
 			if (
