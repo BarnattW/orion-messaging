@@ -126,7 +126,7 @@ function CreateGroupChat({ setIsComponentVisible }: CreateGroupChatProps) {
 							<input
 								className="h-4 w-4 bg-zinc-600"
 								type="checkbox"
-								id={friend.username}
+								id={friend.userId}
 								checked={selectedOptions.includes(`${friend.username}`)}
 								onChange={handleCheckboxChange}
 							></input>

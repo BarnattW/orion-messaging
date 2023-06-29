@@ -24,6 +24,8 @@ type UserState = {
 	setConversations: (conversations: Conversation[]) => void;
 	messages: Messages;
 	setMessages: (conversationId: string, updatedFields: MessageFields) => void;
+	showUserList: boolean;
+	setShowUserList: () => void;
 };
 
 export const useUserStore = create<UserState>((set) => ({
@@ -44,7 +46,7 @@ export const useUserStore = create<UserState>((set) => ({
 	conversations: [],
 	setConversations: (newConversations) =>
 		set((state) => ({
-			conversations: state.conversations.concat(newConversations),
+			conversations: [...state.conversations, ...newConversations],
 		})),
 	messages: {},
 	setMessages: (conversationId, updatedFields) =>
@@ -57,4 +59,7 @@ export const useUserStore = create<UserState>((set) => ({
 				},
 			},
 		})),
+	showUserList: true,
+	setShowUserList: () =>
+		set((state) => ({ showUserList: !state.showUserList })),
 }));

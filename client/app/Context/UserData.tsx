@@ -7,6 +7,7 @@ import { shallow } from "zustand/shallow";
 
 import messageSocket from "../sockets/messageSocket";
 import { useUserStore } from "../store/userStore";
+import { Conversation } from "../types/UserContextTypes";
 
 const fetcher = (url: string) => fetch(url).then((response) => response.json());
 
@@ -91,6 +92,25 @@ export function UserData({ children }: { children: React.ReactNode }) {
 		}
 		getUserConversations();
 	}, [setConversations, userId]);
+
+	useEffect(() => {
+		function receiveUserConversationsUpdates() {
+			try {
+				// when adding a group
+				messageSocket.on(
+					"createdConversation",
+					(conversation: { data: Conversation }) => {
+						if (conversation.data) {
+							setConversations([conversation.data]);
+						}
+					}
+				);
+			} catch (error) {
+				console.log(error);
+			}
+		}
+		receiveUserConversationsUpdates();
+	}, [setConversations]);
 
 	return <>{children}</>;
 }
