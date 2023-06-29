@@ -89,6 +89,15 @@ ConversationSchema.pre('deleteOne', async function () {
   }))
 })
 
+ConversationSchema.virtual('userInfo').get(async function() {
+  const userInfo: Array<{ userId: string | undefined, username: string | undefined}> = await Promise.all(this.users.map(async userId => {
+    const user = await User.findOne({ userId });
+    const data = { userId: user?.userId, username: user?.username};
+    return data
+  }))
+  return Promise.all(userInfo);
+})
+
 export const Conversation = model<IConversation>(
   "Conversation",
   ConversationSchema

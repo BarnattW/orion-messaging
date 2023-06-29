@@ -1,6 +1,6 @@
 import { Server, Socket } from "socket.io";
 import { Conversation } from "../../models/Conversation";
-import { User } from "../../models/User";
+import { IUser, User } from "../../models/User";
 import { Types } from "mongoose";
 import { socketsInConversation } from "../../lib/utils";
 
@@ -36,6 +36,14 @@ export async function createConversation(data: any, type: string, io: Server, co
 
     const conv = await Conversation.create(newChat);
 
+    // @ts-ignore
+    const userInfo = await conv.userData
+
+    const conversationWithUserInfo = { 
+      ...conv.toObject(), 
+      userInfo
+    }
+
     await User.updateMany(
       { userId: { $in: conv.users } },
       { $push: { conversations: conv._id } }
@@ -49,7 +57,7 @@ export async function createConversation(data: any, type: string, io: Server, co
 
     io.to(result as string[]).emit("createdConversation", {
       message: `Conversation of Type ${conv.conversationType} created`,
-      data: conv,
+      data: conversationWithUserInfo
     });
 
     console.log(`Conversation of Type ${conv.conversationType} created`, conv);
@@ -87,11 +95,19 @@ export const addUser = async (data: any, io: Server, connectedClients: Map<strin
       user.conversations.push(conv._id);
       user.save();
 
-      const result = await socketsInConversation(conv, connectedClients);
+      // @ts-ignore
+      const userInfo = await conv.userData
+      
+      const conversationWithUserInfo = { 
+        ...conv.toObject(), 
+        userInfo
+      }
 
+      const result = await socketsInConversation(conv, connectedClients);
+      
       io.to(result as string[]).emit("addedUser", {
         message: `Added user ${newUser} to conversation ${conv._id}`,
-        data: conv,
+        data: conversationWithUserInfo
       });
     } catch (e) {
       console.log("Unable to add user: ", e);

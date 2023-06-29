@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { User } from "../../models/User";
+import { IUser, User } from "../../models/User";
 import { Message } from "../../models/Message";
 import { Conversation } from "../../models/Conversation";
 import express, { Request, Response } from "express";
@@ -11,9 +11,12 @@ export const getConversations = (socket: Socket) => {
   socket.on("getConversations", async (data) => {
     try {
       const { userId }: { userId: string} = data;
-      const user = await User.findOne({ userId: userId }).populate(
-        "conversations"
-      );
+      const user = await User.findOne({ userId: userId }).populate({
+        path: "conversations", 
+        populate: {
+          path: "conversationUsers"
+        }
+      });
 
       if (!user) {
         console.log("Get Conversations: User not found")
@@ -22,11 +25,24 @@ export const getConversations = (socket: Socket) => {
         });
       }
       
-      console.log(user);
-
+     
+      const convoWithUserInformation = await Promise.all(user.conversations.map(async conversation => {
+        //@ts-ignore
+        const userData = conversation.conversationUsers.map(user => ({
+          userId: user.userId,
+          username: user.username
+        }));
+        return {
+          //@ts-ignore
+          ...conversation.toObject(),
+          userData
+        };
+      }));
+      
+      console.log(convoWithUserInformation)
       socket.emit("gotConversations", {
         message: "Got Conversations",
-        data: user.conversations,
+        data: convoWithUserInformation,
       });
       
     } catch (e) {
