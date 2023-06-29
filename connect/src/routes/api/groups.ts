@@ -266,7 +266,6 @@ router.get(
 			User.createIndexes();
 	
 			const user = await User.findOne({ userId: userId });
-			console.log(user);
 	
 			if (!user) {
 				return res.status(404).json({ message: "User not found" });
@@ -299,5 +298,95 @@ router.get(
 		}
 	}
 );
+
+router.delete("/api/connect/deleteGroup", async (req: Request, res: Response) => {
+	try {
+		const { groupId } = req.body;
+
+		const group = await Group.findById(groupId);
+
+		if (!group) {
+			return res.status(404).json({ message: "group not found" });
+		}
+
+		await Group.findByIdAndDelete(groupId);
+
+		await publishMessage("group", group, "delete");
+
+		return res.status(200).json({ message: "Friend removed successfully" });
+	} catch (error) {
+		console.error("Error removing friend:", error);
+		return res.status(500).json({ message: "Server error" });
+	}
+});
+
+router.put("/api/connect/renameGroup", async (req: Request, res: Response) => {
+	try{
+		const { groupId, newName } = req.body;
+
+		const group = await Group.findById(groupId);
+
+		if (!group) {
+			return res.status(404).json({ message: "group not found" });
+		}
+
+		await Group.findByIdAndUpdate(groupId, {name: newName}, {new: true});
+
+		const data = {
+			groupId: groupId,
+			newTitle: newName
+		}
+
+		await publishMessage("group", data, "rename");
+
+		return res.status(200).json({message: `name changed to ${newName}`});
+	} catch (error) {
+		console.error("Error changing group name", error);
+		return res.status(500).json({ message: "Server error" });
+	}
+});
+
+router.put("/api/connect/leaveGroup", async (req: Request, res: Response) => {
+	try{
+		const { groupId, userId } = req.body;
+
+		const group = await Group.findById(groupId);
+
+		if (!group) {
+			return res.status(404).json({ message: "group not found" });
+		}
+
+		User.createIndexes();
+	
+		const user = await User.findOne({ userId: userId });
+
+		if (!user) {
+			return res.status(404).json({ message: "User not found" });
+		}
+
+		await Group.findOneAndUpdate(
+			{ _id: groupId },
+			{
+				$pull: { users: userId },
+			}
+		);
+
+		const data = {
+			userId: userId,
+			groupId: groupId
+		}
+
+		await publishMessage("group", data, "leave");
+
+		return res.status(200).json({message: "left group successfully"});
+
+	} catch (error) {
+
+		console.error("Error leaving group", error);
+		return res.status(500).json({ message: "Server error" });
+
+	}
+});
+
 
 export const groupRoutes = router;
