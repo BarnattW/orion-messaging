@@ -332,6 +332,13 @@ router.put("/api/connect/renameGroup", async (req: Request, res: Response) => {
 
 		await Group.findByIdAndUpdate(groupId, {name: newName}, {new: true});
 
+		const data = {
+			groupId: groupId,
+			newTitle: newName
+		}
+
+		await publishMessage("group", data, "rename");
+
 		return res.status(200).json({message: `name changed to ${newName}`});
 	} catch (error) {
 		console.error("Error changing group name", error);
@@ -364,7 +371,12 @@ router.put("/api/connect/leaveGroup", async (req: Request, res: Response) => {
 			}
 		);
 
-		await publishMessage("group", group, "leave");
+		const data = {
+			userId: userId,
+			groupId: groupId
+		}
+
+		await publishMessage("group", data, "leave");
 
 		return res.status(200).json({message: "left group successfully"});
 
