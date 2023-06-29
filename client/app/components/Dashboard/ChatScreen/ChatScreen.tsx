@@ -3,6 +3,7 @@ import ChatMessages from "./ChatMessages/ChatMessages";
 import ChatTitle from "./ChatTitle";
 
 function ChatScreen() {
+
 	return (
 		<div
 			className="flex h-full grow flex-col overflow-auto"

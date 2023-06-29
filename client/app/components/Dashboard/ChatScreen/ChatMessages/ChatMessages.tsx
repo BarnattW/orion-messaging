@@ -152,7 +152,7 @@ function ChatMessages() {
 				messages[conversationId].messages
 			);
 			console.log(messageIndex);
-			if (messageIndex !== -1) {
+			if (messageIndex && messageIndex !== -1) {
 				// @ts-ignore
 				const updatedMessages = [...messages[conversationId].messages];
 				const currentDatestamp = updatedMessages[messageIndex].renderDatestamp;
@@ -201,6 +201,7 @@ function ChatMessages() {
 				messages[conversationId].messages.splice(messageIndex, 1);
 				const updatedFields = {
 					messages: sortMessagesByTimestamps(
+						// @ts-ignore
 						messages[conversationId].messages,
 						messageIndex,
 						messageIndex + 1

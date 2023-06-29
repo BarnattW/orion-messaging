@@ -7,7 +7,7 @@ export interface Conversation {
 	title: string;
 	groupId?: string;
 	conversationType: string;
-	users: string[];
+	users: Friend[];
 	messages: string[];
 	latestMessageTimestamp: Date;
 	_id: string;
@@ -21,6 +21,8 @@ export interface ActiveConversation {
 	lastScrollTop: number | null;
 	canLoad: boolean;
 	initialLoadComplete?: boolean;
+	users: Friend[];
+	groupId?: string;
 }
 
 export interface ActiveConversationFields {
@@ -31,6 +33,8 @@ export interface ActiveConversationFields {
 	lastScrollTop?: number | null;
 	canLoad?: boolean;
 	initialLoadComplete?: boolean;
+	users?: Friend[];
+	groupId?: string;
 }
 
 export interface Message {
