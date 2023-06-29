@@ -41,6 +41,7 @@ const SentMessage = memo(function SentMessage(message: SentMessage) {
 		}
 	};
 
+	// editing functions
 	const editMessage = async () => {
 		try {
 			messageSocket.emit("editMessage", {
@@ -53,7 +54,6 @@ const SentMessage = memo(function SentMessage(message: SentMessage) {
 		}
 	};
 
-	// editing functions
 	const toggleEditingMode = () => {
 		setIsEditing((prevBool) => {
 			return !prevBool;

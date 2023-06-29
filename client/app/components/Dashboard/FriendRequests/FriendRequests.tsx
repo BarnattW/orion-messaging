@@ -57,9 +57,9 @@ function FriendRequests() {
 					}
 				);
 
-				if (!response.ok) {
+				if (!responseGroup.ok) {
 					// update with common error handling
-					console.log(response);
+					console.log(responseGroup);
 				}
 				const groupRequests = await responseGroup.json();
 				setGroupRequests({

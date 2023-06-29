@@ -5,6 +5,7 @@ export interface Friend {
 
 export interface Conversation {
 	title: string;
+	groupId?: string;
 	conversationType: string;
 	users: string[];
 	messages: string[];

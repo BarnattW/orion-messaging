@@ -7,14 +7,13 @@ import { Group } from "../../models/groups";
 
 const router = express.Router();
 
-router.post("/api/connect/createGroup", async(req: Request, res: Response)=>{
-	try{
+router.post("/api/connect/createGroup", async (req: Request, res: Response) => {
+	try {
+		const { groupName, userId } = req.body;
+		const user = await User.findOne({ userId: userId });
 
-		const{ groupName, userId } = req.body;
-		const user = await User.findOne({userId: userId});
-
-		if (!user){
-			return res.status(404).json({message: "user not found"});
+		if (!user) {
+			return res.status(404).json({ message: "user not found" });
 		}
 
 		const newGroup = new Group();
@@ -22,12 +21,13 @@ router.post("/api/connect/createGroup", async(req: Request, res: Response)=>{
 		newGroup.creator = userId;
 		newGroup.users.push(userId);
 
-		newGroup.save();
+		await newGroup.save();
 
-		publishMessage("group", newGroup, "create")
+		publishMessage("group", newGroup, "create");
 
-		return res.status(201).json({message: "group created successfully", data: newGroup});
-
+		return res
+			.status(201)
+			.json({ message: "group created successfully", data: newGroup });
 	} catch (error) {
 		console.error("Error creating group:", error);
 
@@ -35,94 +35,101 @@ router.post("/api/connect/createGroup", async(req: Request, res: Response)=>{
 	}
 });
 
-router.post("/api/connect/sendGroupRequest", async(req: Request, res: Response) =>{
-	try {
-		const { senderUsername, receiverUsername, groupId } = req.body;
+router.post(
+	"/api/connect/sendGroupRequest",
+	async (req: Request, res: Response) => {
+		try {
+			const { senderUsername, receiverUsername, groupId } = req.body;
+			console.log(req.body);
 
-		User.createIndexes();
+			User.createIndexes();
 
-		const sender = await User.findOne({
-			username: senderUsername,
-		});
-		const receiver = await User.findOne({
-			username: receiverUsername,
-		});
+			const sender = await User.findOne({
+				username: senderUsername,
+			});
+			const receiver = await User.findOne({
+				username: receiverUsername,
+			});
+			console.log(sender, receiver);
 
-		if (!sender || !receiver) {
-			return res.status(404).json({ message: "Sender or receiver not found" });
-		}
-
-		const group = await Group.findById(groupId);
-		
-		if (!group){
-			return res.status(404).json({message: "Group not found"});
-		}
-
-		//check if already in said group
-		const inGroup = await Group.find({
-			users: { $in: [receiver.userId]}
-		})
-
-		if (inGroup) {
-			return res
-				.status(400)
-				.json({ message: `${receiverUsername} is already in your group` });
+			if (!sender || !receiver) {
+				return res
+					.status(404)
+					.json({ message: "Sender or receiver not found" });
 			}
 
-		//check if friendrequest is pending
-		const outgoingRequestIds = sender.outgoingrequests;
-		
-		request.createIndexes();
+			const group = await Group.findById(groupId);
+			console.log(group);
 
-		const outgoingRequests = await request.find({
-			_id: { $in: outgoingRequestIds },
-			requestType: "group",
-			receiverId: receiver.userId
-		});
-		console.log(outgoingRequests);
-		if (outgoingRequests.length > 0){
-			return res.status(400).json({ message: `Group request to ${receiverUsername} is currently pending` });
+			if (!group) {
+				return res.status(404).json({ message: "Group not found" });
+			}
+
+			//check if already in said group
+			const inGroup = await Group.find({
+				users: { $in: [receiver.userId] },
+			});
+
+			// if (inGroup.length !== 0) {
+			// 	return res
+			// 		.status(400)
+			// 		.json({ message: `${receiverUsername} is already in your group` });
+			// }
+
+			//check if friendrequest is pending
+			const outgoingRequestIds = sender.outgoingrequests;
+			console.log(outgoingRequestIds);
+
+			request.createIndexes();
+
+			const outgoingRequests = await request.find({
+				_id: { $in: outgoingRequestIds },
+				requestType: "group",
+				receiverId: receiver.userId,
+			});
+			console.log(outgoingRequests);
+			if (outgoingRequests.length > 0) {
+				return res.status(400).json({
+					message: `Group request to ${receiverUsername} is currently pending`,
+				});
+			}
+
+			const newRequest = new request({
+				receiverUsername: receiverUsername,
+				senderUsername: senderUsername,
+				senderId: sender.userId,
+				receiverId: receiver.userId,
+				groupId: groupId,
+				requestType: "group",
+				status: "pending",
+			});
+
+			await newRequest.save();
+
+			receiver.incomingrequests.push(newRequest._id);
+			await receiver.save();
+
+			sender.outgoingrequests.push(newRequest._id);
+			await sender.save();
+
+			//await publishMessage("group", newRequest, "create");
+
+			return res.status(201).json({
+				message: `group request created`,
+				data: newRequest,
+			});
+		} catch (error) {
+			console.error(`Error creating group request:`, error);
+
+			return res.status(500).json({ message: "Server error" });
 		}
-
-		const newRequest = new request({
-			receiverUsername: receiverUsername,
-			senderUsername: senderUsername,
-			senderId: sender.userId,
-			receiverId: receiver.userId,
-			groupId: groupId,
-			requestType: "group",
-			status: "pending",
-		});
-
-		await newRequest.save();
-
-		sender.outgoingrequests.push(newRequest._id);
-		await sender.save();
-
-		receiver.incomingrequests.push(newRequest._id);
-		await receiver.save();
-		
-		await publishMessage("group", newRequest, "create")
-
-		return res.status(201).json({
-			message: `group request created`,
-			data: newRequest,
-		});
-
-		
-	} catch (error) {
-		console.error(`Error creating group request:`, error);
-
-		return res.status(500).json({ message: "Server error" });
 	}
-}
 );
 
 router.put(
 	"/api/connect/acceptGroupRequest/:requestId",
 	async (req: Request, res: Response) => {
 		try {
-
 			request.createIndexes();
 
 			const { requestId } = req.params;
@@ -136,11 +143,9 @@ router.put(
 
 			const group = await Group.findById(groupReq.groupId);
 
-			if (!group){
-				return res.status(404).json({ message: "group not found"});
+			if (!group) {
+				return res.status(404).json({ message: "group not found" });
 			}
-
-			
 
 			User.createIndexes();
 
@@ -155,12 +160,12 @@ router.put(
 
 			group.users.push(receiver.userId);
 
-			group.save();
-			
+			await group.save();
+
 			const data = {
 				groupId: group._id,
-				newUser: receiver.userId
-			}
+				newUser: receiver.userId,
+			};
 
 			//publish to kafka
 			await publishMessage("group", data, "accept");
