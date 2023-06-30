@@ -110,7 +110,7 @@ export const addUser = async (
 
     const conversationWithUserInfo = {
       ...conv.toObject(),
-      userInfo,
+      userData,
     };
 
     const result = await socketsInConversation(conv, connectedClients);
