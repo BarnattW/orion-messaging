@@ -9,4 +9,5 @@ export interface ConversationCardProps {
 	conversationId: string;
 	latestMessageTimestamp: Date;
 	groupId?: string;
+	userData: Friend[];
 }
