@@ -232,10 +232,12 @@ export const deleteMessage = (
       );
 
       // Finds the conversation with the message container
-      const conversation = await Conversation.findOne({
-        messages: messageContainer?._id,
-      });
-
+      const conversation = await Conversation.findOneAndUpdate(
+        { messages: messageContainer?._id},
+        { $pull: { messages: messageContainer?._id}},
+        { new: true }
+      )
+      console.log(conversation)
       if (!conversation) {
         console.log(
           "Message in messageContainer does not exist in a conversation"

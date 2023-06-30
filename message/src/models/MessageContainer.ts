@@ -22,10 +22,6 @@ MessageContainerSchema.post('findOneAndUpdate', async function(doc: IMessageCont
 
   if (messageContainer && messageContainer.messages.length == 0) {
     await this.model.deleteOne({_id: messageContainer._id});
-    await Conversation.updateOne(
-      { messages: messageContainer._id},
-      { $pull: { messages: messageContainer._id}}
-    )
   }
 })
 
