@@ -60,9 +60,10 @@ export async function createConversation(
     if (!conv) {
       return console.log("Create Conversation: Failed to create conversation");
     }
-
+    
     const result = await socketsInConversation(conv, connectedClients);
-
+    console.log("Connected Clients: ", connectedClients)
+    console.log("Result: ", result)
     io.to(result as string[]).emit("createdConversation", {
       message: `Conversation of Type ${conv.conversationType} created`,
       data: conversationWithUserInfo,
@@ -194,13 +195,15 @@ export const renameConversation = async (
     
     const conversation = await Conversation.findOneAndUpdate(
       { groupId },
-      { title: newTitle }
+      { title: newTitle },
+      { new: true }
     )
 
     if (!conversation) {
       return console.log(`Rename Conversation: Conversation with groupId: ${groupId} doesn't exist`)
     }
-    conversation.save()
+
+    console.log(conversation)
 
     // @ts-ignore
     const userInfo = await conversation.userData
