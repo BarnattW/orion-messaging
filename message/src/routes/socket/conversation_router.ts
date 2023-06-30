@@ -46,11 +46,11 @@ export const createConversation = (
       console.log("Conversation Created");
 
       // @ts-ignore
-      const userInfo = await conversation.userData
+      const userData = await conversation.userData
 
       const conversationWithUserInfo = { 
         ...conversation.toObject(), 
-        userInfo
+        userData
       }
 
       // Finds users connected and emits an event
@@ -121,11 +121,11 @@ export const addUser = (
       console.log("");
 
       // @ts-ignore
-      const userInfo = await conversation.userData
+      const userData = await conversation.userData
 
       const conversationWithUserInfo = { 
         ...conversation.toObject(), 
-        userInfo
+        userData
       }
 
       // Finds users connected and emits an event
@@ -187,11 +187,11 @@ export const removeUser = (
       }
 
       // @ts-ignore
-      const userInfo = await conversation.userData
+      const userData = await conversation.userData
 
       const conversationWithUserInfo = { 
         ...conversation.toObject(), 
-        userInfo
+        userData
       }
       
       // Finds users connected and emits an event 
