@@ -45,11 +45,11 @@ export async function createConversation(
     const conv = await Conversation.create(newChat);
 
     // @ts-ignore
-    const userInfo = await conv.userData;
+    const userData = await conv.userData;
 
     const conversationWithUserInfo = {
       ...conv.toObject(),
-      userInfo,
+      userData,
     };
 
     await User.updateMany(
@@ -106,7 +106,7 @@ export const addUser = async (
     user.save();
 
     // @ts-ignore
-    const userInfo = await conv.userData;
+    const userData = await conv.userData;
 
     const conversationWithUserInfo = {
       ...conv.toObject(),
@@ -163,11 +163,11 @@ export const removeUser = async (
     }
 
     // @ts-ignore
-    const userInfo = await conversation.userData
+    const userData = await conversation.userData
 
     const conversationWithUserInfo = { 
       ...conversation.toObject(), 
-      userInfo
+      userData
     }
     
     // Finds users connected and emits an event 
@@ -206,11 +206,11 @@ export const renameConversation = async (
     console.log(conversation)
 
     // @ts-ignore
-    const userInfo = await conversation.userData
+    const userData = await conversation.userData
 
     const conversationWithUserInfo = { 
       ...conversation.toObject(), 
-      userInfo
+      userData
     }
     const result = await socketsInConversation(
       conversation,
