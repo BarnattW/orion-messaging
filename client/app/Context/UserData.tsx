@@ -48,6 +48,7 @@ export function UserData({ children }: { children: React.ReactNode }) {
 			}
 			const userId = await response.json();
 			setUserId(userId);
+			messageSocket.emit("userId", userId);
 		}
 		getUserId();
 	}, [setUserId, router]);
@@ -82,7 +83,6 @@ export function UserData({ children }: { children: React.ReactNode }) {
 					messageSocket.on("gotConversations", (conversation) => {
 						if (conversation.data) {
 							setConversations(conversation.data);
-							console.log(conversation.data);
 						}
 					});
 				} catch (error) {

@@ -22,6 +22,10 @@ type UserState = {
 	) => void;
 	conversations: Conversation[];
 	setConversations: (conversations: Conversation[]) => void;
+	updateConversations: (
+		updatedConversation: Conversation,
+		index: number
+	) => void;
 	messages: Messages;
 	setMessages: (conversationId: string, updatedFields: MessageFields) => void;
 	showUserList: boolean;
@@ -48,6 +52,15 @@ export const useUserStore = create<UserState>((set) => ({
 		set((state) => ({
 			conversations: [...state.conversations, ...newConversations],
 		})),
+	updateConversations: (updatedConversation, index) => {
+		set((state) => {
+			const updatedConversations = [...state.conversations];
+			updatedConversations[index] = updatedConversation;
+			return {
+				conversations: updatedConversations,
+			};
+		});
+	},
 	messages: {},
 	setMessages: (conversationId, updatedFields) =>
 		set((state) => ({
