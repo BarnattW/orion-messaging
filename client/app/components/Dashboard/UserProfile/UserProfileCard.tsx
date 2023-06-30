@@ -28,8 +28,11 @@ const UserProfileCard = forwardRef(function (
 	}
 
 	function showMessage() {
-		// to-do
+		// to-do -> update activeConversation
 		console.log("navigating to message");
+		if (ref && "current" in ref && ref.current) {
+			ref.current.close();
+		}
 	}
 
 	function toggleOptions() {

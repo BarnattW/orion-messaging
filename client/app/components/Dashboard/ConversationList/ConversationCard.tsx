@@ -11,6 +11,7 @@ function ConversationCard({
 	users,
 	conversationName,
 	latestMessageTimestamp,
+	groupId,
 }: ConversationCardProps) {
 	const {
 		activeConversation,
@@ -29,7 +30,9 @@ function ConversationCard({
 		shallow
 	);
 	const conversationTitle =
-		type === "individual" ? users.find((id) => id != userId) : conversationName;
+		type === "individual"
+			? users.find((user) => user.userId != userId)?.username
+			: conversationName;
 
 	function changeActiveConversation() {
 		if (activeConversation?.conversationId != conversationId) {
@@ -47,6 +50,8 @@ function ConversationCard({
 					lastScrollTop: messages[conversationId].lastScrollTop,
 					canLoad: !messages[conversationId].initialLoadComplete,
 					initialLoadComplete: messages[conversationId].initialLoadComplete,
+					users: users,
+					groupId: groupId,
 				});
 			} else {
 				// initialize messages and activeConversation
@@ -58,6 +63,8 @@ function ConversationCard({
 					lastScrollTop: null,
 					canLoad: true,
 					initialLoadComplete: false,
+					users: users,
+					groupId: groupId,
 				});
 
 				const updatedFields = {
