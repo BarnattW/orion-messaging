@@ -3,7 +3,7 @@ import { Schema, model, Types } from "mongoose";
 interface IUser {
   _id: Types.ObjectId;
   userId: string;
-  username: String;
+  username: string;
   conversations: Array<Types.ObjectId>;
 }
 

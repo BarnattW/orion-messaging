@@ -29,13 +29,13 @@ export const createConversation = (
       };
 
       // Creates conversation and adds the conversation id to users
-      const conv = await Conversation.create(newChat);
+      const conversation = await Conversation.create(newChat);
       const user = await User.updateMany(
         { userId: { $in: users } },
-        { $push: { conversations: conv._id } }
+        { $push: { conversations: conversation._id } }
       );
 
-      if (!conv) {
+      if (!conversation) {
         console.log("Create Conversation: Failed to create conversation");
         socket.emit("requestError", {
           message: `Failed to create conversation`,
@@ -45,12 +45,20 @@ export const createConversation = (
 
       console.log("Conversation Created");
 
+      // @ts-ignore
+      const userInfo = await conversation.userData
+
+      const conversationWithUserInfo = { 
+        ...conversation.toObject(), 
+        userInfo
+      }
+
       // Finds users connected and emits an event
-      const result = await socketsInConversation(conv, connectedClients);
+      const result = await socketsInConversation(conversation, connectedClients);
 
       io.to(result as string[]).emit("createdConversation", {
-        message: `Conversation of Type ${conv.conversationType} created`,
-        data: conv,
+        message: `Conversation of Type ${conversation.conversationType} created`,
+        data: conversationWithUserInfo,
       });
     } catch (e) {
       console.log("Unable to create: ", e);
@@ -77,8 +85,8 @@ export const addUser = (
       console.log(data);
 
       // Finds conversation by given id
-      const conv = await Conversation.findById(conversationId);
-      if (!conv) {
+      const conversation = await Conversation.findById(conversationId);
+      if (!conversation) {
         console.log("Add User: Conversation not found");
         return socket.emit("requestError", {
           message: "Conversation not found",
@@ -86,7 +94,7 @@ export const addUser = (
       }
 
       // Checks if user is already in the conversation
-      if (conv.users.includes(userId)) {
+      if (conversation.users.includes(userId)) {
         console.log("Add User: User already in conversation");
         return socket.emit("requestError", {
           message: "User already in conversation",
@@ -104,20 +112,28 @@ export const addUser = (
 
       // Adds user id to conversation and conversation id
       // to user
-      conv.users.push(userId);
-      conv.save();
+      conversation.users.push(userId);
+      conversation.save();
 
       user.conversations.push(conversationId);
       user.save();
 
       console.log("");
 
+      // @ts-ignore
+      const userInfo = await conversation.userData
+
+      const conversationWithUserInfo = { 
+        ...conversation.toObject(), 
+        userInfo
+      }
+
       // Finds users connected and emits an event
-      const result = await socketsInConversation(conv, connectedClients);
+      const result = await socketsInConversation(conversation, connectedClients);
 
       io.to(result as string[]).emit("addedUser", {
-        message: `Added user ${userId} to conversation ${conv._id}`,
-        data: conv,
+        message: `Added user ${userId} to conversation ${conversation._id}`,
+        data: conversationWithUserInfo,
       });
     } catch (e) {
       console.log("Unable to add user: ", e);
@@ -170,6 +186,14 @@ export const removeUser = (
         });
       }
 
+      // @ts-ignore
+      const userInfo = await conversation.userData
+
+      const conversationWithUserInfo = { 
+        ...conversation.toObject(), 
+        userInfo
+      }
+      
       // Finds users connected and emits an event 
       const result = await socketsInConversation(
         conversation,
@@ -178,10 +202,7 @@ export const removeUser = (
 
       io.to(result as string[]).emit("removedUser", {
         message: `Removed user ${userId} from ${conversationId}`,
-        data: {
-          user: user,
-          conversation: conversation,
-        },
+        data: conversationWithUserInfo
       });
     } catch (e) {
       console.log("Unable to remove user: ", e);

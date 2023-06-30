@@ -4,7 +4,7 @@ import {
 } from "kafkajs";
 import { kafka } from "./kafka";
 import { createUser } from "../routes/kafka/user_router";
-import { addUser, createConversation } from "../routes/kafka/conversation_router";
+import { addUser, createConversation, deleteConversation, removeUser, renameConversation } from "../routes/kafka/conversation_router";
 import { Server, Socket } from "socket.io";
 
 export interface SimpleConsumer {
@@ -71,6 +71,18 @@ export class messageConsumer implements SimpleConsumer {
 
     if (topic == "group" && messageType == "accept") {
       addUser(value, this.io, this.connectedClients)
+    }
+
+    if (topic == "group" && messageType == "delete") {
+      deleteConversation(value, this.io, this.connectedClients)
+    }
+
+    if (topic == "group" && messageType == "rename") {
+      renameConversation(value, this.io, this.connectedClients)
+    }
+
+    if (topic == "group" && messageType == "leave") {
+      removeUser(value, this.io, this.connectedClients)
     }
 	}
 

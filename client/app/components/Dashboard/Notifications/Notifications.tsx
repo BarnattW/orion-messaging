@@ -1,6 +1,7 @@
+import { useState } from "react";
+
 import NotificationBellIcon from "../../Icons/NotificationBellIcon";
 import NotificationWrapper from "./NotificationWrapper";
-import { useState } from "react";
 
 function Notifications() {
 	const iconClassNames: string =
