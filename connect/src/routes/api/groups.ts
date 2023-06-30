@@ -65,35 +65,6 @@ router.post(
 				return res.status(404).json({ message: "Group not found" });
 			}
 
-			//check if already in said group
-			const inGroup = await Group.find({
-				users: { $in: [receiver.userId] },
-			});
-
-			// if (inGroup.length !== 0) {
-			// 	return res
-			// 		.status(400)
-			// 		.json({ message: `${receiverUsername} is already in your group` });
-			// }
-
-			//check if friendrequest is pending
-			const outgoingRequestIds = sender.outgoingrequests;
-			console.log(outgoingRequestIds);
-
-			request.createIndexes();
-
-			const outgoingRequests = await request.find({
-				_id: { $in: outgoingRequestIds },
-				requestType: "group",
-				receiverId: receiver.userId,
-			});
-			console.log(outgoingRequests);
-			if (outgoingRequests.length > 0) {
-				return res.status(400).json({
-					message: `Group request to ${receiverUsername} is currently pending`,
-				});
-			}
-
 			const newRequest = new request({
 				receiverUsername: receiverUsername,
 				senderUsername: senderUsername,
@@ -299,26 +270,6 @@ router.get(
 	}
 );
 
-router.delete("/api/connect/deleteGroup", async (req: Request, res: Response) => {
-	try {
-		const { groupId } = req.body;
-
-		const group = await Group.findById(groupId);
-
-		if (!group) {
-			return res.status(404).json({ message: "group not found" });
-		}
-
-		await Group.findByIdAndDelete(groupId);
-
-		await publishMessage("group", group, "delete");
-
-		return res.status(200).json({ message: "Friend removed successfully" });
-	} catch (error) {
-		console.error("Error removing friend:", error);
-		return res.status(500).json({ message: "Server error" });
-	}
-});
 
 router.put("/api/connect/renameGroup", async (req: Request, res: Response) => {
 	try{
@@ -374,6 +325,14 @@ router.put("/api/connect/leaveGroup", async (req: Request, res: Response) => {
 		const data = {
 			userId: userId,
 			groupId: groupId
+		}
+
+		if (group.users.length === 0){
+			await Group.findByIdAndDelete(groupId);
+
+			await publishMessage("group", group, "delete");
+
+			return res.status(200).json({ message: "group removed successfully" });
 		}
 
 		await publishMessage("group", data, "leave");
