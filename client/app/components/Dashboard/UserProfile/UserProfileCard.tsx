@@ -78,16 +78,15 @@ const UserProfileCard = forwardRef(function (
 						<p className="text-md">Description</p>
 					</div>
 					<div className="flex w-full flex-row justify-around border-t-2 border-neutral-600 p-3">
-						{username != currentUsername && (
-							<div onClick={showMessage}>
-								<MessageIcon className={iconClassNames} />
-							</div>
-						)}
-
-						{username != currentUsername && (
-							<div onClick={toggleOptions}>
-								<OptionsIcon className={iconClassNames} />
-							</div>
+						{userId != currentUserId && (
+							<>
+								<div onClick={showMessage}>
+									<MessageIcon className={iconClassNames} />
+								</div>
+								<div onClick={toggleOptions}>
+									<OptionsIcon className={iconClassNames} />
+								</div>
+							</>
 						)}
 					</div>
 				</div>

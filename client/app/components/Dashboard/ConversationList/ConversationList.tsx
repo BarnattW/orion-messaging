@@ -21,6 +21,7 @@ function ConversationList() {
 	);
 	const { ref, isComponentVisible, setIsComponentVisible } =
 		useComponentVisible(false);
+	console.log(conversations);
 
 	const toggleCreateGroup = () => {
 		setIsComponentVisible((prevBool) => !prevBool);
@@ -55,19 +56,10 @@ function ConversationList() {
 								conversationId={conversation._id}
 								latestMessageTimestamp={conversation.latestMessageTimestamp}
 								groupId={conversation.groupId}
+								userData={conversation.userData}
 							/>
 						);
 					})}
-				<ConversationCard
-					altText="vany"
-					//imageUrl={conversation.conversationImageUrl}
-					users={[{ userId: "van", username: "vany" }]}
-					type="group"
-					conversationName="AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-					conversationId="vany"
-					latestMessageTimestamp={new Date()}
-					groupId="eh"
-				/>
 			</div>
 		</ListContainer>
 	);

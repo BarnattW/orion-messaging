@@ -19,6 +19,7 @@ function CreateGroupChat({ setIsComponentVisible }: CreateGroupChatProps) {
 	const title = useRef<HTMLInputElement>(null);
 	const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
 	const [friendsQuery, setFriendsQuery] = useState<string>("");
+	console.log(selectedOptions);
 
 	const createChat = async () => {
 		if (title.current && title.current?.value.trim() === "") return;
@@ -69,8 +70,8 @@ function CreateGroupChat({ setIsComponentVisible }: CreateGroupChatProps) {
 	};
 
 	const handleCheckboxChange = (event: ChangeEvent<HTMLInputElement>) => {
-		const optionId = event.target.id;
-		if (event.target.checked) {
+		const optionId = event.target.dataset.username;
+		if (event.target.checked && optionId) {
 			setSelectedOptions([...selectedOptions, optionId]);
 		} else {
 			setSelectedOptions(
@@ -127,7 +128,8 @@ function CreateGroupChat({ setIsComponentVisible }: CreateGroupChatProps) {
 								className="h-4 w-4 bg-zinc-600"
 								type="checkbox"
 								id={friend.userId}
-								checked={selectedOptions.includes(`${friend.username}`)}
+								data-username={friend.username}
+								checked={selectedOptions.includes(friend.username)}
 								onChange={handleCheckboxChange}
 							></input>
 						</label>

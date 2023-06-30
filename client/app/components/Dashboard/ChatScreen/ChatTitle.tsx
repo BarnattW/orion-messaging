@@ -3,7 +3,9 @@
 import { useEffect, useState } from "react";
 
 import useComponentVisible from "@/app/custom-hooks/useComponentVisible";
+import messageSocket from "@/app/sockets/messageSocket";
 import { useUserStore } from "@/app/store/userStore";
+import { Conversation } from "@/app/types/UserContextTypes";
 
 import HamburgerMenuIcon from "../../Icons/HamburgerMenuIcon";
 import InviteFriends from "./InviteFriends";
@@ -11,9 +13,18 @@ import InviteFriends from "./InviteFriends";
 const maxCharacters = 75;
 
 function ChatTitle() {
-	const { activeConversation, setShowUserList } = useUserStore((state) => ({
+	const {
+		activeConversation,
+		setActiveConversation,
+		setShowUserList,
+		conversations,
+		updateConversations,
+	} = useUserStore((state) => ({
 		activeConversation: state.activeConversation,
+		setActiveConversation: state.setActiveConversation,
 		setShowUserList: state.setShowUserList,
+		conversations: state.conversations,
+		updateConversations: state.updateConversations,
 	}));
 	const title = activeConversation?.title;
 	const { ref, isComponentVisible, setIsComponentVisible } =
@@ -59,7 +70,7 @@ function ChatTitle() {
 			console.log("edit title", titleValue);
 			// to do
 			const response = await fetch("/api/connect/renameGroup", {
-				method: "POST",
+				method: "PUT",
 				body: JSON.stringify({
 					newName: titleValue,
 					groupId: activeConversation?.groupId,
@@ -88,9 +99,41 @@ function ChatTitle() {
 		}
 	}, [isComponentVisible, ref, title]);
 
+	useEffect(() => {
+		const handleEditedMessage = (socketEvent: { data: Conversation }) => {
+			if (!socketEvent) {
+				return;
+			}
+
+			const updatedConversation = socketEvent.data;
+			console.log(socketEvent);
+			const index = conversations.findIndex((conversation) => {
+				return conversation._id === updatedConversation._id;
+			});
+
+			if (index === -1) return;
+
+			updateConversations(updatedConversation, index);
+			if (activeConversation?.groupId === updatedConversation.groupId) {
+				setActiveConversation({ title: updatedConversation.title });
+			}
+		};
+
+		messageSocket.on("renamedConversation", handleEditedMessage);
+
+		return () => {
+			messageSocket.off("renamedConversation", handleEditedMessage);
+		};
+	}, [
+		conversations,
+		updateConversations,
+		setActiveConversation,
+		activeConversation?.groupId,
+	]);
+
 	return (
 		<div className="sticky top-0 flex justify-between border-b-2 border-neutral-600 bg-zinc-800 px-5 pb-4 pt-8 text-lg font-medium">
-			{isComponentVisible ? (
+			{isComponentVisible && activeConversation?.groupId ? (
 				<input
 					value={titleValue}
 					onInput={handleInput}
@@ -100,7 +143,7 @@ function ChatTitle() {
 						`}
 				></input>
 			) : (
-				<span onClick={toggleEditingMode} className="truncate">
+				<span onClick={toggleEditingMode} className="grow truncate">
 					{title}
 				</span>
 			)}

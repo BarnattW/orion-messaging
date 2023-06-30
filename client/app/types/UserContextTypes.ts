@@ -11,6 +11,7 @@ export interface Conversation {
 	messages: string[];
 	latestMessageTimestamp: Date;
 	_id: string;
+	userData: Friend[];
 }
 
 export interface ActiveConversation {

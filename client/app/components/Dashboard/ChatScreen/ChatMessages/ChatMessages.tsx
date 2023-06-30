@@ -151,8 +151,8 @@ function ChatMessages() {
 				message,
 				messages[conversationId].messages
 			);
-			console.log(messageIndex);
-			if (messageIndex && messageIndex !== -1) {
+
+			if (messageIndex != undefined && messageIndex !== -1) {
 				// @ts-ignore
 				const updatedMessages = [...messages[conversationId].messages];
 				const currentDatestamp = updatedMessages[messageIndex].renderDatestamp;

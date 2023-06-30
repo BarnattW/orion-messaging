@@ -82,7 +82,6 @@ export function UserData({ children }: { children: React.ReactNode }) {
 					messageSocket.on("gotConversations", (conversation) => {
 						if (conversation.data) {
 							setConversations(conversation.data);
-							console.log(conversation.data);
 						}
 					});
 				} catch (error) {
