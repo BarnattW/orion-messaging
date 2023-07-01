@@ -234,9 +234,10 @@ export const deleteMessage = (
       // Finds the conversation with the message container
       const conversation = await Conversation.findOneAndUpdate(
         { messages: messageContainer?._id},
-        { $pull: { messages: messageContainer?._id}},
+        messageContainer && messageContainer.messages.length === 1 ? { $pull: { messages: messageContainer._id } } : {},
         { new: true }
       )
+      
       console.log(conversation)
       if (!conversation) {
         console.log(

@@ -43,6 +43,7 @@ export async function createConversation(
     console.log(newChat);
 
     const conv = await Conversation.create(newChat);
+    console.log(conv)
 
     // @ts-ignore
     const userData = await conv.userData;
@@ -69,7 +70,7 @@ export async function createConversation(
       data: conversationWithUserInfo,
     });
 
-    console.log(`Conversation of Type ${conv.conversationType} created`, conv);
+    console.log(`Conversation of Type ${conv.conversationType} created`, conversationWithUserInfo);
   } catch (e) {
     console.log("Unable to create: ", e);
   }
@@ -170,6 +171,7 @@ export const removeUser = async (
       userData
     }
     
+    console.log(conversationWithUserInfo)
     // Finds users connected and emits an event 
     const result = await socketsInConversation(
       conversation,
