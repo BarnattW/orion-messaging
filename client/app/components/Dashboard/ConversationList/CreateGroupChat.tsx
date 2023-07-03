@@ -86,7 +86,7 @@ function CreateGroupChat({ setIsComponentVisible }: CreateGroupChatProps) {
 	};
 
 	return (
-		<div className="absolute top-full z-50 flex w-72 flex-col gap-2 rounded-md bg-zinc-700 py-4 text-base text-gray-200 scrollbar-thumb-neutral-800">
+		<div className="absolute top-full flex w-72 flex-col gap-2 rounded-md bg-zinc-700 py-4 text-base text-gray-200 scrollbar-thumb-neutral-800">
 			<div className="flex flex-col gap-2 px-3">
 				<p>Creating Group Chat</p>
 				<input

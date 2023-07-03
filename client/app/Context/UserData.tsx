@@ -100,6 +100,7 @@ export function UserData({ children }: { children: React.ReactNode }) {
 				messageSocket.on(
 					"createdConversation",
 					(conversation: { data: Conversation }) => {
+						console.log(conversation);
 						if (conversation.data) {
 							setConversations([conversation.data]);
 						}

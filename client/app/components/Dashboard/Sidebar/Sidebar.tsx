@@ -15,7 +15,7 @@ import Notifications from "../Notifications/Notifications";
 import UserProfile from "../UserProfile/UserProfile";
 import Tooltip from "./Tooltip";
 
-const iconClassNames: string = "fill-neutral-500 hover:fill-gray-400 h-6 w-6";
+const iconClassNames: string = "fill-neutral-500 hover:fill-gray-400 h-6 w-6 ";
 const activeIconClassNames: string = "fill-gray-100 h-6 w-6";
 
 function Sidebar() {
@@ -94,7 +94,9 @@ function Sidebar() {
 			<Notifications />
 			<Tooltip content="Logout">
 				<button onClick={logout}>
-					<LogoutIcon className={iconClassNames} color="#737373" />
+					<LogoutIcon
+						className={`${iconClassNames}stroke-neutral-500 hover:stroke-gray-400`}
+					/>
 				</button>
 			</Tooltip>
 			<UserProfile

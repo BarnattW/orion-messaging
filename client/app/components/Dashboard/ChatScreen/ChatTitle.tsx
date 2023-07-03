@@ -132,7 +132,7 @@ function ChatTitle() {
 	]);
 
 	return (
-		<div className="sticky top-0 flex justify-between border-b-2 border-neutral-600 bg-zinc-800 px-5 pb-4 pt-8 text-lg font-medium">
+		<div className="sticky top-0 z-10 flex justify-between border-b-2 border-neutral-600 bg-zinc-800 px-5 pb-4 pt-8 text-lg font-medium">
 			{isComponentVisible && activeConversation?.groupId ? (
 				<input
 					value={titleValue}
@@ -150,7 +150,7 @@ function ChatTitle() {
 			<div className="flex gap-4">
 				{activeConversation?.groupId != undefined && <InviteFriends />}
 				<div onClick={toggleUserList}>
-					<HamburgerMenuIcon className="h-7 w-7 flex-shrink-0 fill-gray-100 hover:cursor-pointer" />
+					<HamburgerMenuIcon className="h-7 w-7 flex-shrink-0 stroke-gray-100 hover:cursor-pointer hover:stroke-gray-400" />
 				</div>
 			</div>
 		</div>

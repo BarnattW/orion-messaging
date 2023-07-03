@@ -9,6 +9,10 @@ export interface FriendCardProps {
 	userId: string;
 	username: string;
 	onlineStatus: boolean;
+	handleContextMenu?: (
+		event: MouseEvent<HTMLDivElement>,
+		friendId: string
+	) => void;
 }
 
 export interface OnlineStatusProps {

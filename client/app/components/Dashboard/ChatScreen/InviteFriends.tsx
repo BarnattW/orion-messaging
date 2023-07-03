@@ -1,5 +1,5 @@
 "use client";
-import { ChangeEvent, useRef, useState } from "react";
+import { ChangeEvent, useState } from "react";
 
 import useComponentVisible from "@/app/custom-hooks/useComponentVisible";
 import { useUserStore } from "@/app/store/userStore";
@@ -8,17 +8,14 @@ import FriendAddIcon from "../../Icons/FriendAddIcon";
 import InviteFriendCard from "../ConversationList/InviteFriendCard";
 
 const iconClassNames =
-	"fill-gray-100 h-6 w-6 hover:cursor-pointer flex-shrink-0";
+	"fill-gray-100 h-6 w-6 hover:cursor-pointer flex-shrink-0 stroke hover:fill-gray-400";
 
 function InviteFriends() {
-	const { friends, userId, username, activeConversation } = useUserStore(
-		(state) => ({
-			friends: state.friends,
-			userId: state.userId,
-			username: state.username,
-			activeConversation: state.activeConversation,
-		})
-	);
+	const { friends, username, activeConversation } = useUserStore((state) => ({
+		friends: state.friends,
+		username: state.username,
+		activeConversation: state.activeConversation,
+	}));
 	const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
 	const [friendsQuery, setFriendsQuery] = useState<string>("");
 	const { ref, isComponentVisible, setIsComponentVisible } =
@@ -79,7 +76,7 @@ function InviteFriends() {
 			</div>
 
 			{isComponentVisible && (
-				<div className="absolute right-0 top-full z-50 flex w-72 flex-col gap-2 rounded-md bg-zinc-700 py-4 text-base text-gray-200 scrollbar-thumb-neutral-800">
+				<div className="absolute right-0 top-full flex w-72 flex-col gap-2 rounded-md bg-zinc-700 py-4 text-base text-gray-200 scrollbar-thumb-neutral-800">
 					<div className="flex flex-col gap-2 px-3">
 						<div className="sticky top-0">Invite Friends</div>
 						<input

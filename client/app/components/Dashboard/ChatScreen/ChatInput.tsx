@@ -13,7 +13,8 @@ import EmojiIcon from "../../Icons/EmojiIcon";
 import FileClipIcon from "../../Icons/FileClipIcon";
 import SendIcon from "../../Icons/SendIcon";
 
-const iconClassNames: string = "fill-gray-100 h-6 w-6 hover:cursor-pointer";
+const iconClassNames: string =
+	"fill-gray-100 h-6 w-6 hover:cursor-pointer stroke-gray-100 hover:stroke-gray-400";
 const maxCharacters: number = 2000;
 
 function ChatInput() {

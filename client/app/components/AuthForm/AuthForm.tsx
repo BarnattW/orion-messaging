@@ -4,9 +4,9 @@ import SignInProvider from "./SignInProvider";
 
 function AuthForm() {
 	return (
-		<div className="h-full min-h-full bg-gradient-to-r from-zinc-800 to-neutral-800">
+		<div className="h-full min-h-full bg-zinc-800">
 			<div className="flex h-full items-center">
-				<div className="md:mt-1/2 flex h-full grow flex-col items-center justify-center rounded bg-zinc-800 drop-shadow-lg md:m-auto md:h-2/3 md:max-w-lg">
+				<div className="md:mt-1/2 flex h-full grow flex-col items-center justify-center rounded bg-zinc-800 drop-shadow-md md:m-auto md:h-2/3 md:max-w-lg">
 					<div className="mb-6">
 						<Image
 							src="/orion-logo2.svg"
