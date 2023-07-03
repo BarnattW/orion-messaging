@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import express, {Request, Response } from 'express';
 import http from 'http';
 import { Server, Socket } from 'socket.io';
-import { removeSocketForUser, storeKeySocketPair } from "./services/sockets";
+import { removeSocketForUser, storeKeySocketPair } from "./utils/sockets";
 
 const app = express();
 const PORT = 3000;

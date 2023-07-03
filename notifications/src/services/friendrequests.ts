@@ -1,6 +1,6 @@
 import { redis } from '../redis/redis';
 import { consumer } from '../kafka/kafka_consumer';
-import { getKeySocketPairs } from './sockets';
+import { getKeySocketPairs } from '../utils/sockets';
 
 async function handleMessages() {
     await consumer.connect();
@@ -15,16 +15,24 @@ async function handleMessages() {
             
             if (topic === "friends" && messageType === "requestCreated"){
                 const {receiverId, senderUsername} = parseMessage.value
-                await sendFriendRequestNotification(receiverId, `You have a new friend request from ${senderUsername}`)
+                await sendFriendRequestNotification(receiverId, `You have a new friend request from ${senderUsername}`);
             }
         }
-    
       },
     });
   }
 
   async function sendFriendRequestNotification(receiverId: string, message: string) {
-
-    const socketInfo = getKeySocketPairs(receiverId, "notification");
-    
+    try {
+      const socketInfo = await getKeySocketPairs(receiverId, "notification");
+      if (socketInfo) {
+        socketInfo.emit("friendRequestReceived", message);
+        console.log(`friend request received for receiver ID ${receiverId}`);
+      } else {
+        console.log(`No socket found for receiver ID ${receiverId}`);
+      }
+    } catch (error) {
+      console.error('Error emitting event:', error);
+    }
   }
+

@@ -18,6 +18,7 @@ export async function getKeySocketPairs(userId: string, key: string) {
     if (socketString) {
       const socket = JSON.parse(socketString) as Socket;
       console.log(`Socket for user ID ${userId}:`, socket);
+      return socket;
     } else {
       console.log(`No socket found for user ID ${userId}`);
     }
