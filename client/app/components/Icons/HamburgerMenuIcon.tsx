@@ -7,10 +7,10 @@ function HamburgerMenuIcon({ className }: { className?: string }) {
 		>
 			<path
 				fill="none"
-				stroke-linecap="round"
-				stroke-linejoin="round"
-				stroke-miterlimit="10"
-				stroke-width="2"
+				strokeLinecap="round"
+				strokeLinejoin="round"
+				strokeMiterlimit="10"
+				strokeWidth="2"
 				d="M7 16h18M7 25h18M7 7h18"
 			/>
 		</svg>

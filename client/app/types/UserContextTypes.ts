@@ -7,7 +7,6 @@ export interface Conversation {
 	title: string;
 	groupId?: string;
 	conversationType: string;
-	users: Friend[];
 	messages: string[];
 	latestMessageTimestamp: Date;
 	_id: string;

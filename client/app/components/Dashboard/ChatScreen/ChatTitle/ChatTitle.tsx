@@ -1,14 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { shallow } from "zustand/shallow";
 
 import useComponentVisible from "@/app/custom-hooks/useComponentVisible";
 import messageSocket from "@/app/sockets/messageSocket";
 import { useUserStore } from "@/app/store/userStore";
 import { Conversation } from "@/app/types/UserContextTypes";
 
-import HamburgerMenuIcon from "../../Icons/HamburgerMenuIcon";
+import HamburgerMenuIcon from "../../../Icons/HamburgerMenuIcon";
 import InviteFriends from "./InviteFriends";
+import LeaveGroup from "./LeaveGroup";
 
 const maxCharacters = 75;
 
@@ -19,13 +21,16 @@ function ChatTitle() {
 		setShowUserList,
 		conversations,
 		updateConversations,
-	} = useUserStore((state) => ({
-		activeConversation: state.activeConversation,
-		setActiveConversation: state.setActiveConversation,
-		setShowUserList: state.setShowUserList,
-		conversations: state.conversations,
-		updateConversations: state.updateConversations,
-	}));
+	} = useUserStore(
+		(state) => ({
+			activeConversation: state.activeConversation,
+			setActiveConversation: state.setActiveConversation,
+			setShowUserList: state.setShowUserList,
+			conversations: state.conversations,
+			updateConversations: state.updateConversations,
+		}),
+		shallow
+	);
 	const title = activeConversation?.title;
 	const { ref, isComponentVisible, setIsComponentVisible } =
 		useComponentVisible(false);
@@ -148,7 +153,12 @@ function ChatTitle() {
 				</span>
 			)}
 			<div className="flex gap-4">
-				{activeConversation?.groupId != undefined && <InviteFriends />}
+				{activeConversation?.groupId != undefined && (
+					<>
+						<LeaveGroup />
+						<InviteFriends />
+					</>
+				)}
 				<div onClick={toggleUserList}>
 					<HamburgerMenuIcon className="h-7 w-7 flex-shrink-0 stroke-gray-100 hover:cursor-pointer hover:stroke-gray-400" />
 				</div>

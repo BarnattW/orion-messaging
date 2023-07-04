@@ -67,26 +67,25 @@ function OptionsPopout({
 	if (!showOptions) {
 		return <div className="relative">{children}</div>;
 	}
-
-	if (isFriends) {
-		return (
-			<div className="relative">
-				{children}
-				<div className="absolute left-40 top-3/4 select-none rounded bg-zinc-900 px-2 py-2 text-sm text-white outline-none hover:bg-red-700">
-					<button onClick={deleteFriend}>Delete Friend</button>
+	return (
+		<>
+			{isFriends ? (
+				<div className="relative">
+					{children}
+					<div className="absolute left-40 top-3/4 select-none rounded bg-zinc-900 px-2 py-2 text-sm text-white outline-none hover:bg-red-700">
+						<button onClick={deleteFriend}>Delete Friend</button>
+					</div>
 				</div>
-			</div>
-		);
-	} else {
-		return (
-			<div className="relative">
-				{children}
-				<div className="absolute left-40 top-3/4 rounded bg-zinc-900 px-2 py-2 text-sm text-white hover:bg-red-700">
-					<button onClick={addFriend}>Add Friend</button>
+			) : (
+				<div className="relative">
+					{children}
+					<div className="absolute left-40 top-3/4 rounded bg-zinc-900 px-2 py-2 text-sm text-white hover:bg-indigo-700">
+						<button onClick={addFriend}>Add Friend</button>
+					</div>
 				</div>
-			</div>
-		);
-	}
+			)}
+		</>
+	);
 }
 
 export default OptionsPopout;

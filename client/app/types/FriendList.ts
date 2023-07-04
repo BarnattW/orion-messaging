@@ -1,20 +1,39 @@
+import { MouseEvent } from "react";
+
 export interface FriendList {
 	onlineFriends: string[];
 	offlineFriends: string[];
 }
 
-export interface FriendCardProps {
+interface FriendProps {
 	imageUrl?: string;
 	altText: string;
 	userId: string;
 	username: string;
 	onlineStatus: boolean;
-	handleContextMenu?: (
+}
+
+export interface SelectedFriend {
+	friendId: string;
+	friendUsername: string;
+}
+
+export interface FriendCardProps extends FriendProps {
+	handleContextMenu: (
 		event: MouseEvent<HTMLDivElement>,
-		friendId: string
+		friendInfo: SelectedFriend
 	) => void;
 }
 
+export interface InviteFriendCardProps extends FriendProps {}
+
 export interface OnlineStatusProps {
 	onlineStatus: boolean;
+}
+
+export interface FriendContextMenuProps {
+	contextMenuPosition: { x: number; y: number };
+	closeContextMenu: () => void;
+	friendId: string;
+	friendUsername: string;
 }

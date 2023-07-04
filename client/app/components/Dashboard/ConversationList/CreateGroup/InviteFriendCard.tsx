@@ -1,9 +1,9 @@
-import { FriendCardProps } from "@/app/types/FriendList";
+import { InviteFriendCardProps } from "@/app/types/FriendList";
 
-import OnlineStatus from "../Avatar/OnlineStatus";
-import UserProfile from "../UserProfile/UserProfile";
+import OnlineStatus from "../../Avatar/OnlineStatus";
+import UserProfile from "../../UserProfile/UserProfile";
 
-function InviteFriendCard(friendCardProps: FriendCardProps) {
+function InviteFriendCard(friendCardProps: InviteFriendCardProps) {
 	return (
 		<div className="py-2 hover:cursor-pointer hover:bg-zinc-700 hover:text-neutral-50 focus:bg-white">
 			<div className="flex items-center gap-3">

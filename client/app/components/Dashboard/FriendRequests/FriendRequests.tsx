@@ -6,8 +6,8 @@ import { useUserStore } from "@/app/store/userStore";
 
 import ListContainer from "../ListWrappers/ListContainer";
 import AddFriend from "./AddFriend";
-import ReceivedFriendRequests from "./ReceivedFriendRequests";
-import SentFriendRequests from "./SentFriendRequests";
+import ReceivedFriendRequests from "./RequestWrappers/ReceivedFriendRequests";
+import SentFriendRequests from "./RequestWrappers/SentFriendRequests";
 
 function FriendRequestsList() {
 	const { userId, friendRequests, setFriendRequests } = useUserStore(

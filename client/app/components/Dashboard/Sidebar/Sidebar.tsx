@@ -9,6 +9,7 @@ import { useUserStore } from "@/app/store/userStore";
 
 import FriendAddIcon from "../../Icons/FriendAddIcon";
 import FriendIcon from "../../Icons/FriendIcon";
+import GearIcon from "../../Icons/GearIcon";
 import LogoutIcon from "../../Icons/LogoutIcon";
 import MessageIcon from "../../Icons/MessageIcon";
 import Notifications from "../Notifications/Notifications";
@@ -58,6 +59,7 @@ function Sidebar() {
 				alt="Orion Messaging Logo"
 				className="mb-5"
 			/>
+			<Notifications />
 			<Tooltip content="Friends">
 				<Link href={`/dashboard/friends`}>
 					<FriendIcon
@@ -91,7 +93,17 @@ function Sidebar() {
 					/>
 				</Link>
 			</Tooltip>
-			<Notifications />
+			<Tooltip content="Settings">
+				<Link href={`/dashboard/settings`}>
+					<GearIcon
+						className={
+							pathname.includes("/dashboard/settings")
+								? activeIconClassNames
+								: iconClassNames
+						}
+					/>
+				</Link>
+			</Tooltip>
 			<Tooltip content="Logout">
 				<button onClick={logout}>
 					<LogoutIcon

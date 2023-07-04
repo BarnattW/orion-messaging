@@ -1,0 +1,5 @@
+
+.DialogWrapper::backdrop {
+    background-color:  rgb(9 9 11 );
+    opacity: 0.8;
+}

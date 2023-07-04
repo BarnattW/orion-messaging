@@ -1,35 +1,65 @@
 "use client";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useRef, useState } from "react";
+import { shallow } from "zustand/shallow";
 
 import useComponentVisible from "@/app/custom-hooks/useComponentVisible";
 import { useUserStore } from "@/app/store/userStore";
 
-import FriendAddIcon from "../../Icons/FriendAddIcon";
-import InviteFriendCard from "../ConversationList/InviteFriendCard";
+import AddIcon from "../../../Icons/AddIcon";
+import InviteFriendCard from "./InviteFriendCard";
 
-const iconClassNames =
-	"fill-gray-100 h-6 w-6 hover:cursor-pointer flex-shrink-0 stroke hover:fill-gray-400";
-
-function InviteFriends() {
-	const { friends, username, activeConversation } = useUserStore((state) => ({
-		friends: state.friends,
-		username: state.username,
-		activeConversation: state.activeConversation,
-	}));
+const iconClassNames: string =
+	"h-7 w-7 hover:cursor-pointer stroke-gray-100 hover:stroke-gray-400";
+const maxTitleCharacterLimit = 75;
+function CreateGroupChat() {
+	const { friends, userId, username } = useUserStore(
+		(state) => ({
+			friends: state.friends,
+			userId: state.userId,
+			username: state.username,
+		}),
+		shallow
+	);
+	const title = useRef<HTMLInputElement>(null);
 	const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
 	const [friendsQuery, setFriendsQuery] = useState<string>("");
 	const { ref, isComponentVisible, setIsComponentVisible } =
 		useComponentVisible(false);
 
-	const inviteFriends = async () => {
+	const toggleCreateGroup = () => {
+		setIsComponentVisible((prevBool) => !prevBool);
+	};
+
+	const createChat = async () => {
+		if (title.current && title.current?.value.trim() === "") return;
 		try {
+			const response = await fetch("/api/connect/createGroup", {
+				method: "POST",
+				body: JSON.stringify({
+					groupName: title.current?.value.trim(),
+					userId: userId,
+				}),
+				headers: {
+					"Content-Type": "application/json",
+				},
+			});
+			if (!response.ok) {
+				// update with common error handling
+				console.log(response);
+			}
+			const parsedResponse = await response.json();
+			const groupId = parsedResponse.data._id;
+
+			setIsComponentVisible(false);
+
 			for (let i = 0; i < selectedOptions.length; i++) {
+				console.log("cope", groupId, username, selectedOptions[i]);
 				const sendInviteResponse = await fetch(
 					"/api/connect/sendGroupRequest",
 					{
 						method: "POST",
 						body: JSON.stringify({
-							groupId: activeConversation?.groupId,
+							groupId: groupId,
 							senderUsername: username,
 							receiverUsername: selectedOptions[i],
 						}),
@@ -43,15 +73,14 @@ function InviteFriends() {
 					console.log(sendInviteResponse);
 				}
 			}
-			setIsComponentVisible(false);
 		} catch (error) {
 			console.log(error);
 		}
 	};
 
 	const handleCheckboxChange = (event: ChangeEvent<HTMLInputElement>) => {
-		const optionId = event.target.id;
-		if (event.target.checked) {
+		const optionId = event.target.dataset.username;
+		if (event.target.checked && optionId) {
 			setSelectedOptions([...selectedOptions, optionId]);
 		} else {
 			setSelectedOptions(
@@ -65,19 +94,22 @@ function InviteFriends() {
 		setFriendsQuery(query);
 	};
 
-	const toggleInviteFriends = () => {
-		setIsComponentVisible((prevBool) => !prevBool);
-	};
-
 	return (
-		<div ref={ref} className="relative">
-			<div onClick={toggleInviteFriends}>
-				<FriendAddIcon className={iconClassNames} />
+		<div className="relative" ref={ref}>
+			<div onClick={toggleCreateGroup}>
+				<AddIcon className={iconClassNames} />
 			</div>
-
 			{isComponentVisible && (
-				<div className="absolute right-0 top-full flex w-72 flex-col gap-2 rounded-md bg-zinc-700 py-4 text-base text-gray-200 scrollbar-thumb-neutral-800">
+				<div className="absolute top-full flex w-72 flex-col gap-2 rounded-md bg-zinc-700 py-4 text-base text-gray-200 scrollbar-thumb-neutral-800">
 					<div className="flex flex-col gap-2 px-3">
+						<p>Creating Group Chat</p>
+						<input
+							placeholder="Group Chat Name"
+							className="rounded-md bg-zinc-800 p-1 outline-none"
+							ref={title}
+							maxLength={maxTitleCharacterLimit}
+						></input>
+
 						<div className="sticky top-0">Invite Friends</div>
 						<input
 							type="text"
@@ -91,14 +123,10 @@ function InviteFriends() {
 							<p className="flex justify-center">No friends found.</p>
 						)}
 						{friends
-							.filter(
-								(friend) =>
-									friend.username
-										.toLowerCase()
-										.includes(friendsQuery.toLowerCase()) &&
-									!activeConversation?.users.some(
-										(user) => user.username === friend.username
-									)
+							.filter((friend) =>
+								friend.username
+									.toLowerCase()
+									.includes(friendsQuery.toLowerCase())
 							)
 							.map((friend) => (
 								<label
@@ -116,7 +144,8 @@ function InviteFriends() {
 										className="h-4 w-4 bg-zinc-600"
 										type="checkbox"
 										id={friend.userId}
-										checked={selectedOptions.includes(`${friend.username}`)}
+										data-username={friend.username}
+										checked={selectedOptions.includes(friend.username)}
 										onChange={handleCheckboxChange}
 									></input>
 								</label>
@@ -124,9 +153,9 @@ function InviteFriends() {
 					</div>
 					<button
 						className="mx-3 rounded-md bg-indigo-600 py-1 hover:bg-indigo-500"
-						onClick={inviteFriends}
+						onClick={createChat}
 					>
-						Invite
+						Create Chat
 					</button>
 				</div>
 			)}
@@ -134,4 +163,4 @@ function InviteFriends() {
 	);
 }
 
-export default InviteFriends;
+export default CreateGroupChat;
