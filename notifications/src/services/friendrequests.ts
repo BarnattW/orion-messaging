@@ -2,7 +2,7 @@ import { redis } from '../redis/redis';
 import { consumer } from '../kafka/kafka_consumer';
 import { getKeySocketPairs } from '../utils/sockets';
 
-async function handleMessages() {
+export async function handleFriends() {
     await consumer.connect();
     await consumer.subscribe({ topic: 'friends', fromBeginning: true });
   
@@ -11,10 +11,10 @@ async function handleMessages() {
         //@ts-ignore
         const parseMessage = JSON.parse(message.value?.toString());
         const { messageType, value } = parseMessage;
-        if (message.value){
+        if (messageType && value){
             
             if (topic === "friends" && messageType === "requestCreated"){
-                const {receiverId, senderUsername} = parseMessage.value
+                const {receiverId, senderUsername} = value
                 await sendFriendRequestNotification(receiverId, `You have a new friend request from ${senderUsername}`);
             }
         }
