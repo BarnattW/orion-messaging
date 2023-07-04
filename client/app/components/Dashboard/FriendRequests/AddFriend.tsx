@@ -46,12 +46,12 @@ function AddFriend() {
 			<ListHeading>Add Friends</ListHeading>
 			<input
 				ref={addUsername}
-				className="mx-5 rounded-md bg-zinc-700 p-1 outline-none"
+				className="mx-5 mb-1 rounded-md bg-zinc-700 p-1 outline-none"
 				placeholder="Search username"
 				onKeyDown={keyDownHandler}
 			></input>
 			<button
-				className="bg- text-md mx-10 rounded-md bg-indigo-600 py-1 hover:bg-indigo-500"
+				className="text-md mx-10 rounded-md bg-indigo-600 py-1 hover:bg-indigo-500"
 				onClick={submitFriendRequest}
 			>
 				Send Friend Request

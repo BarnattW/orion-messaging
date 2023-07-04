@@ -35,9 +35,7 @@ function DialogWrapper({
 			>
 				{React.cloneElement(content as React.ReactElement, { ref: dialogRef })}
 			</dialog>
-			<button onClick={showProfile} className="w-full">
-				{trigger}
-			</button>
+			<span onClick={showProfile}>{trigger}</span>
 		</>
 	);
 }

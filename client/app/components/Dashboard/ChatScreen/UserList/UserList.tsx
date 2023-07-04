@@ -5,8 +5,8 @@ import useComponentVisible from "@/app/custom-hooks/useComponentVisible";
 import { useUserStore } from "@/app/store/userStore";
 import { SelectedFriend } from "@/app/types/FriendList";
 
-import FriendCard from "../../FriendList/FriendCard/FriendCard";
-import FriendContextMenu from "../../FriendList/FriendCard/FriendContextMenu";
+import FriendCard from "../../FriendList/FriendListItem/FriendListItem";
+import FriendContextMenu from "../../FriendList/FriendListItem/FriendContextMenu";
 import UserListContainer from "./UserListContainer";
 import UserListHeading from "./UserListHeading";
 

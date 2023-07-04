@@ -13,6 +13,7 @@ import ConversationCard from "./ConversationCard/ConversationCard";
 import ConversationContextMenu from "./ConversationCard/ConversationContextMenu";
 import CreateGroupChat from "./CreateGroup/CreateGroupChat";
 import ReceivedGroupRequests from "./ReceivedGroupRequests";
+import SentGroupRequests from "./SentGroupRequest";
 
 function ConversationList() {
 	const { conversations, groupRequests, setGroupRequests, userId } =
@@ -87,6 +88,9 @@ function ConversationList() {
 						receivedRequests={groupRequests.receivedRequests}
 					/>
 				)}
+			{groupRequests.sentRequests && groupRequests.sentRequests.length > 0 && (
+				<SentGroupRequests sentRequests={groupRequests.sentRequests} />
+			)}
 			<ListHeading>
 				<div className="flex justify-between">
 					Messages

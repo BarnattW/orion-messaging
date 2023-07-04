@@ -8,8 +8,8 @@ import { SelectedFriend } from "@/app/types/FriendList";
 
 import ListContainer from "../ListWrappers/ListContainer";
 import ListHeading from "../ListWrappers/ListHeading";
-import FriendCard from "./FriendCard/FriendCard";
-import FriendContextMenu from "./FriendCard/FriendContextMenu";
+import FriendContextMenu from "./FriendListItem/FriendContextMenu";
+import FriendListItem from "./FriendListItem/FriendListItem";
 
 function FriendList() {
 	const { friends } = useUserStore(
@@ -33,7 +33,7 @@ function FriendList() {
 	};
 
 	const handleContextMenu = (
-		event: React.MouseEvent<HTMLDivElement>,
+		event: React.MouseEvent<HTMLLIElement>,
 		friendInfo: SelectedFriend
 	) => {
 		event.preventDefault();
@@ -55,7 +55,7 @@ function FriendList() {
 				className="mx-5 rounded-md bg-zinc-900 p-1 outline-none"
 				onChange={filterFriends}
 			></input>
-			<div className="overflow-y-scroll scrollbar-thin">
+			<ul className="overflow-y-scroll scrollbar-thin">
 				<p className="mx-5">{`Online - ${friends.length} `}</p>
 				{friends.length > 0 &&
 					friends
@@ -64,7 +64,7 @@ function FriendList() {
 						)
 						.map((friend) => {
 							return (
-								<FriendCard
+								<FriendListItem
 									altText={friend.username}
 									username={friend.username}
 									userId={friend.userId}
@@ -74,7 +74,7 @@ function FriendList() {
 								/>
 							);
 						})}
-			</div>
+			</ul>
 			{selectedFriend?.friendId && isComponentVisible && (
 				<FriendContextMenu
 					contextMenuPosition={contextMenuPosition}

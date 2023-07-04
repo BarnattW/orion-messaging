@@ -1,11 +1,10 @@
 import { ForwardedRef, forwardRef } from "react";
 import { shallow } from "zustand/shallow";
 
+import ConfirmationDialogBox from "@/app/components/Dialog/ConfirmationDialogBox";
 import DialogWrapper from "@/app/components/Dialog/DialogWrapper";
 import { useUserStore } from "@/app/store/userStore";
 import { ConversationContextMenuProps } from "@/app/types/Conversations";
-
-import ContextConfirmationDialogBox from "./ContextConfirmationDialogBox";
 
 const ConversationContextMenu = forwardRef(function (
 	{
@@ -61,24 +60,22 @@ const ConversationContextMenu = forwardRef(function (
 				{selectedConversation.type === "group" && (
 					<DialogWrapper
 						content={
-							<ContextConfirmationDialogBox
-								closeContextMenu={closeContextMenu}
-								selectedConversation={selectedConversation}
+							<ConfirmationDialogBox
+								heading={`Leave ${selectedConversation.conversationName}?`}
+								message="Once you leave this group, you cannot rejoin unless reinvited."
+								cancelText="Cancel"
+								confirmText="Leave"
+								onCancel={closeContextMenu}
+								onConfirm={leaveGroup}
 							/>
 						}
 						trigger={
-							<li className="rounded-sm px-2 py-1 hover:cursor-pointer hover:bg-red-700">
+							<li className="rounded-sm px-2 py-1 hover:cursor-pointer hover:bg-pink-600">
 								Leave Group
 							</li>
 						}
 					/>
 				)}
-				<li
-					className="rounded-sm px-2 py-1 hover:cursor-pointer hover:bg-red-700"
-					onClick={leaveGroup}
-				>
-					Leave Group
-				</li>
 			</ul>
 		</div>
 	);

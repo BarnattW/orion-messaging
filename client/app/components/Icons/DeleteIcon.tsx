@@ -8,7 +8,6 @@ function DeleteIcon({ className }: { className?: string }) {
 			<rect fill="none" height="256" width="256"></rect>
 			<line
 				fill="none"
-				stroke="white"
 				strokeLinecap="round"
 				strokeLinejoin="round"
 				strokeWidth="16"
@@ -19,7 +18,6 @@ function DeleteIcon({ className }: { className?: string }) {
 			></line>
 			<line
 				fill="none"
-				stroke="white"
 				strokeLinecap="round"
 				strokeLinejoin="round"
 				strokeWidth="16"
@@ -30,7 +28,6 @@ function DeleteIcon({ className }: { className?: string }) {
 			></line>
 			<line
 				fill="none"
-				stroke="white"
 				strokeLinecap="round"
 				strokeLinejoin="round"
 				strokeWidth="16"
@@ -42,7 +39,6 @@ function DeleteIcon({ className }: { className?: string }) {
 			<path
 				d="M200,56V208a8,8,0,0,1-8,8H64a8,8,0,0,1-8-8V56"
 				fill="none"
-				stroke="white"
 				strokeLinecap="round"
 				strokeLinejoin="round"
 				strokeWidth="16"
@@ -50,7 +46,6 @@ function DeleteIcon({ className }: { className?: string }) {
 			<path
 				d="M168,56V40a16,16,0,0,0-16-16H104A16,16,0,0,0,88,40V56"
 				fill="none"
-				stroke="white"
 				strokeLinecap="round"
 				strokeLinejoin="round"
 				strokeWidth="16"

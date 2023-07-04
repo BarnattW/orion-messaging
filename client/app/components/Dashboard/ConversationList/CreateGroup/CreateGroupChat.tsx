@@ -53,7 +53,6 @@ function CreateGroupChat() {
 			setIsComponentVisible(false);
 
 			for (let i = 0; i < selectedOptions.length; i++) {
-				console.log("cope", groupId, username, selectedOptions[i]);
 				const sendInviteResponse = await fetch(
 					"/api/connect/sendGroupRequest",
 					{

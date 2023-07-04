@@ -38,6 +38,10 @@ function ConversationCard({
 
 	const onContextMenuHandler = (event: React.MouseEvent<HTMLDivElement>) => {
 		event.preventDefault();
+		const conversationTitle =
+			type === "friends"
+				? userData.find((user) => user.userId != userId)?.username
+				: conversationName;
 		if (groupId) {
 			handleContextMenu(event, {
 				type,

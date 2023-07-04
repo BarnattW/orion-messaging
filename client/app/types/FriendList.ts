@@ -18,9 +18,9 @@ export interface SelectedFriend {
 	friendUsername: string;
 }
 
-export interface FriendCardProps extends FriendProps {
+export interface FriendListItemProps extends FriendProps {
 	handleContextMenu: (
-		event: MouseEvent<HTMLDivElement>,
+		event: MouseEvent<HTMLLIElement>,
 		friendInfo: SelectedFriend
 	) => void;
 }

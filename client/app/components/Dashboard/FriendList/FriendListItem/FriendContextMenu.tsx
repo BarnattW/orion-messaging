@@ -1,6 +1,8 @@
 import { ForwardedRef, forwardRef } from "react";
 import { shallow } from "zustand/shallow";
 
+import ConfirmationDialogBox from "@/app/components/Dialog/ConfirmationDialogBox";
+import DialogWrapper from "@/app/components/Dialog/DialogWrapper";
 import { useUserStore } from "@/app/store/userStore";
 import { FriendContextMenuProps } from "@/app/types/FriendList";
 
@@ -96,12 +98,23 @@ const FriendContextMenu = forwardRef(function (
 					Message
 				</li>
 				{isFriends ? (
-					<li
-						className=" rounded-sm px-2 py-1 hover:cursor-pointer hover:bg-red-700"
-						onClick={deleteFriend}
-					>
-						Delete Friend
-					</li>
+					<DialogWrapper
+						content={
+							<ConfirmationDialogBox
+								heading="Delete Friend?"
+								message={`Are you sure you want to remove ${friendUsername} as a friend?`}
+								cancelText="Cancel"
+								confirmText="Delete"
+								onCancel={closeContextMenu}
+								onConfirm={deleteFriend}
+							/>
+						}
+						trigger={
+							<li className="rounded-sm px-2 py-1 hover:cursor-pointer hover:bg-pink-600">
+								Delete Friend
+							</li>
+						}
+					/>
 				) : (
 					<li
 						className=" rounded-sm px-2 py-1 hover:cursor-pointer hover:bg-indigo-700"
