@@ -111,16 +111,6 @@ function ConversationList() {
 							/>
 						);
 					})}
-				<ConversationCard
-					altText="hi"
-					conversationName="hi"
-					groupId="hi"
-					userData={[{ userId: "hi", username: "hi" }]}
-					conversationId="hi"
-					latestMessageTimestamp={new Date()}
-					type="group"
-					handleContextMenu={handleContextMenu}
-				/>
 			</div>
 			{selectedConversation?.conversationId && isComponentVisible && (
 				<ConversationContextMenu
