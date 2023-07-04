@@ -9,13 +9,14 @@ import { useUserStore } from "@/app/store/userStore";
 
 import FriendAddIcon from "../../Icons/FriendAddIcon";
 import FriendIcon from "../../Icons/FriendIcon";
+import GearIcon from "../../Icons/GearIcon";
 import LogoutIcon from "../../Icons/LogoutIcon";
 import MessageIcon from "../../Icons/MessageIcon";
 import Notifications from "../Notifications/Notifications";
 import UserProfile from "../UserProfile/UserProfile";
 import Tooltip from "./Tooltip";
 
-const iconClassNames: string = "fill-neutral-500 hover:fill-gray-400 h-6 w-6";
+const iconClassNames: string = "fill-neutral-500 hover:fill-gray-400 h-6 w-6 ";
 const activeIconClassNames: string = "fill-gray-100 h-6 w-6";
 
 function Sidebar() {
@@ -58,6 +59,7 @@ function Sidebar() {
 				alt="Orion Messaging Logo"
 				className="mb-5"
 			/>
+			<Notifications />
 			<Tooltip content="Friends">
 				<Link href={`/dashboard/friends`}>
 					<FriendIcon
@@ -91,10 +93,22 @@ function Sidebar() {
 					/>
 				</Link>
 			</Tooltip>
-			<Notifications />
+			<Tooltip content="Settings">
+				<Link href={`/dashboard/settings`}>
+					<GearIcon
+						className={
+							pathname.includes("/dashboard/settings")
+								? activeIconClassNames
+								: iconClassNames
+						}
+					/>
+				</Link>
+			</Tooltip>
 			<Tooltip content="Logout">
 				<button onClick={logout}>
-					<LogoutIcon className={iconClassNames} color="#737373" />
+					<LogoutIcon
+						className={`${iconClassNames}stroke-neutral-500 hover:stroke-gray-400`}
+					/>
 				</button>
 			</Tooltip>
 			<UserProfile

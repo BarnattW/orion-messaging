@@ -3,16 +3,16 @@ import { shallow } from "zustand/shallow";
 import { useUserStore } from "@/app/store/userStore";
 import { ConversationCardProps } from "@/app/types/Conversations";
 
-import Avatar from "../Avatar/Avatar";
+import Avatar from "../../Avatar/Avatar";
 
 function ConversationCard({
 	conversationId,
 	type,
-	users,
 	conversationName,
 	latestMessageTimestamp,
 	groupId,
 	userData,
+	handleContextMenu,
 }: ConversationCardProps) {
 	const {
 		activeConversation,
@@ -35,6 +35,19 @@ function ConversationCard({
 		type === "friends"
 			? userData.find((user) => user.userId != userId)?.username
 			: conversationName;
+
+	const onContextMenuHandler = (event: React.MouseEvent<HTMLDivElement>) => {
+		event.preventDefault();
+		if (groupId) {
+			handleContextMenu(event, {
+				type,
+				conversationId,
+				conversationName: conversationTitle,
+				userData,
+				groupId,
+			});
+		}
+	};
 
 	function changeActiveConversation() {
 		if (activeConversation?.conversationId != conversationId) {
@@ -89,6 +102,7 @@ function ConversationCard({
 					: "bg-zinc-800"
 			}`}
 			onClick={changeActiveConversation}
+			onContextMenu={onContextMenuHandler}
 		>
 			<div className="mx-4 flex items-center gap-3">
 				<div className="relative z-0">

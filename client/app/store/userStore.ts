@@ -1,5 +1,6 @@
 import { create } from "zustand";
 
+import { FriendRequests, GroupRequests } from "../types/FriendRequests";
 import {
 	ActiveConversation,
 	ActiveConversationFields,
@@ -16,6 +17,10 @@ type UserState = {
 	setUsername: (username: string | null) => void;
 	friends: Friend[];
 	setFriends: (friends: Friend[]) => void;
+	friendRequests: FriendRequests;
+	setFriendRequests: (friendRequests: FriendRequests) => void;
+	groupRequests: GroupRequests;
+	setGroupRequests: (groupRequests: GroupRequests) => void;
 	activeConversation: ActiveConversation | null;
 	setActiveConversation: (
 		updatedActiveConversation: ActiveConversationFields
@@ -39,6 +44,12 @@ export const useUserStore = create<UserState>((set) => ({
 	setUsername: (username) => set(() => ({ username })),
 	friends: [],
 	setFriends: (friends) => set(() => ({ friends })),
+	friendRequests: { receivedRequests: [], sentRequests: [] },
+	setFriendRequests: (friendRequests) =>
+		set((state) => ({ friendRequests: friendRequests })),
+	groupRequests: { receivedRequests: [], sentRequests: [] },
+	setGroupRequests: (groupRequests) =>
+		set((state) => ({ groupRequests: groupRequests })),
 	activeConversation: null,
 	setActiveConversation: (updatedActiveConversation) =>
 		set((state) => ({

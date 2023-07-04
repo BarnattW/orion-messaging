@@ -1,13 +1,45 @@
-import { useUserStore } from "@/app/store/userStore";
+import { useState } from "react";
+import { shallow } from "zustand/shallow";
 
-import FriendCard from "../../FriendList/FriendCard";
+import useComponentVisible from "@/app/custom-hooks/useComponentVisible";
+import { useUserStore } from "@/app/store/userStore";
+import { SelectedFriend } from "@/app/types/FriendList";
+
+import FriendCard from "../../FriendList/FriendCard/FriendCard";
+import FriendContextMenu from "../../FriendList/FriendCard/FriendContextMenu";
 import UserListContainer from "./UserListContainer";
 import UserListHeading from "./UserListHeading";
 
 function UserList() {
-	const { activeConversation } = useUserStore((state) => ({
-		activeConversation: state.activeConversation,
-	}));
+	const { activeConversation } = useUserStore(
+		(state) => ({
+			activeConversation: state.activeConversation,
+		}),
+		shallow
+	);
+	const [selectedFriend, setSelectedFriend] = useState<SelectedFriend | null>(
+		null
+	);
+	const [contextMenuPosition, setContextMenuPosition] = useState<{
+		x: number;
+		y: number;
+	}>({ x: 0, y: 0 });
+	const { ref, isComponentVisible, setIsComponentVisible } =
+		useComponentVisible(false);
+
+	const handleContextMenu = (
+		event: React.MouseEvent<HTMLDivElement>,
+		friendInfo: SelectedFriend
+	) => {
+		event.preventDefault();
+		setSelectedFriend(friendInfo);
+		setContextMenuPosition({ x: event.clientX, y: event.clientY });
+		setIsComponentVisible(true);
+	};
+
+	const closeContextMenu = () => {
+		setSelectedFriend(null);
+	};
 
 	return (
 		<UserListContainer>
@@ -23,10 +55,20 @@ function UserList() {
 							userId={user.userId}
 							username={user.username}
 							onlineStatus={true}
+							handleContextMenu={handleContextMenu}
 						/>
 					);
 				})}
 			</div>
+			{selectedFriend?.friendId && isComponentVisible && (
+				<FriendContextMenu
+					contextMenuPosition={contextMenuPosition}
+					closeContextMenu={closeContextMenu}
+					friendId={selectedFriend.friendId}
+					friendUsername={selectedFriend.friendUsername}
+					ref={ref}
+				/>
+			)}
 		</UserListContainer>
 	);
 }

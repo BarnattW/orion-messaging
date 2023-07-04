@@ -1,7 +1,7 @@
 import { SentFriendRequestsProps } from "@/app/types/FriendRequests";
 
+import SentRequestCard from "../FriendRequests/RequestCards/SentRequestCard";
 import ListHeading from "../ListWrappers/ListHeading";
-import SentRequestCard from "./RequestCards/SentRequestCard";
 
 function SentGroupRequests({ sentRequests }: SentFriendRequestsProps) {
 	if (!sentRequests) {

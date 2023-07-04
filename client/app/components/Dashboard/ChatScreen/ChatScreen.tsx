@@ -1,9 +1,9 @@
 "use client";
 import { useUserStore } from "@/app/store/userStore";
 
-import ChatInput from "./ChatInput";
+import ChatInput from "./ChatInput/ChatInput";
 import ChatMessages from "./ChatMessages/ChatMessages";
-import ChatTitle from "./ChatTitle";
+import ChatTitle from "./ChatTitle/ChatTitle";
 import UserList from "./UserList/UserList";
 
 function ChatScreen() {

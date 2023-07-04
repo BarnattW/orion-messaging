@@ -1,7 +1,7 @@
 import { ReceviedRequestsProps } from "@/app/types/FriendRequests";
 
+import RecievedRequestCard from "../FriendRequests/RequestCards/ReceivedRequestCard";
 import ListHeading from "../ListWrappers/ListHeading";
-import RecievedRequestCard from "./RequestCards/ReceivedRequestCard";
 
 function ReceivedGroupRequests({ receivedRequests }: ReceviedRequestsProps) {
 	if (!receivedRequests) {
