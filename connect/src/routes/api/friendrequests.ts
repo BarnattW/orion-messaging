@@ -45,6 +45,11 @@ router.post("/api/connect/sendFriendRequest", async(req: Request, res: Response)
 			return res.status(400).json({ message: `Friend request to ${receiverUsername} is currently pending` });
 		}
 
+		//check if self
+		if (sender === receiver){
+			return res.status(400).json({message: 'You cannot send a friend request to yourself'});
+		}
+
 		const newRequest = new request({
 			receiverUsername: receiverUsername,
 			senderUsername: senderUsername,
