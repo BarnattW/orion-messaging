@@ -1,6 +1,6 @@
 import { IUser, User } from "../../models/user";
 import express, { Request, Response } from "express";
-import { insertionSort } from "./functions/sort";
+import { insertionSortFriends } from "./functions/sort";
 import { consumer } from "./kafka-ops/kafkaproducer";
 import { publishMessage } from "./kafka-ops/kafkaproducer";
 import { KafkaMessage } from "kafkajs";
@@ -81,12 +81,8 @@ router.put(
 			const usersWithUserAsFriend = await User.find({ friends: userId });
 
 			usersWithUserAsFriend.forEach(async (user) => {
-				const populatedFriends = await User.find({
-					userId: { $in: user.friends },
-				}).populate("friends");
-				const sortedFriends = insertionSort(populatedFriends, "username");
-				const sortedFriendIds = sortedFriends.map((friend) => friend.userId);
-				user.friends = sortedFriendIds;
+				await insertionSortFriends(user);
+				user.save();
 			});
 
 			return res.json(user);

@@ -1,16 +1,19 @@
-export function insertionSort<T>(arr: T[], key: keyof T | string): T[] {
-    for (let i = 1; i < arr.length; i++) {
-      const currVal = arr[i];
-      let j = i - 1;
-  
-      while (j >= 0 && String(arr[j][key as keyof T]) > String(currVal[key as keyof T])) {
-        arr[j + 1] = arr[j];
-        j--;
-      }
-  
-      arr[j + 1] = currVal;
-    }
-  
-    return arr;
-}
+import { User, IUser } from "../../../models/user";
 
+export async function insertionSortFriends(user: IUser): Promise<void> {
+  const friends = await User.find({ _id: { $in: user.friends } });
+
+  for (let i = 1; i < friends.length; i++) {
+    const currentFriend = friends[i];
+    let j = i - 1;
+
+    while (j >= 0 && friends[j].username && friends[j].username.localeCompare(currentFriend.username) > 0) {
+      friends[j + 1] = friends[j];
+      j--;
+    }
+
+    friends[j + 1] = currentFriend;
+  }
+
+  user.friends = friends.map((friend) => friend._id.toString());
+}

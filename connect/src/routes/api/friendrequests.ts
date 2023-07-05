@@ -3,7 +3,7 @@ import { User } from "../../models/user";
 import { request } from "../../models/request";
 import express, { Request, Response } from "express";
 import { publishMessage } from "./kafka-ops/kafkaproducer";
-import { insertionSort } from "./functions/sort";
+import { insertionSortFriends } from "./functions/sort";
 
 const router = express.Router();
 
@@ -118,6 +118,13 @@ router.put(
 				receiverId: receiver.userId,
 				senderId: sender.userId
 			}
+
+			await insertionSortFriends(sender);
+
+			await insertionSortFriends(receiver);
+
+			await sender.save();
+			await receiver.save();
 
 			//publish to kafka
 			await publishMessage("friends", users, "request-accepted");
