@@ -11,8 +11,7 @@ export async function handleFriends() {
         //@ts-ignore
         const parseMessage = JSON.parse(message.value?.toString());
         const { messageType, value } = parseMessage;
-        if (messageType && value){
-            
+        if (messageType && value){   
             if (topic === "friends" && messageType === "requestCreated"){
                 const {receiverId, senderUsername} = value
                 await sendFriendRequestNotification(receiverId, `You have a new friend request from ${senderUsername}`);
