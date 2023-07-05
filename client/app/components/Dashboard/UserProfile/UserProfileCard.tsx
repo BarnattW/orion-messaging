@@ -1,12 +1,14 @@
-import Image from "next/image";
+import Link from "next/link";
 import { ForwardedRef, forwardRef, useState } from "react";
 
 import { useUserStore } from "@/app/store/userStore";
 import { UserProfileCardProps } from "@/app/types/UserProfile";
 
+import EditIcon from "../../Icons/EditIcon";
 import ExitIcon from "../../Icons/ExitIcon";
+import GearIcon from "../../Icons/GearIcon";
+import KebabMenuIcon from "../../Icons/KebabMenuIcon";
 import MessageIcon from "../../Icons/MessageIcon";
-import OptionsIcon from "../../Icons/OptionsIcon";
 import Avatar from "../Avatar/Avatar";
 import OptionsPopout from "./OptionsPopout";
 
@@ -40,58 +42,55 @@ const UserProfileCard = forwardRef(function (
 	}
 
 	return (
-		<>
-			<OptionsPopout
-				showOptions={toggleOptionsPopout}
-				currentUserId={currentUserId}
-				currentUsername={currentUsername}
-				username={username}
-				userId={userId}
-			>
-				<div className=" flex flex-col items-center justify-center gap-4 text-slate-50">
-					<div className="max-h-36 w-full overflow-hidden">
-						<Image
-							src="/starry.avif"
-							width={300}
-							height={100}
-							alt="starry"
-							style={{ objectFit: "scale-down" }}
-							className="select-none"
-						/>
-						<div
-							className="absolute right-0 top-0 -translate-x-2 translate-y-2 transform select-none hover:cursor-pointer"
-							onClick={closeProfile}
-						>
-							<ExitIcon />
-						</div>
-					</div>
-					<div className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 transform select-none">
-						<Avatar
-							imageUrl={imageUrl}
-							altText={username}
-							size={300}
-							type="userProfile"
-						/>
-					</div>
-					<div className="mt-8 flex w-64 flex-col items-center rounded-lg bg-zinc-900 py-4">
-						<p className="text-xl">{username}</p>
-						<p className="text-md">Description</p>
-					</div>
-					<div className="flex w-full flex-row justify-around border-t-2 border-neutral-600 p-3">
-						{userId != currentUserId && (
-							<>
-								<div onClick={showMessage}>
-									<MessageIcon className={iconClassNames} />
-								</div>
-								<div onClick={toggleOptions}>
-									<OptionsIcon className={iconClassNames} />
-								</div>
-							</>
-						)}
-					</div>
+		<div className="flex h-96 flex-col items-center justify-center gap-4 text-slate-50">
+			<div className="flex h-48 w-full items-end justify-center bg-[url('/starry.avif')]">
+				<div className="translate-y-1/2 transform select-none">
+					<Avatar
+						imageUrl={imageUrl}
+						altText={username}
+						size={300}
+						type="userProfile"
+					/>
 				</div>
-			</OptionsPopout>
-		</>
+				<div
+					className="absolute right-0 top-0 -translate-x-2 translate-y-2 transform select-none hover:cursor-pointer"
+					onClick={closeProfile}
+				>
+					<ExitIcon />
+				</div>
+			</div>
+			<div className="mt-8 flex h-32 w-64 flex-col items-center justify-center rounded-lg bg-zinc-900 py-2">
+				<p className="text-xl">{username}</p>
+				<p className="line-clamp-3 w-64 px-7 text-center text-sm">
+					Description
+				</p>
+			</div>
+			<div className="flex w-full flex-row justify-around border-t-2 border-neutral-600 p-3">
+				{userId != currentUserId && (
+					<>
+						<span onClick={showMessage}>
+							<MessageIcon className={iconClassNames} />
+						</span>
+						<OptionsPopout
+							showOptions={toggleOptionsPopout}
+							currentUserId={currentUserId}
+							currentUsername={currentUsername}
+							username={username}
+							userId={userId}
+						>
+							<span onClick={toggleOptions}>
+								<KebabMenuIcon className={iconClassNames} />
+							</span>
+						</OptionsPopout>
+					</>
+				)}
+				{userId === currentUserId && (
+					<Link href="/dashboard/settings">
+						<GearIcon className={iconClassNames} />
+					</Link>
+				)}
+			</div>
+		</div>
 	);
 });
 

@@ -1,4 +1,4 @@
-function OptionsIcon({ className }: { className?: string }) {
+function KebabMenuIcon({ className }: { className?: string }) {
 	return (
 		<svg
 			viewBox="0 0 32 32"
@@ -17,4 +17,4 @@ function OptionsIcon({ className }: { className?: string }) {
 	);
 }
 
-export default OptionsIcon;
+export default KebabMenuIcon;

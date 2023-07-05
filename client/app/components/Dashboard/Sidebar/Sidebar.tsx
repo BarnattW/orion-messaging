@@ -51,7 +51,7 @@ function Sidebar() {
 	}
 
 	return (
-		<div className="flex h-full w-16 flex-shrink-0 flex-col items-center gap-7 bg-zinc-900 pt-8">
+		<div className="flex h-full w-16 flex-shrink-0 flex-col items-center gap-7 overflow-scroll bg-zinc-900 py-8 scrollbar-none">
 			<Image
 				src="/orion-logo2.svg"
 				width={80}
