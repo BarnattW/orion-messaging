@@ -3,7 +3,7 @@ import { User } from "../../models/user";
 import { request } from "../../models/request";
 import express, { Request, Response } from "express";
 import { publishMessage } from "./kafka-ops/kafkaproducer";
-import { insertionSort } from "./functions/sort";
+import { insertionSortFriends } from "./functions/sort";
 
 const router = express.Router();
 
@@ -45,6 +45,11 @@ router.post("/api/connect/sendFriendRequest", async(req: Request, res: Response)
 			return res.status(400).json({ message: `Friend request to ${receiverUsername} is currently pending` });
 		}
 
+		//check if self
+		if (sender === receiver){
+			return res.status(400).json({message: 'You cannot send a friend request to yourself'});
+		}
+
 		const newRequest = new request({
 			receiverUsername: receiverUsername,
 			senderUsername: senderUsername,
@@ -61,8 +66,13 @@ router.post("/api/connect/sendFriendRequest", async(req: Request, res: Response)
 
 		receiver.incomingrequests.push(newRequest._id);
 		await receiver.save();
+
+		const data = {
+			request: newRequest,
+			receiverStatus: receiver.onlineStatus
+		}
 		
-		await publishMessage("friends", newRequest, "requestCreated")
+		await publishMessage("friends", data, "requestCreated")
 
 		return res.status(201).json({
 			message: `friend request created`,
@@ -113,6 +123,13 @@ router.put(
 				receiverId: receiver.userId,
 				senderId: sender.userId
 			}
+
+			await insertionSortFriends(sender);
+
+			await insertionSortFriends(receiver);
+
+			await sender.save();
+			await receiver.save();
 
 			//publish to kafka
 			await publishMessage("friends", users, "request-accepted");
