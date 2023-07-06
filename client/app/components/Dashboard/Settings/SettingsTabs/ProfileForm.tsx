@@ -32,7 +32,9 @@ function ProfileForm() {
 		setPreviewURL(null);
 	};
 
-	async function handleSave() {
+	//@ts-ignore
+	async function handleSave(event) {
+		event?.preventDefault();
 		// to-do: status and profile picture, also banner
 		try {
 			const response = await fetch("/api/connect/changeUsername", {

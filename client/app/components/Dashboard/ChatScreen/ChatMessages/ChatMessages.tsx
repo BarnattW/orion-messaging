@@ -272,16 +272,22 @@ function ChatMessages() {
 
 	if (conversationMessages?.length === 0) {
 		return (
-			<div className={renderStateClassName}>
-				<p>No messages found. Try sending some!</p>
-			</div>
+			<>
+				<div className={renderStateClassName}>
+					<p>No messages found. Try sending some!</p>
+				</div>
+				<ChatInput
+					scrollToBottom={scrollToBottom}
+					showScrollButton={showScrollButton}
+				/>
+			</>
 		);
 	}
 
 	return (
 		<>
 			<div
-				className="flex flex-col-reverse overflow-auto scrollbar-thin scrollbar-thumb-neutral-700"
+				className="flex grow flex-col-reverse overflow-auto scrollbar-thin scrollbar-thumb-neutral-700"
 				ref={scrollRef}
 				onScroll={handleScroll}
 			>
