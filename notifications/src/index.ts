@@ -3,6 +3,8 @@ import express, {Request, Response } from 'express';
 import http from 'http';
 import { Server, Socket } from 'socket.io';
 import { removeSocketForUser, storeKeySocketPair } from "./utils/sockets";
+import { User } from "./models/user";
+import { addUser } from "./utils/userCreation";
 
 const app = express();
 const PORT = 3000;
@@ -15,10 +17,6 @@ mongoose
 
 
 app.use(express.json());
-
-app.listen(3000, () => {
-	console.log(`Server Started on Port 3000`);
-});
 
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -36,12 +34,25 @@ io.on('connection', async(socket: Socket) => {
 	socket.on("userId", async (userId) => {
 		const socketString = JSON.stringify(socket);
 		storeKeySocketPair(userId, "notification", socketString);
+		const user = await User.findOne({userId: userId});
+		if (!user){
+			return;
+		}
+		user.onlineStatus = true;
 	});
 
 	socket.on('disconnect', async(userId) => {
 		console.log('socket connection closed');
 		removeSocketForUser(userId, "notification");
+		const user = await User.findOne({userId: userId});
+		if (!user){
+			return;
+		}
+		user.onlineStatus = false;
   });
+
+addUser();
+
 });
 
 server.listen(8080, () => {
