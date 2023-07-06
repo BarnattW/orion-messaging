@@ -12,12 +12,18 @@ import { useUserStore } from "@/app/store/userStore";
 import EmojiIcon from "../../../Icons/EmojiIcon";
 import FileClipIcon from "../../../Icons/FileClipIcon";
 import SendIcon from "../../../Icons/SendIcon";
+import ScrollButton from "../ChatMessages/ScrollButton";
+
+interface ChatInputProps {
+	scrollToBottom: () => void;
+	showScrollButton: boolean;
+}
 
 const iconClassNames: string =
 	"fill-gray-100 h-6 w-6 hover:cursor-pointer stroke-gray-100 hover:stroke-gray-400";
 const maxCharacters: number = 2000;
 
-function ChatInput() {
+function ChatInput({ scrollToBottom, showScrollButton }: ChatInputProps) {
 	const { activeConversation, userId } = useUserStore(
 		(state) => ({
 			activeConversation: state.activeConversation,
@@ -93,9 +99,9 @@ function ChatInput() {
 			<div className="flex gap-3 px-3 pb-2">
 				<FileClipIcon className={iconClassNames} />
 				<div className="relative" ref={ref}>
-					<div onClick={toggleEmojiPicker}>
+					<span onClick={toggleEmojiPicker}>
 						<EmojiIcon className={iconClassNames} />
-					</div>
+					</span>
 					{isComponentVisible && (
 						<div className="absolute bottom-full z-20 overflow-auto text-sm scrollbar-thin scrollbar-thumb-neutral-800">
 							<Picker data={data} onEmojiSelect={handleEmojiInput} />
@@ -117,6 +123,12 @@ function ChatInput() {
 			<button className="px-3 pb-2" onClick={sendMessage}>
 				<SendIcon className={iconClassNames} />
 			</button>
+			<div className="relative">
+				<ScrollButton
+					showScrollButton={showScrollButton}
+					scrollToBottom={scrollToBottom}
+				/>
+			</div>
 		</div>
 	);
 }

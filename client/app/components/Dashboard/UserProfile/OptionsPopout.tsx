@@ -72,14 +72,14 @@ function OptionsPopout({
 			{isFriends ? (
 				<div className="relative">
 					{children}
-					<div className="absolute left-40 top-3/4 select-none rounded bg-zinc-900 px-2 py-2 text-sm text-white outline-none hover:bg-red-700">
+					<div className="absolute top-3/4 select-none rounded bg-zinc-900 px-2 py-2 text-sm text-white outline-none hover:bg-pink-600">
 						<button onClick={deleteFriend}>Delete Friend</button>
 					</div>
 				</div>
 			) : (
 				<div className="relative">
 					{children}
-					<div className="absolute left-40 top-3/4 rounded bg-zinc-900 px-2 py-2 text-sm text-white hover:bg-indigo-700">
+					<div className="absolute bottom-full -ml-5 mb-2 whitespace-nowrap rounded bg-zinc-900 px-2 py-2 text-sm text-white hover:bg-indigo-700">
 						<button onClick={addFriend}>Add Friend</button>
 					</div>
 				</div>

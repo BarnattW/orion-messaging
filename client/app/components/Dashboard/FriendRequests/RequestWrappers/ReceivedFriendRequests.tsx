@@ -1,7 +1,7 @@
 import { ReceviedRequestsProps } from "@/app/types/FriendRequests";
 
 import ListHeading from "../../ListWrappers/ListHeading";
-import RecievedRequestCard from "../RequestCards/ReceivedRequestCard";
+import RecievedRequestListItem from "../RequestListItem/ReceivedRequestListItem";
 
 function ReceivedFriendRequests({ receivedRequests }: ReceviedRequestsProps) {
 	if (!receivedRequests) {
@@ -16,17 +16,19 @@ function ReceivedFriendRequests({ receivedRequests }: ReceviedRequestsProps) {
 	return (
 		<>
 			<ListHeading>Friend Requests</ListHeading>
-			{receivedRequests?.map((ReceivedRequest) => {
-				return (
-					<RecievedRequestCard
-						userId={ReceivedRequest.senderId}
-						username={ReceivedRequest.senderUsername}
-						requestId={ReceivedRequest._id}
-						key={ReceivedRequest._id}
-						requestType={ReceivedRequest.requestType}
-					/>
-				);
-			})}
+			<ul>
+				{receivedRequests?.map((ReceivedRequest) => {
+					return (
+						<RecievedRequestListItem
+							userId={ReceivedRequest.senderId}
+							username={ReceivedRequest.senderUsername}
+							requestId={ReceivedRequest._id}
+							key={ReceivedRequest._id}
+							requestType={ReceivedRequest.requestType}
+						/>
+					);
+				})}
+			</ul>
 		</>
 	);
 }

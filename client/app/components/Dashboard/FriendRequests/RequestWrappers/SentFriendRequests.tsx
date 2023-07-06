@@ -1,7 +1,7 @@
 import { SentFriendRequestsProps } from "@/app/types/FriendRequests";
 
 import ListHeading from "../../ListWrappers/ListHeading";
-import SentRequestCard from "../RequestCards/SentRequestCard";
+import SentRequestListItem from "../RequestListItem/SentRequestListItem";
 
 function SentFriendRequests({ sentRequests }: SentFriendRequestsProps) {
 	if (!sentRequests) {
@@ -16,17 +16,19 @@ function SentFriendRequests({ sentRequests }: SentFriendRequestsProps) {
 	return (
 		<>
 			<ListHeading>Sent Requests</ListHeading>
-			{sentRequests.map((sentRequest) => {
-				return (
-					<SentRequestCard
-						userId={sentRequest.receiverId}
-						username={sentRequest.receiverUsername}
-						requestId={sentRequest._id}
-						key={sentRequest._id}
-						requestType={sentRequest.requestType}
-					/>
-				);
-			})}
+			<ul>
+				{sentRequests.map((sentRequest) => {
+					return (
+						<SentRequestListItem
+							userId={sentRequest.receiverId}
+							username={sentRequest.receiverUsername}
+							requestId={sentRequest._id}
+							key={sentRequest._id}
+							requestType={sentRequest.requestType}
+						/>
+					);
+				})}
+			</ul>
 		</>
 	);
 }

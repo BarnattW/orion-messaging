@@ -6,7 +6,7 @@ import useComponentVisible from "@/app/custom-hooks/useComponentVisible";
 import { useUserStore } from "@/app/store/userStore";
 
 import FriendAddIcon from "../../../Icons/FriendAddIcon";
-import InviteFriendCard from "../../ConversationList/CreateGroup/InviteFriendCard";
+import InviteFriendCard from "../../ConversationList/CreateGroup/InviteFriendListItem";
 
 const iconClassNames =
 	"fill-gray-100 h-6 w-6 hover:cursor-pointer flex-shrink-0 hover:fill-gray-400";
@@ -54,8 +54,8 @@ function InviteFriends() {
 	};
 
 	const handleCheckboxChange = (event: ChangeEvent<HTMLInputElement>) => {
-		const optionId = event.target.id;
-		if (event.target.checked) {
+		const optionId = event.target.dataset.username;
+		if (event.target.checked && optionId) {
 			setSelectedOptions([...selectedOptions, optionId]);
 		} else {
 			setSelectedOptions(
@@ -120,6 +120,7 @@ function InviteFriends() {
 										className="h-4 w-4 bg-zinc-600"
 										type="checkbox"
 										id={friend.userId}
+										data-username={friend.username}
 										checked={selectedOptions.includes(`${friend.username}`)}
 										onChange={handleCheckboxChange}
 									></input>

@@ -5,15 +5,16 @@ import useComponentVisible from "@/app/custom-hooks/useComponentVisible";
 import { useUserStore } from "@/app/store/userStore";
 import { SelectedFriend } from "@/app/types/FriendList";
 
-import FriendCard from "../../FriendList/FriendCard/FriendCard";
-import FriendContextMenu from "../../FriendList/FriendCard/FriendContextMenu";
+import FriendContextMenu from "../../FriendList/FriendListItem/FriendContextMenu";
+import FriendListItem from "../../FriendList/FriendListItem/FriendListItem";
 import UserListContainer from "./UserListContainer";
 import UserListHeading from "./UserListHeading";
 
 function UserList() {
-	const { activeConversation } = useUserStore(
+	const { activeConversation, userId } = useUserStore(
 		(state) => ({
 			activeConversation: state.activeConversation,
+			userId: state.userId,
 		}),
 		shallow
 	);
@@ -46,10 +47,10 @@ function UserList() {
 			<UserListHeading>
 				{activeConversation && <div>Users</div>}
 			</UserListHeading>
-			<div className="overflow-y-scroll scrollbar-thin">
+			<ul className="overflow-y-scroll scrollbar-thin">
 				{activeConversation?.users.map((user) => {
 					return (
-						<FriendCard
+						<FriendListItem
 							key={user.userId}
 							altText={user.username}
 							userId={user.userId}
@@ -59,16 +60,18 @@ function UserList() {
 						/>
 					);
 				})}
-			</div>
-			{selectedFriend?.friendId && isComponentVisible && (
-				<FriendContextMenu
-					contextMenuPosition={contextMenuPosition}
-					closeContextMenu={closeContextMenu}
-					friendId={selectedFriend.friendId}
-					friendUsername={selectedFriend.friendUsername}
-					ref={ref}
-				/>
-			)}
+			</ul>
+			{selectedFriend?.friendId &&
+				selectedFriend?.friendId != userId &&
+				isComponentVisible && (
+					<FriendContextMenu
+						contextMenuPosition={contextMenuPosition}
+						closeContextMenu={closeContextMenu}
+						friendId={selectedFriend.friendId}
+						friendUsername={selectedFriend.friendUsername}
+						ref={ref}
+					/>
+				)}
 		</UserListContainer>
 	);
 }

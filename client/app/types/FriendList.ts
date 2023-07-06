@@ -18,14 +18,14 @@ export interface SelectedFriend {
 	friendUsername: string;
 }
 
-export interface FriendCardProps extends FriendProps {
+export interface FriendListItemProps extends FriendProps {
 	handleContextMenu: (
-		event: MouseEvent<HTMLDivElement>,
+		event: MouseEvent<HTMLLIElement>,
 		friendInfo: SelectedFriend
 	) => void;
 }
 
-export interface InviteFriendCardProps extends FriendProps {}
+export interface InviteFriendListItemProps extends FriendProps {}
 
 export interface OnlineStatusProps {
 	onlineStatus: boolean;

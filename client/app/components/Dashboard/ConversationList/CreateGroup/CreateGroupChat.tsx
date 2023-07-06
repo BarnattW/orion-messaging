@@ -6,11 +6,12 @@ import useComponentVisible from "@/app/custom-hooks/useComponentVisible";
 import { useUserStore } from "@/app/store/userStore";
 
 import AddIcon from "../../../Icons/AddIcon";
-import InviteFriendCard from "./InviteFriendCard";
+import InviteFriendCard from "./InviteFriendListItem";
 
 const iconClassNames: string =
 	"h-7 w-7 hover:cursor-pointer stroke-gray-100 hover:stroke-gray-400";
 const maxTitleCharacterLimit = 75;
+
 function CreateGroupChat() {
 	const { friends, userId, username } = useUserStore(
 		(state) => ({
@@ -53,7 +54,6 @@ function CreateGroupChat() {
 			setIsComponentVisible(false);
 
 			for (let i = 0; i < selectedOptions.length; i++) {
-				console.log("cope", groupId, username, selectedOptions[i]);
 				const sendInviteResponse = await fetch(
 					"/api/connect/sendGroupRequest",
 					{
@@ -118,7 +118,7 @@ function CreateGroupChat() {
 							onChange={filterFriends}
 						></input>
 					</div>
-					<div className="max-h-40 overflow-scroll px-3 scrollbar-thin">
+					<ul className="max-h-40 overflow-scroll px-3 scrollbar-thin">
 						{friends.length === 0 && (
 							<p className="flex justify-center">No friends found.</p>
 						)}
@@ -150,7 +150,7 @@ function CreateGroupChat() {
 									></input>
 								</label>
 							))}
-					</div>
+					</ul>
 					<button
 						className="mx-3 rounded-md bg-indigo-600 py-1 hover:bg-indigo-500"
 						onClick={createChat}

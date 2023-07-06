@@ -159,9 +159,9 @@ function ChatTitle() {
 						<InviteFriends />
 					</>
 				)}
-				<div onClick={toggleUserList}>
+				<span onClick={toggleUserList}>
 					<HamburgerMenuIcon className="h-7 w-7 flex-shrink-0 stroke-gray-100 hover:cursor-pointer hover:stroke-gray-400" />
-				</div>
+				</span>
 			</div>
 		</div>
 	);
