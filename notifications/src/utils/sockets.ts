@@ -1,7 +1,9 @@
 import { redis } from "../redis/redis";
 import {Socket} from "socket.io";
+
 import { sendFriendRequestNotification } from "../services/friendrequests";
 import { Notification } from "../models/notifications";
+
 
 export function storeKeySocketPair(userId: string, key: string, socket: string) {
   try{
@@ -39,6 +41,7 @@ export async function removeSocketForUser(userId: string, key: string) {
   } catch (error) {
     console.error(`Error deleting key-socket pair: ${error}`);
   }
+
 };
 
 export async function pullNotificationsForUser(userId: string) {
@@ -68,3 +71,4 @@ export async function pullNotificationsForUser(userId: string) {
     console.error(error);
   }
 }
+

@@ -1,18 +1,19 @@
 import { shallow } from "zustand/shallow";
 
 import { useUserStore } from "@/app/store/userStore";
-import { ConversationCardProps } from "@/app/types/Conversations";
+import { ConversationListItemProps } from "@/app/types/Conversations";
 
-import Avatar from "../Avatar/Avatar";
+import Avatar from "../../Avatar/Avatar";
 
-function ConversationCard({
+function ConversationListItem({
 	conversationId,
 	type,
-	users,
 	conversationName,
 	latestMessageTimestamp,
 	groupId,
-}: ConversationCardProps) {
+	userData,
+	handleContextMenu,
+}: ConversationListItemProps) {
 	const {
 		activeConversation,
 		setActiveConversation,
@@ -29,10 +30,28 @@ function ConversationCard({
 		}),
 		shallow
 	);
+
 	const conversationTitle =
-		type === "individual"
-			? users.find((user) => user.userId != userId)?.username
+		type === "friends"
+			? userData.find((user) => user.userId != userId)?.username
 			: conversationName;
+
+	const onContextMenuHandler = (event: React.MouseEvent<HTMLLIElement>) => {
+		event.preventDefault();
+		const conversationTitle =
+			type === "friends"
+				? userData.find((user) => user.userId != userId)?.username
+				: conversationName;
+		if (groupId) {
+			handleContextMenu(event, {
+				type,
+				conversationId,
+				conversationName: conversationTitle,
+				userData,
+				groupId,
+			});
+		}
+	};
 
 	function changeActiveConversation() {
 		if (activeConversation?.conversationId != conversationId) {
@@ -50,7 +69,7 @@ function ConversationCard({
 					lastScrollTop: messages[conversationId].lastScrollTop,
 					canLoad: !messages[conversationId].initialLoadComplete,
 					initialLoadComplete: messages[conversationId].initialLoadComplete,
-					users: users,
+					users: userData,
 					groupId: groupId,
 				});
 			} else {
@@ -63,7 +82,7 @@ function ConversationCard({
 					lastScrollTop: null,
 					canLoad: true,
 					initialLoadComplete: false,
-					users: users,
+					users: userData,
 					groupId: groupId,
 				});
 
@@ -80,26 +99,28 @@ function ConversationCard({
 	}
 
 	return (
-		<div
+		<li
 			className={`py-2 pl-1 hover:cursor-pointer hover:bg-zinc-700 hover:text-neutral-50 focus:bg-white ${
 				activeConversation?.conversationId === conversationId
 					? "bg-zinc-600"
 					: "bg-zinc-800"
 			}`}
 			onClick={changeActiveConversation}
+			onContextMenu={onContextMenuHandler}
 		>
 			<div className="mx-4 flex items-center gap-3">
-				<div className="relative z-0">
+				<span className="relative z-0">
 					<Avatar
 						imageUrl="/friend-icon-blue.png"
+						//@ts-ignore
 						altText={conversationTitle}
 						type="default"
 					/>
-				</div>
-				<div className="truncate text-sm">{conversationTitle}</div>
+				</span>
+				<span className="truncate text-sm">{conversationTitle}</span>
 			</div>
-		</div>
+		</li>
 	);
 }
 
-export default ConversationCard;
+export default ConversationListItem;

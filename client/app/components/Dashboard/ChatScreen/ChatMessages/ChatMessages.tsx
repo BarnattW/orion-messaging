@@ -11,8 +11,8 @@ import { Message } from "@/app/types/UserContextTypes";
 import { findMessageByTimestamps } from "@/app/utils/findMessageByTimestamps";
 import sortMessagesByTimestamps from "@/app/utils/sortMessagesByTimestamps";
 
+import ChatInput from "../ChatInput/ChatInput";
 import ChatDate from "./ChatDate";
-import ScrollButton from "./ScrollButton";
 import SentMessage from "./SentMessage";
 import UserMessages from "./UserMessages";
 
@@ -151,8 +151,8 @@ function ChatMessages() {
 				message,
 				messages[conversationId].messages
 			);
-			console.log(messageIndex);
-			if (messageIndex && messageIndex !== -1) {
+
+			if (messageIndex != undefined && messageIndex !== -1) {
 				// @ts-ignore
 				const updatedMessages = [...messages[conversationId].messages];
 				const currentDatestamp = updatedMessages[messageIndex].renderDatestamp;
@@ -279,62 +279,64 @@ function ChatMessages() {
 	}
 
 	return (
-		<div
-			className="flex grow flex-col-reverse overflow-auto scrollbar-thin scrollbar-thumb-neutral-700"
-			ref={scrollRef}
-			onScroll={handleScroll}
-		>
-			<div>
-				{!messages[activeConversation.conversationId].hasMore && (
-					<div className="flex items-center justify-center pb-2 pt-4 text-sm">
-						Beginning of messages
-					</div>
-				)}
-				{conversationMessages?.map((message, i) => {
-					const isUserMessage = message.renderUserMessage;
-					const isConsecutiveMessage = message.renderDatestamp;
+		<>
+			<div
+				className="flex flex-col-reverse overflow-auto scrollbar-thin scrollbar-thumb-neutral-700"
+				ref={scrollRef}
+				onScroll={handleScroll}
+			>
+				<div>
+					{!messages[activeConversation.conversationId].hasMore && (
+						<div className="flex items-center justify-center pb-2 pt-4 text-sm">
+							Beginning of messages
+						</div>
+					)}
+					{conversationMessages?.map((message, i) => {
+						const isUserMessage = message.renderUserMessage;
+						const isConsecutiveMessage = message.renderDatestamp;
 
-					return (
-						<Fragment key={message._id}>
-							{i === 0 && <div ref={loadMoreMessages}></div>}
-							{isConsecutiveMessage && isUserMessage && (
-								<ChatDate
-									timeStamp={message.timestamp}
-									key={message.timestamp.getTime()}
-								/>
-							)}
-							{isUserMessage ? (
-								<>
-									<div className="pt-3"></div>
-									<UserMessages
+						return (
+							<Fragment key={message._id}>
+								{i === 0 && <div ref={loadMoreMessages}></div>}
+								{isConsecutiveMessage && isUserMessage && (
+									<ChatDate
+										timeStamp={message.timestamp}
+										key={message.timestamp.getTime()}
+									/>
+								)}
+								{isUserMessage ? (
+									<>
+										<div className="pt-3"></div>
+										<UserMessages
+											senderUsername={message.senderUsername}
+											senderId={message.senderId}
+											message={message.message}
+											_id={message._id}
+											timestamp={message.timestamp}
+											key={message._id}
+										/>
+									</>
+								) : (
+									<SentMessage
 										senderUsername={message.senderUsername}
 										senderId={message.senderId}
 										message={message.message}
 										_id={message._id}
 										timestamp={message.timestamp}
 										key={message._id}
+										type="consecutiveMessage"
 									/>
-								</>
-							) : (
-								<SentMessage
-									senderUsername={message.senderUsername}
-									senderId={message.senderId}
-									message={message.message}
-									_id={message._id}
-									timestamp={message.timestamp}
-									key={message._id}
-									type="consecutiveMessage"
-								/>
-							)}
-						</Fragment>
-					);
-				})}
-				<ScrollButton
-					scrollToBottom={scrollToBottom}
-					showScrollButton={showScrollButton}
-				/>
+								)}
+							</Fragment>
+						);
+					})}
+				</div>
 			</div>
-		</div>
+			<ChatInput
+				scrollToBottom={scrollToBottom}
+				showScrollButton={showScrollButton}
+			/>
+		</>
 	);
 }
 

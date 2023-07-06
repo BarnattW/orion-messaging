@@ -42,7 +42,7 @@ export default async function DashboardLayout({
 
 	return (
 		<UserData>
-			<div className="bg-gradient-to-r from-zinc-800 to-neutral-800 h-full min-h-full">
+			<div className="h-full min-h-full bg-zinc-800">
 				<div className="flex h-full">{children}</div>
 			</div>
 		</UserData>

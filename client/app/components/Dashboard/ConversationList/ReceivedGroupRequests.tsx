@@ -1,7 +1,7 @@
 import { ReceviedRequestsProps } from "@/app/types/FriendRequests";
 
+import RecievedRequestListItem from "../FriendRequests/RequestListItem/ReceivedRequestListItem";
 import ListHeading from "../ListWrappers/ListHeading";
-import RecievedRequestCard from "./RequestCards/ReceivedRequestCard";
 
 function ReceivedGroupRequests({ receivedRequests }: ReceviedRequestsProps) {
 	if (!receivedRequests) {
@@ -18,7 +18,7 @@ function ReceivedGroupRequests({ receivedRequests }: ReceviedRequestsProps) {
 			<ListHeading>Group Invites</ListHeading>
 			{receivedRequests?.map((receivedRequest) => {
 				return (
-					<RecievedRequestCard
+					<RecievedRequestListItem
 						userId={receivedRequest.senderId}
 						username={receivedRequest.senderUsername}
 						requestId={receivedRequest._id}

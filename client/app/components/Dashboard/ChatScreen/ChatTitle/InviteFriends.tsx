@@ -1,23 +1,24 @@
 "use client";
-import { ChangeEvent, useRef, useState } from "react";
+import { ChangeEvent, useState } from "react";
+import { shallow } from "zustand/shallow";
 
 import useComponentVisible from "@/app/custom-hooks/useComponentVisible";
 import { useUserStore } from "@/app/store/userStore";
 
-import FriendAddIcon from "../../Icons/FriendAddIcon";
-import InviteFriendCard from "../ConversationList/InviteFriendCard";
+import FriendAddIcon from "../../../Icons/FriendAddIcon";
+import InviteFriendCard from "../../ConversationList/CreateGroup/InviteFriendListItem";
 
 const iconClassNames =
-	"fill-gray-100 h-6 w-6 hover:cursor-pointer flex-shrink-0";
+	"fill-gray-100 h-6 w-6 hover:cursor-pointer flex-shrink-0 hover:fill-gray-400";
 
 function InviteFriends() {
-	const { friends, userId, username, activeConversation } = useUserStore(
+	const { friends, username, activeConversation } = useUserStore(
 		(state) => ({
 			friends: state.friends,
-			userId: state.userId,
 			username: state.username,
 			activeConversation: state.activeConversation,
-		})
+		}),
+		shallow
 	);
 	const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
 	const [friendsQuery, setFriendsQuery] = useState<string>("");
@@ -53,8 +54,8 @@ function InviteFriends() {
 	};
 
 	const handleCheckboxChange = (event: ChangeEvent<HTMLInputElement>) => {
-		const optionId = event.target.id;
-		if (event.target.checked) {
+		const optionId = event.target.dataset.username;
+		if (event.target.checked && optionId) {
 			setSelectedOptions([...selectedOptions, optionId]);
 		} else {
 			setSelectedOptions(
@@ -79,7 +80,7 @@ function InviteFriends() {
 			</div>
 
 			{isComponentVisible && (
-				<div className="absolute right-0 top-full z-50 flex w-72 flex-col gap-2 rounded-md bg-zinc-700 py-4 text-base text-gray-200 scrollbar-thumb-neutral-800">
+				<div className="absolute right-0 top-full flex w-60 flex-col gap-2 rounded-md bg-zinc-700 py-4 text-base text-gray-200 scrollbar-thumb-neutral-800">
 					<div className="flex flex-col gap-2 px-3">
 						<div className="sticky top-0">Invite Friends</div>
 						<input
@@ -119,6 +120,7 @@ function InviteFriends() {
 										className="h-4 w-4 bg-zinc-600"
 										type="checkbox"
 										id={friend.userId}
+										data-username={friend.username}
 										checked={selectedOptions.includes(`${friend.username}`)}
 										onChange={handleCheckboxChange}
 									></input>
