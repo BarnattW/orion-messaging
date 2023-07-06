@@ -1,6 +1,9 @@
 import { redis } from "../redis/redis";
 import {Socket} from "socket.io";
 
+import { sendFriendRequestNotification } from "../services/friendrequests";
+import { Notification } from "../models/notifications";
+
 
 export function storeKeySocketPair(userId: string, key: string, socket: string) {
   try{
@@ -38,4 +41,34 @@ export async function removeSocketForUser(userId: string, key: string) {
   } catch (error) {
     console.error(`Error deleting key-socket pair: ${error}`);
   }
+
 };
+
+export async function pullNotificationsForUser(userId: string) {
+  try {
+    const cached = await Notification.find({ receiverId: userId });
+
+    if (!cached) {
+      console.log("no notifications");
+      return;
+    }
+
+    cached.forEach((Element) => {
+      switch(Element.type){
+        case 'friends':
+          sendFriendRequestNotification(Element.receiverId.toString(), Element.message);
+          Notification.findByIdAndDelete(Element._id);
+          break;
+        case 'groups':
+          break;
+        case 'message':
+          break;
+      }
+
+    });
+
+  } catch (error) {
+    console.error(error);
+  }
+}
+
