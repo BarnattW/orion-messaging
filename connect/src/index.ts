@@ -48,32 +48,3 @@ app.listen(3000, () => {
 	console.log(`Server Started on Port 3000`);
 });
 
-const server = http.createServer(app);
-const io = new Server(server, {
-	path: "/socket/notification-socket"
-  });
-
-io.on('connection', async(socket: Socket) => {
-
-	socket.on("userId", async (userId) => {
-		const user = await User.findOne({ userId: userId });
-		if (!user){
-			console.log("user not found");
-			return;
-		}
-		user.onlineStatus = true;
-		user.save();
-		console.log(`${user.username} logged on`);
-	});
-
-	socket.on('disconnect', async(userId) => {
-		const user = await User.findOne({ userId: userId });
-		if (!user){
-			console.log("user not found");
-			return;
-		}
-		user.onlineStatus = false;
-		user.save();
-		console.log(`${user.username} logged off`);
-  });
-});
