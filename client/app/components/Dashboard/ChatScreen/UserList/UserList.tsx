@@ -6,7 +6,7 @@ import { useUserStore } from "@/app/store/userStore";
 import { SelectedFriend } from "@/app/types/FriendList";
 
 import FriendContextMenu from "../../FriendList/FriendListItem/FriendContextMenu";
-import FriendCard from "../../FriendList/FriendListItem/FriendListItem";
+import FriendListItem from "../../FriendList/FriendListItem/FriendListItem";
 import UserListContainer from "./UserListContainer";
 import UserListHeading from "./UserListHeading";
 
@@ -50,7 +50,7 @@ function UserList() {
 			<ul className="overflow-y-scroll scrollbar-thin">
 				{activeConversation?.users.map((user) => {
 					return (
-						<FriendCard
+						<FriendListItem
 							key={user.userId}
 							altText={user.username}
 							userId={user.userId}
