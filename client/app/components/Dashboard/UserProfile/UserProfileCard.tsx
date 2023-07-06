@@ -4,7 +4,6 @@ import { ForwardedRef, forwardRef, useState } from "react";
 import { useUserStore } from "@/app/store/userStore";
 import { UserProfileCardProps } from "@/app/types/UserProfile";
 
-import EditIcon from "../../Icons/EditIcon";
 import ExitIcon from "../../Icons/ExitIcon";
 import GearIcon from "../../Icons/GearIcon";
 import KebabMenuIcon from "../../Icons/KebabMenuIcon";
@@ -42,8 +41,8 @@ const UserProfileCard = forwardRef(function (
 	}
 
 	return (
-		<div className="flex h-96 flex-col items-center justify-center gap-4 text-slate-50">
-			<div className="flex h-48 w-full items-end justify-center bg-[url('/starry.avif')]">
+		<div className="flex h-96 flex-col items-center justify-center gap-4 rounded-md bg-zinc-800 text-slate-50">
+			<div className="flex h-48 w-full items-end justify-center rounded-md bg-[url('/starry.avif')]">
 				<div className="translate-y-1/2 transform select-none">
 					<Avatar
 						imageUrl={imageUrl}
@@ -85,7 +84,7 @@ const UserProfileCard = forwardRef(function (
 					</>
 				)}
 				{userId === currentUserId && (
-					<Link href="/dashboard/settings">
+					<Link href="/dashboard/settings" onClick={closeProfile}>
 						<GearIcon className={iconClassNames} />
 					</Link>
 				)}

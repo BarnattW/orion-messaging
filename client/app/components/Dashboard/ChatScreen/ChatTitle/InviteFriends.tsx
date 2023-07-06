@@ -6,7 +6,7 @@ import useComponentVisible from "@/app/custom-hooks/useComponentVisible";
 import { useUserStore } from "@/app/store/userStore";
 
 import FriendAddIcon from "../../../Icons/FriendAddIcon";
-import InviteFriendCard from "../../ConversationList/CreateGroup/InviteFriendCard";
+import InviteFriendCard from "../../ConversationList/CreateGroup/InviteFriendListItem";
 
 const iconClassNames =
 	"fill-gray-100 h-6 w-6 hover:cursor-pointer flex-shrink-0 hover:fill-gray-400";

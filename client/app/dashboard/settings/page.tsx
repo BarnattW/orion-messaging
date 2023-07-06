@@ -7,7 +7,6 @@ export default async function SettingsPage() {
 		<>
 			<Sidebar />
 			<SettingsTab />
-			<Settings />
 		</>
 	);
 }

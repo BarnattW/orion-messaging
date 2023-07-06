@@ -1,6 +1,6 @@
 import { ReceviedRequestsProps } from "@/app/types/FriendRequests";
 
-import RecievedRequestCard from "../FriendRequests/RequestCards/ReceivedRequestCard";
+import RecievedRequestCard from "../FriendRequests/RequestListItem/ReceivedRequestListItem";
 import ListHeading from "../ListWrappers/ListHeading";
 
 function ReceivedGroupRequests({ receivedRequests }: ReceviedRequestsProps) {

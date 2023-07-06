@@ -9,8 +9,8 @@ import { SelectedConversation } from "@/app/types/Conversations";
 
 import ListContainer from "../ListWrappers/ListContainer";
 import ListHeading from "../ListWrappers/ListHeading";
-import ConversationCard from "./ConversationCard/ConversationCard";
-import ConversationContextMenu from "./ConversationCard/ConversationContextMenu";
+import ConversationContextMenu from "./ConversationListItem/ConversationContextMenu";
+import ConversationListItem from "./ConversationListItem/ConversationListItem";
 import CreateGroupChat from "./CreateGroup/CreateGroupChat";
 import ReceivedGroupRequests from "./ReceivedGroupRequests";
 import SentGroupRequests from "./SentGroupRequest";
@@ -36,7 +36,7 @@ function ConversationList() {
 		useComponentVisible(false);
 
 	const handleContextMenu = (
-		event: React.MouseEvent<HTMLDivElement>,
+		event: React.MouseEvent<HTMLLIElement>,
 		selectedConversation: SelectedConversation
 	) => {
 		event.preventDefault();
@@ -97,11 +97,11 @@ function ConversationList() {
 					<CreateGroupChat />
 				</div>
 			</ListHeading>
-			<div className="overflow-y-scroll scrollbar-thin">
+			<ul className="overflow-y-scroll scrollbar-thin">
 				{conversations.length > 0 &&
 					conversations.map((conversation) => {
 						return (
-							<ConversationCard
+							<ConversationListItem
 								altText={conversation.title}
 								//imageUrl={conversation.conversationImageUrl}
 								key={conversation._id}
@@ -115,7 +115,7 @@ function ConversationList() {
 							/>
 						);
 					})}
-			</div>
+			</ul>
 			{selectedConversation?.conversationId && isComponentVisible && (
 				<ConversationContextMenu
 					contextMenuPosition={contextMenuPosition}

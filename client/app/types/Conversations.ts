@@ -10,7 +10,7 @@ export interface SelectedConversation {
 	groupId?: string;
 }
 
-export interface ConversationCardProps {
+export interface ConversationListItemProps {
 	imageUrl?: string;
 	altText: string;
 	type: string;
@@ -20,7 +20,7 @@ export interface ConversationCardProps {
 	groupId?: string;
 	userData: Friend[];
 	handleContextMenu: (
-		event: MouseEvent<HTMLDivElement>,
+		event: MouseEvent<HTMLLIElement>,
 		selectedConversation: SelectedConversation
 	) => void;
 }

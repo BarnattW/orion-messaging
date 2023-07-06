@@ -9,15 +9,11 @@ import UserList from "./UserList/UserList";
 function ChatScreen() {
 	const showUserList = useUserStore((state) => state.showUserList);
 	return (
-		<div
-			className="flex h-full grow flex-col overflow-auto"
-			style={{ wordBreak: "break-word" }}
-		>
+		<div className="flex grow flex-col" style={{ wordBreak: "break-word" }}>
 			<ChatTitle />
-			<div className="flex h-full flex-row">
-				<div className="flex h-full grow flex-col overflow-auto">
+			<div className="flex h-full max-h-full flex-row overflow-auto">
+				<div className="flex grow flex-col">
 					<ChatMessages />
-					<ChatInput />
 				</div>
 				{showUserList && <UserList />}
 			</div>

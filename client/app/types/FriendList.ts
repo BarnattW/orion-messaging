@@ -25,7 +25,7 @@ export interface FriendListItemProps extends FriendProps {
 	) => void;
 }
 
-export interface InviteFriendCardProps extends FriendProps {}
+export interface InviteFriendListItemProps extends FriendProps {}
 
 export interface OnlineStatusProps {
 	onlineStatus: boolean;

@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { useState } from "react";
 import { shallow } from "zustand/shallow";
 
 import { useUserStore } from "@/app/store/userStore";
@@ -29,6 +30,35 @@ function Sidebar() {
 	);
 	const pathname = usePathname();
 	const router = useRouter();
+	const [showTooltip, setShowTooltip] = useState(false);
+	const [contextMenuPosition, setContextMenuPosition] = useState<{
+		x: number;
+		y: number;
+	}>({ x: 0, y: 0 });
+	const [content, setContent] = useState<string | null>(null);
+
+	const handleTooltip = (
+		event:
+			| React.MouseEvent<HTMLAnchorElement>
+			| React.MouseEvent<HTMLButtonElement>,
+		content: string
+	) => {
+		const iconWidth = 12;
+		const sidebarRect = event.currentTarget.closest(".flex");
+		if (sidebarRect) {
+			const rect = sidebarRect.getBoundingClientRect();
+			const x = rect.width - iconWidth;
+			const y = event.currentTarget.offsetTop;
+			setContextMenuPosition({ x, y });
+			setShowTooltip(true);
+			setContent(content);
+		}
+	};
+
+	const handleTooltipLeave = () => {
+		setShowTooltip(false);
+		setContent(null);
+	};
 
 	async function logout() {
 		try {
@@ -60,63 +90,86 @@ function Sidebar() {
 				className="mb-5"
 			/>
 			<Notifications />
-			<Tooltip content="Friends">
-				<Link href={`/dashboard/friends`}>
-					<FriendIcon
-						className={
-							pathname.includes("/dashboard/friends")
-								? activeIconClassNames
-								: iconClassNames
-						}
-					/>
-				</Link>
-			</Tooltip>
-			<Tooltip content="Messages">
-				<Link href={`/dashboard/conversations`}>
-					<MessageIcon
-						className={
-							pathname.includes("/dashboard/conversations")
-								? activeIconClassNames
-								: iconClassNames
-						}
-					/>
-				</Link>
-			</Tooltip>
-			<Tooltip content="Add Friends">
-				<Link href={`/dashboard/add-friends`}>
-					<FriendAddIcon
-						className={
-							pathname.includes("/dashboard/add-friends")
-								? activeIconClassNames
-								: iconClassNames
-						}
-					/>
-				</Link>
-			</Tooltip>
-			<Tooltip content="Settings">
-				<Link href={`/dashboard/settings`}>
-					<GearIcon
-						className={
-							pathname.includes("/dashboard/settings")
-								? activeIconClassNames
-								: iconClassNames
-						}
-					/>
-				</Link>
-			</Tooltip>
-			<Tooltip content="Logout">
-				<button onClick={logout}>
-					<LogoutIcon
-						className={`${iconClassNames}stroke-neutral-500 hover:stroke-gray-400`}
-					/>
-				</button>
-			</Tooltip>
+			<Link
+				href={`/dashboard/friends`}
+				onMouseEnter={(event) => {
+					handleTooltip(event, "Friends");
+				}}
+				onMouseLeave={handleTooltipLeave}
+			>
+				<FriendIcon
+					className={
+						pathname.includes("/dashboard/friends")
+							? activeIconClassNames
+							: iconClassNames
+					}
+				/>
+			</Link>
+			<Link
+				href={`/dashboard/conversations`}
+				onMouseEnter={(event) => {
+					handleTooltip(event, "Messages");
+				}}
+				onMouseLeave={handleTooltipLeave}
+			>
+				<MessageIcon
+					className={
+						pathname.includes("/dashboard/conversations")
+							? activeIconClassNames
+							: iconClassNames
+					}
+				/>
+			</Link>
+			<Link
+				href={`/dashboard/add-friends`}
+				onMouseEnter={(event) => {
+					handleTooltip(event, "Add Friends");
+				}}
+				onMouseLeave={handleTooltipLeave}
+			>
+				<FriendAddIcon
+					className={
+						pathname.includes("/dashboard/add-friends")
+							? activeIconClassNames
+							: iconClassNames
+					}
+				/>
+			</Link>
+			<Link
+				href={`/dashboard/settings`}
+				onMouseEnter={(event) => {
+					handleTooltip(event, "Settings");
+				}}
+				onMouseLeave={handleTooltipLeave}
+			>
+				<GearIcon
+					className={
+						pathname.includes("/dashboard/settings")
+							? activeIconClassNames
+							: iconClassNames
+					}
+				/>
+			</Link>
+			<button
+				onClick={logout}
+				onMouseEnter={(event) => {
+					handleTooltip(event, "Logout");
+				}}
+				onMouseLeave={handleTooltipLeave}
+			>
+				<LogoutIcon
+					className={`${iconClassNames}stroke-neutral-500 hover:stroke-gray-400`}
+				/>
+			</button>
 			<UserProfile
 				username={username ? username : "null"}
 				type="default"
 				imageUrl=""
 				userId={userId ? userId : "null"}
 			/>
+			{showTooltip && content && (
+				<Tooltip content={content} contextMenuPosition={contextMenuPosition} />
+			)}
 		</div>
 	);
 }

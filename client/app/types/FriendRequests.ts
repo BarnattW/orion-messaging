@@ -23,7 +23,7 @@ export interface SentFriendRequestsProps {
 	sentRequests?: Request[];
 }
 
-export interface RequestCardProps {
+export interface RequestListItemProps {
 	imageUrl?: string;
 	altText?: string;
 	userId: string;

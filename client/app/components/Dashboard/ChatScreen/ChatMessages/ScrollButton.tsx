@@ -11,7 +11,7 @@ function ScrollButton({ scrollToBottom, showScrollButton }: ScrollButtonProps) {
 			onClick={scrollToBottom}
 			className={
 				showScrollButton
-					? "absolute bottom-20 right-6 z-20 rounded-full bg-gray-100 px-2 py-2 text-sm hover:bg-gray-300"
+					? "absolute bottom-16 right-1 z-20 animate-bounce rounded-full bg-gray-100 p-2 text-sm hover:bg-gray-300"
 					: "hidden"
 			}
 		>

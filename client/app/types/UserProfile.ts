@@ -19,6 +19,7 @@ export interface AvatarProps {
 
 export interface UserProfileCardProps extends UserDetails {
 	imageUrl: string;
+	status?: string | null;
 }
 
 export interface OptionsPopoutProps extends UserDetails {
