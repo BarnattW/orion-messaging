@@ -46,7 +46,7 @@ router.post("/api/connect/sendFriendRequest", async(req: Request, res: Response)
 		}
 
 		//check if self
-		if (sender === receiver){
+		if (sender.userId === receiver.userId){
 			return res.status(400).json({message: 'You cannot send a friend request to yourself'});
 		}
 
