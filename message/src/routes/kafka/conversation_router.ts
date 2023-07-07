@@ -43,13 +43,14 @@ export async function createConversation(
     console.log(newChat);
 
     const conv = await Conversation.create(newChat);
+    console.log(conv)
 
     // @ts-ignore
-    const userInfo = await conv.userData;
+    const userData = await conv.userData;
 
     const conversationWithUserInfo = {
       ...conv.toObject(),
-      userInfo,
+      userData,
     };
 
     await User.updateMany(
@@ -69,7 +70,7 @@ export async function createConversation(
       data: conversationWithUserInfo,
     });
 
-    console.log(`Conversation of Type ${conv.conversationType} created`, conv);
+    console.log(`Conversation of Type ${conv.conversationType} created`, conversationWithUserInfo);
   } catch (e) {
     console.log("Unable to create: ", e);
   }
@@ -106,11 +107,11 @@ export const addUser = async (
     user.save();
 
     // @ts-ignore
-    const userInfo = await conv.userData;
+    const userData = await conv.userData;
 
     const conversationWithUserInfo = {
       ...conv.toObject(),
-      userInfo,
+      userData,
     };
 
     const result = await socketsInConversation(conv, connectedClients);
@@ -163,13 +164,14 @@ export const removeUser = async (
     }
 
     // @ts-ignore
-    const userInfo = await conversation.userData
+    const userData = await conversation.userData
 
     const conversationWithUserInfo = { 
       ...conversation.toObject(), 
-      userInfo
+      userData
     }
     
+    console.log(conversationWithUserInfo)
     // Finds users connected and emits an event 
     const result = await socketsInConversation(
       conversation,
@@ -206,11 +208,11 @@ export const renameConversation = async (
     console.log(conversation)
 
     // @ts-ignore
-    const userInfo = await conversation.userData
+    const userData = await conversation.userData
 
     const conversationWithUserInfo = { 
       ...conversation.toObject(), 
-      userInfo
+      userData
     }
     const result = await socketsInConversation(
       conversation,

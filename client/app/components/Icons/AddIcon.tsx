@@ -4,7 +4,6 @@ function AddIcon({ className }: { className?: string }) {
 			<line
 				style={{
 					fill: "none",
-					stroke: "white",
 					strokeLinecap: "square",
 					strokeLinejoin: "round",
 					strokeWidth: "32px",
@@ -17,7 +16,6 @@ function AddIcon({ className }: { className?: string }) {
 			<line
 				style={{
 					fill: "none",
-					stroke: "white",
 					strokeLinecap: "square",
 					strokeLinejoin: "round",
 					strokeWidth: "32px",

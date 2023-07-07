@@ -9,14 +9,21 @@ import useComponentVisible from "@/app/custom-hooks/useComponentVisible";
 import messageSocket from "@/app/sockets/messageSocket";
 import { useUserStore } from "@/app/store/userStore";
 
-import EmojiIcon from "../../Icons/EmojiIcon";
-import FileClipIcon from "../../Icons/FileClipIcon";
-import SendIcon from "../../Icons/SendIcon";
+import EmojiIcon from "../../../Icons/EmojiIcon";
+import FileClipIcon from "../../../Icons/FileClipIcon";
+import SendIcon from "../../../Icons/SendIcon";
+import ScrollButton from "../ChatMessages/ScrollButton";
 
-const iconClassNames: string = "fill-gray-100 h-6 w-6 hover:cursor-pointer";
+interface ChatInputProps {
+	scrollToBottom: () => void;
+	showScrollButton: boolean;
+}
+
+const iconClassNames: string =
+	"fill-gray-100 h-6 w-6 hover:cursor-pointer stroke-gray-100 hover:stroke-gray-400";
 const maxCharacters: number = 2000;
 
-function ChatInput() {
+function ChatInput({ scrollToBottom, showScrollButton }: ChatInputProps) {
 	const { activeConversation, userId } = useUserStore(
 		(state) => ({
 			activeConversation: state.activeConversation,
@@ -88,15 +95,15 @@ function ChatInput() {
 	}
 
 	return (
-		<div className="mx-5 rounded-xl bg-zinc-700 my-3 flex items-end">
-			<div className="flex px-3 gap-3 pb-2">
+		<div className="mx-5 my-3 flex items-end rounded-xl bg-zinc-700">
+			<div className="flex gap-3 px-3 pb-2">
 				<FileClipIcon className={iconClassNames} />
 				<div className="relative" ref={ref}>
-					<div onClick={toggleEmojiPicker}>
+					<span onClick={toggleEmojiPicker}>
 						<EmojiIcon className={iconClassNames} />
-					</div>
+					</span>
 					{isComponentVisible && (
-						<div className="absolute text-sm z-20 bottom-full overflow-auto scrollbar-thin scrollbar-thumb-neutral-800">
+						<div className="absolute bottom-full z-20 overflow-auto text-sm scrollbar-thin scrollbar-thumb-neutral-800">
 							<Picker data={data} onEmojiSelect={handleEmojiInput} />
 						</div>
 					)}
@@ -105,7 +112,7 @@ function ChatInput() {
 			<textarea
 				ref={inputRef}
 				rows={1}
-				className={`grow max-h-[50vh] overflow-y-auto bg-zinc-700 rounded-xl outline-none px-3 py-2 scrollbar-thin resize-none w-full ${
+				className={`max-h-[50vh] w-full grow resize-none overflow-y-auto rounded-xl bg-zinc-700 px-3 py-2 outline-none scrollbar-thin ${
 					isScrollbarVisible ? "scrollbar-thumb-neutral-800" : "scrollbar-none"
 				}`}
 				onInput={handleInput}
@@ -116,6 +123,12 @@ function ChatInput() {
 			<button className="px-3 pb-2" onClick={sendMessage}>
 				<SendIcon className={iconClassNames} />
 			</button>
+			<div className="relative">
+				<ScrollButton
+					showScrollButton={showScrollButton}
+					scrollToBottom={scrollToBottom}
+				/>
+			</div>
 		</div>
 	);
 }

@@ -1,9 +1,12 @@
+import { useUserStore } from "@/app/store/userStore";
 import { SentFriendRequestsProps } from "@/app/types/FriendRequests";
 
+import SentRequestListItem from "../FriendRequests/RequestListItem/SentRequestListItem";
 import ListHeading from "../ListWrappers/ListHeading";
-import SentRequestCard from "./RequestCards/SentRequestCard";
 
 function SentGroupRequests({ sentRequests }: SentFriendRequestsProps) {
+	const { users } = useUserStore((state) => state.users);
+
 	if (!sentRequests) {
 		return (
 			<>
@@ -18,9 +21,9 @@ function SentGroupRequests({ sentRequests }: SentFriendRequestsProps) {
 			<ListHeading>Sent Requests</ListHeading>
 			{sentRequests.map((sentRequest) => {
 				return (
-					<SentRequestCard
+					<SentRequestListItem
 						userId={sentRequest.receiverId}
-						username={sentRequest.receiverUsername}
+						username={users[receivedRequest.receiverId].username}
 						requestId={sentRequest._id}
 						key={sentRequest._id}
 						requestType={sentRequest.requestType}

@@ -1,34 +1,18 @@
-import { useState } from "react";
-
-function Tooltip({
-	content,
-	children,
-}: {
+export interface TooltipProps {
 	content: string;
-	children: React.ReactNode;
-}) {
-	const [showTooltip, setShowTooltip] = useState(false);
+	contextMenuPosition: { x: number; y: number };
+}
 
-	const handleMouseEnter = () => {
-		setShowTooltip(true);
-	};
-
-	const handleMouseLeave = () => {
-		setShowTooltip(false);
-	};
-
+function Tooltip({ content, contextMenuPosition }: TooltipProps) {
 	return (
 		<div
-			className="relative"
-			onMouseEnter={handleMouseEnter}
-			onMouseLeave={handleMouseLeave}
+			style={{
+				top: contextMenuPosition.y,
+				left: contextMenuPosition.x,
+			}}
+			className="fixed z-30 inline-block overflow-auto rounded bg-indigo-700 px-2 py-1 text-sm text-white"
 		>
-			{children}
-			{showTooltip && (
-				<div className="absolute left-full z-20 -my-7 ml-2 rounded bg-gray-800 px-2 py-1 text-sm text-white">
-					{content}
-				</div>
-			)}
+			<span className="">{content}</span>
 		</div>
 	);
 }

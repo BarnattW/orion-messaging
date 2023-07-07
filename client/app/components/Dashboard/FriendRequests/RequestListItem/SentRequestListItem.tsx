@@ -1,13 +1,13 @@
-import { RequestCardProps } from "@/app/types/FriendRequests";
+import { RequestListItemProps } from "@/app/types/FriendRequests";
 
 import Avatar from "../../Avatar/Avatar";
 
-function SentRequestCard(friendRequestCardProps: RequestCardProps) {
+function SentRequestListItem(friendRequestListItemProps: RequestListItemProps) {
 	async function deleteRequest() {
 		try {
-			if (friendRequestCardProps.requestType === "friend") {
+			if (friendRequestListItemProps.requestType === "friend") {
 				const response = await fetch(
-					`/api/connect/rejectFriendRequest/${friendRequestCardProps.requestId}`,
+					`/api/connect/rejectFriendRequest/${friendRequestListItemProps.requestId}`,
 					{
 						method: "PUT",
 						headers: {
@@ -21,9 +21,9 @@ function SentRequestCard(friendRequestCardProps: RequestCardProps) {
 					console.log(response);
 				}
 			}
-			if (friendRequestCardProps.requestType === "group") {
+			if (friendRequestListItemProps.requestType === "group") {
 				const response = await fetch(
-					`/api/connect/rejectGroupRequest/${friendRequestCardProps.requestId}`,
+					`/api/connect/rejectGroupRequest/${friendRequestListItemProps.requestId}`,
 					{
 						method: "PUT",
 						headers: {
@@ -48,14 +48,14 @@ function SentRequestCard(friendRequestCardProps: RequestCardProps) {
 				<div className="relative z-0">
 					<Avatar
 						imageUrl="/friend-icon.svg"
-						altText={friendRequestCardProps.username}
-						username={friendRequestCardProps.username}
+						altText={friendRequestListItemProps.username}
+						username={friendRequestListItemProps.username}
 						type="default"
 					/>
 				</div>
-				<div className="flex-1 overflow-hidden">
-					<div className="truncate">{friendRequestCardProps.username}</div>
-				</div>
+				<span className="flex-1 overflow-hidden">
+					<div className="truncate">{friendRequestListItemProps.username}</div>
+				</span>
 				<div className="flex flex-shrink-0 justify-end gap-2">
 					<button
 						className="bg- text-md rounded-md bg-pink-600 px-2 py-1 hover:bg-pink-500"
@@ -69,4 +69,4 @@ function SentRequestCard(friendRequestCardProps: RequestCardProps) {
 	);
 }
 
-export default SentRequestCard;
+export default SentRequestListItem;

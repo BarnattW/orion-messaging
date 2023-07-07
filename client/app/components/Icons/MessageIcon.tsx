@@ -9,7 +9,6 @@ function MessageIcon({ className }: { className?: string }) {
 			<circle cx="16" cy="13.5" r="1.5" />
 			<circle cx="21.5" cy="13.5" r="1.5" />
 			<circle cx="10.5" cy="13.5" r="1.5" />
-			<path d="M0 0h32v32H0z" style={{ fill: "none" }} />
 		</svg>
 	);
 }
