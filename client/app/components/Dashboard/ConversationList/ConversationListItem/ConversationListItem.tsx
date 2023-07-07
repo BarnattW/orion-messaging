@@ -20,6 +20,7 @@ function ConversationListItem({
 		userId,
 		messages,
 		setMessages,
+		users,
 	} = useUserStore(
 		(state) => ({
 			activeConversation: state.activeConversation,
@@ -27,20 +28,31 @@ function ConversationListItem({
 			userId: state.userId,
 			messages: state.messages,
 			setMessages: state.setMessages,
+			users: state.users,
 		}),
 		shallow
 	);
 
+	const foundUserId =
+		type === "friends"
+			? userData.find((user) => user.userId !== userId)?.userId
+			: "";
 	const conversationTitle =
 		type === "friends"
-			? userData.find((user) => user.userId != userId)?.username
+			? //@ts-ignore
+			  users[foundUserId]?.username
 			: conversationName;
 
 	const onContextMenuHandler = (event: React.MouseEvent<HTMLLIElement>) => {
 		event.preventDefault();
+		const foundUserId =
+			type === "friends"
+				? userData.find((user) => user.userId !== userId)?.userId
+				: "";
 		const conversationTitle =
 			type === "friends"
-				? userData.find((user) => user.userId != userId)?.username
+				? //@ts-ignore
+				  users[foundUserId]?.username
 				: conversationName;
 		if (groupId) {
 			handleContextMenu(event, {

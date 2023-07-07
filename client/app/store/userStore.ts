@@ -8,6 +8,7 @@ import {
 	Friend,
 	MessageFields,
 	Messages,
+	Users,
 } from "../types/UserContextTypes";
 
 type UserState = {
@@ -15,6 +16,8 @@ type UserState = {
 	setUserId: (id: string | null) => void;
 	username: string | null;
 	setUsername: (username: string | null) => void;
+	users: Users;
+	setUsers: (userId: string, username: string) => void;
 	friends: Friend[];
 	setFriends: (friends: Friend[]) => void;
 	friendRequests: FriendRequests;
@@ -35,6 +38,8 @@ type UserState = {
 	setMessages: (conversationId: string, updatedFields: MessageFields) => void;
 	showUserList: boolean;
 	setShowUserList: () => void;
+	isScrolling: boolean;
+	setIsScrolling: (boolean: boolean) => void;
 };
 
 export const useUserStore = create<UserState>((set) => ({
@@ -42,6 +47,11 @@ export const useUserStore = create<UserState>((set) => ({
 	setUserId: (id) => set(() => ({ userId: id })),
 	username: null,
 	setUsername: (username) => set(() => ({ username })),
+	users: {},
+	setUsers: (userId, username) =>
+		set((state) => ({
+			users: { ...state.users, [userId]: { username } },
+		})),
 	friends: [],
 	setFriends: (friends) => set(() => ({ friends })),
 	friendRequests: { receivedRequests: [], sentRequests: [] },
@@ -86,4 +96,6 @@ export const useUserStore = create<UserState>((set) => ({
 	showUserList: true,
 	setShowUserList: () =>
 		set((state) => ({ showUserList: !state.showUserList })),
+	isScrolling: false,
+	setIsScrolling: (boolean: boolean) => set(() => ({ isScrolling: boolean })),
 }));

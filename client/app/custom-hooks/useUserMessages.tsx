@@ -55,6 +55,7 @@ const useUserMessages = () => {
 					const activeConversationId = activeConversation.conversationId;
 
 					if (!socketEvent.data) return;
+					console.log(socketEvent.data);
 					const latestTimestamp = socketEvent.data.timestamp;
 
 					const messagesArray = messages[activeConversationId]?.messages ?? [];

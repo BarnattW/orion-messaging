@@ -12,10 +12,11 @@ const iconClassNames: string =
 const maxCharacters: number = 2000;
 
 const SentMessage = memo(function SentMessage(message: SentMessage) {
-	const { activeConversation, userId } = useUserStore(
+	const { activeConversation, userId, isScrolling } = useUserStore(
 		(state) => ({
 			activeConversation: state.activeConversation,
 			userId: state.userId,
+			isScrolling: state.isScrolling,
 		}),
 		shallow
 	);
@@ -110,7 +111,7 @@ const SentMessage = memo(function SentMessage(message: SentMessage) {
 					<p>{message.message}</p>
 				)}
 
-				{showDetails && message.senderId === userId && (
+				{showDetails && message.senderId === userId && isScrolling && (
 					<div className="absolute -top-5 right-8 rounded border-2 border-zinc-800 bg-zinc-700">
 						<div className="flex">
 							<div onClick={toggleEditingMode} className="hover:cursor-pointer">
