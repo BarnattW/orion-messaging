@@ -20,30 +20,3 @@ app.listen(3000, () => {
 	console.log(`Server Started on Port 3000`);
 });
 
-const server = http.createServer(app);
-const io = new Server(server, {
-	path: "/socket/notification-socket"
-  });
-
-io.on('connection', async(socket: Socket) => {
-	console.log('socket connected');
-	socket.on("connection", () => {
-	socket.emit("connection", {
-		message: "user connected",
-	});
-});
-
-	socket.on("userId", async (userId) => {
-		const socketString = JSON.stringify(socket);
-		storeKeySocketPair(userId, "notification", socketString);
-	});
-
-	socket.on('disconnect', async(userId) => {
-		console.log('socket connection closed');
-		removeSocketForUser(userId, "notification");
-  });
-});
-
-server.listen(8080, () => {
-  console.log('Socket.IO server is running');
-});
