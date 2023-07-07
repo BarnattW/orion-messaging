@@ -8,10 +8,11 @@ const usernameCharacterLimit = 25;
 const userStatusCharacterLimit = 100;
 
 function ProfileForm() {
-	const { username, setUsername, userId } = useUserStore((state) => ({
+	const { username, setUsername, userId, setUsers } = useUserStore((state) => ({
 		username: state.username,
 		setUsername: state.setUsername,
 		userId: state.userId,
+		setUsers: state.setUsers,
 	}));
 	const [usernameValue, setUsernameValue] = useState(username);
 	const [statusValue, setStatusValue] = useState<string | null>(null);
@@ -49,6 +50,8 @@ function ProfileForm() {
 				console.log(response);
 			}
 			setUsername(usernameValue);
+			//@ts-ignore
+			setUsers(userId, usernameValue);
 		} catch (error) {
 			console.log(error);
 		}

@@ -11,10 +11,11 @@ import UserListContainer from "./UserListContainer";
 import UserListHeading from "./UserListHeading";
 
 function UserList() {
-	const { activeConversation, userId } = useUserStore(
+	const { activeConversation, userId, users } = useUserStore(
 		(state) => ({
 			activeConversation: state.activeConversation,
 			userId: state.userId,
+			users: state.users,
 		}),
 		shallow
 	);
@@ -29,7 +30,7 @@ function UserList() {
 		useComponentVisible(false);
 
 	const handleContextMenu = (
-		event: React.MouseEvent<HTMLDivElement>,
+		event: React.MouseEvent<HTMLLIElement>,
 		friendInfo: SelectedFriend
 	) => {
 		event.preventDefault();
@@ -52,9 +53,10 @@ function UserList() {
 					return (
 						<FriendListItem
 							key={user.userId}
-							altText={user.username}
+							altText={users[user.userId].username}
 							userId={user.userId}
-							username={user.username}
+							//@ts-ignore
+							username={users[user.userId].username}
 							onlineStatus={true}
 							handleContextMenu={handleContextMenu}
 						/>

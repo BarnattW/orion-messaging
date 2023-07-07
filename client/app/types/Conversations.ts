@@ -1,10 +1,10 @@
 import { MouseEvent } from "react";
 
-import { Friend } from "./UserContextTypes";
+
 
 export interface SelectedConversation {
 	type: string;
-	userData: Friend[];
+	userData: { userId: string }[];
 	conversationName: string | undefined;
 	conversationId: string;
 	groupId?: string;
@@ -18,7 +18,7 @@ export interface ConversationListItemProps {
 	conversationId: string;
 	latestMessageTimestamp: Date;
 	groupId?: string;
-	userData: Friend[];
+	userData: { userId: string }[];
 	handleContextMenu: (
 		event: MouseEvent<HTMLLIElement>,
 		selectedConversation: SelectedConversation

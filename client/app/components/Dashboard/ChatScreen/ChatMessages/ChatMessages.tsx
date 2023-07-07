@@ -23,16 +23,25 @@ function ChatMessages() {
 	const scrollRef = useRef<HTMLDivElement>(null);
 	const [showScrollButton, setShowScrollButton] = useState(false);
 	const { loading, latestTimestampRef } = useUserMessages();
-	const { activeConversation, setActiveConversation, setMessages, messages } =
-		useUserStore(
-			(state) => ({
-				activeConversation: state.activeConversation,
-				setActiveConversation: state.setActiveConversation,
-				setMessages: state.setMessages,
-				messages: state.messages,
-			}),
-			shallow
-		);
+	const {
+		activeConversation,
+		setActiveConversation,
+		setMessages,
+		messages,
+		users,
+		setIsScrolling,
+	} = useUserStore(
+		(state) => ({
+			activeConversation: state.activeConversation,
+			setActiveConversation: state.setActiveConversation,
+			setMessages: state.setMessages,
+			messages: state.messages,
+			users: state.users,
+			setIsScrolling: state.setIsScrolling,
+		}),
+		shallow
+	);
+	let scrollStopTimer: NodeJS.Timeout;
 
 	console.log("messages: ", messages, activeConversation);
 
@@ -242,6 +251,7 @@ function ChatMessages() {
 			return;
 		}
 
+		setIsScrolling(true);
 		// show scroll button
 		if (scrollRef.current && scrollRef.current.scrollTop < -100) {
 			setShowScrollButton(true);
@@ -256,6 +266,11 @@ function ChatMessages() {
 			};
 			setMessages(activeConversation.conversationId, updatedFields);
 		}
+
+		clearTimeout(scrollStopTimer);
+		scrollStopTimer = setTimeout(() => {
+			setIsScrolling(false);
+		}, 50); // Adjust the duration to your preference
 	}, 10);
 
 	// render states
@@ -314,7 +329,7 @@ function ChatMessages() {
 									<>
 										<div className="pt-3"></div>
 										<UserMessages
-											senderUsername={message.senderUsername}
+											senderUsername={users[message.senderId].username}
 											senderId={message.senderId}
 											message={message.message}
 											_id={message._id}
@@ -324,7 +339,7 @@ function ChatMessages() {
 									</>
 								) : (
 									<SentMessage
-										senderUsername={message.senderUsername}
+										senderUsername={users[message.senderId].username}
 										senderId={message.senderId}
 										message={message.message}
 										_id={message._id}
