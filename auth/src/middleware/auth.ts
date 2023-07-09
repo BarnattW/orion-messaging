@@ -15,7 +15,10 @@ export async function isAuthorized(
 ) {
   let token: string | null = null;
 
-  if (!req || !req.cookies["cookie"]) {
+  console.log("Req:", req)
+  //@ts-ignore
+  console.log("Cookie: ", req.headers.cookie)
+  if (!req || !req.headers.cookie) {
     return res.status(401).json({ message: "Unauthorized" });
   }
 
@@ -42,6 +45,8 @@ export async function isAuthorized(
     if (!(await User.findOne({ userId: userId }))) {
       return res.status(404).json({ message: "User doesn't exist" });
     }
+
+    res.locals.userId = userId;
   } catch (e) {
     return res.status(401).json({ message: "Invalid token" });
   }
