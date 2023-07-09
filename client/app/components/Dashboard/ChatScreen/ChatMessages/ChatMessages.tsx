@@ -29,7 +29,6 @@ function ChatMessages() {
 		setMessages,
 		messages,
 		users,
-		setIsScrolling,
 	} = useUserStore(
 		(state) => ({
 			activeConversation: state.activeConversation,
@@ -37,11 +36,9 @@ function ChatMessages() {
 			setMessages: state.setMessages,
 			messages: state.messages,
 			users: state.users,
-			setIsScrolling: state.setIsScrolling,
 		}),
 		shallow
 	);
-	let scrollStopTimer: NodeJS.Timeout;
 
 	console.log("messages: ", messages, activeConversation);
 
@@ -251,7 +248,6 @@ function ChatMessages() {
 			return;
 		}
 
-		setIsScrolling(true);
 		// show scroll button
 		if (scrollRef.current && scrollRef.current.scrollTop < -100) {
 			setShowScrollButton(true);
@@ -266,11 +262,6 @@ function ChatMessages() {
 			};
 			setMessages(activeConversation.conversationId, updatedFields);
 		}
-
-		clearTimeout(scrollStopTimer);
-		scrollStopTimer = setTimeout(() => {
-			setIsScrolling(false);
-		}, 50); // Adjust the duration to your preference
 	}, 10);
 
 	// render states

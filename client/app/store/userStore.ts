@@ -38,8 +38,6 @@ type UserState = {
 	setMessages: (conversationId: string, updatedFields: MessageFields) => void;
 	showUserList: boolean;
 	setShowUserList: () => void;
-	isScrolling: boolean;
-	setIsScrolling: (boolean: boolean) => void;
 };
 
 export const useUserStore = create<UserState>((set) => ({
@@ -96,6 +94,4 @@ export const useUserStore = create<UserState>((set) => ({
 	showUserList: true,
 	setShowUserList: () =>
 		set((state) => ({ showUserList: !state.showUserList })),
-	isScrolling: false,
-	setIsScrolling: (boolean: boolean) => set(() => ({ isScrolling: boolean })),
 }));
