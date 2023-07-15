@@ -20,7 +20,7 @@ app.use(express.json());
 
 const server = http.createServer(app);
 const io = new Server(server, {
-	path: "/socket/notification-socket"
+	path: "/socket/notifications-socket"
   });
 
 io.on('connection', async(socket: Socket) => {
