@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
+import Snackbar from "../components/Snackbar/Snackbar";
 import { UserData } from "../Context/UserData";
 
 async function fetchUserId() {
@@ -14,6 +15,7 @@ async function fetchUserId() {
 				method: "GET",
 				credentials: "include",
 				headers: {
+					"Content-Type": "application/json",
 					cookie: userJWT?.value,
 				},
 			}
@@ -41,9 +43,12 @@ export default async function DashboardLayout({
 	// }
 
 	return (
-		<UserData>
+		<UserData userId={"a"}>
 			<div className="h-full min-h-full bg-zinc-800">
-				<div className="flex h-full">{children}</div>
+				<div className="flex h-full">
+					{children}
+					<Snackbar />
+				</div>
 			</div>
 		</UserData>
 	);

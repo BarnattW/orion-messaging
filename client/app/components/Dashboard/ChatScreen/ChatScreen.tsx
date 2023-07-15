@@ -1,13 +1,10 @@
 "use client";
-import { useUserStore } from "@/app/store/userStore";
 
-import ChatInput from "./ChatInput/ChatInput";
 import ChatMessages from "./ChatMessages/ChatMessages";
 import ChatTitle from "./ChatTitle/ChatTitle";
 import UserList from "./UserList/UserList";
 
 function ChatScreen() {
-	const showUserList = useUserStore((state) => state.showUserList);
 	return (
 		<div className="flex grow flex-col" style={{ wordBreak: "break-word" }}>
 			<ChatTitle />
@@ -15,7 +12,7 @@ function ChatScreen() {
 				<div className="flex grow flex-col">
 					<ChatMessages />
 				</div>
-				{showUserList && <UserList />}
+				<UserList />
 			</div>
 		</div>
 	);

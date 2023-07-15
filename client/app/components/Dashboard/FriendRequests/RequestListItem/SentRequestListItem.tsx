@@ -1,8 +1,13 @@
+import { useUserStore } from "@/app/store/userStore";
 import { RequestListItemProps } from "@/app/types/FriendRequests";
 
 import Avatar from "../../Avatar/Avatar";
 
 function SentRequestListItem(friendRequestListItemProps: RequestListItemProps) {
+	const { snackbar, setSnackbar } = useUserStore((state) => ({
+		snackbar: state.snackbar,
+		setSnackbar: state.setSnackbar,
+	}));
 	async function deleteRequest() {
 		try {
 			if (friendRequestListItemProps.requestType === "friend") {
@@ -17,8 +22,17 @@ function SentRequestListItem(friendRequestListItemProps: RequestListItemProps) {
 				);
 
 				if (!response.ok) {
-					// update with common error handling
-					console.log(response);
+					snackbar.offer({
+						type: "error",
+						message: "Failed to Send Friend Request",
+						showSnackbar: false,
+					});
+				} else {
+					snackbar.offer({
+						type: "success",
+						message: "Sent Friend Request",
+						showSnackbar: false,
+					});
 				}
 			}
 			if (friendRequestListItemProps.requestType === "group") {
@@ -33,8 +47,17 @@ function SentRequestListItem(friendRequestListItemProps: RequestListItemProps) {
 				);
 
 				if (!response.ok) {
-					// update with common error handling
-					console.log(response);
+					snackbar.offer({
+						type: "error",
+						message: "Failed to Send Friend Request",
+						showSnackbar: false,
+					});
+				} else {
+					snackbar.offer({
+						type: "success",
+						message: "Sent Friend Request",
+						showSnackbar: false,
+					});
 				}
 			}
 		} catch (error) {
