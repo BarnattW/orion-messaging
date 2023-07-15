@@ -6,6 +6,8 @@ import { shallow } from "zustand/shallow";
 import useComponentVisible from "@/app/custom-hooks/useComponentVisible";
 import { useUserStore } from "@/app/store/userStore";
 import { SelectedConversation } from "@/app/types/Conversations";
+import { Request } from "@/app/types/FriendRequests";
+import getUsername from "@/app/utils/getUsername";
 
 import ListContainer from "../ListWrappers/ListContainer";
 import ListHeading from "../ListWrappers/ListHeading";
@@ -16,16 +18,25 @@ import ReceivedGroupRequests from "./ReceivedGroupRequests";
 import SentGroupRequests from "./SentGroupRequest";
 
 function ConversationList() {
-	const { conversations, groupRequests, setGroupRequests, userId } =
-		useUserStore(
-			(state) => ({
-				conversations: state.conversations,
-				groupRequests: state.groupRequests,
-				setGroupRequests: state.setGroupRequests,
-				userId: state.userId,
-			}),
-			shallow
-		);
+	const {
+		conversations,
+		groupRequests,
+		setGroupRequests,
+		userId,
+		users,
+		setUsers,
+	} = useUserStore(
+		(state) => ({
+			conversations: state.conversations,
+			groupRequests: state.groupRequests,
+			setGroupRequests: state.setGroupRequests,
+			userId: state.userId,
+			users: state.users,
+			setUsers: state.setUsers,
+		}),
+		shallow
+	);
+	console.log("users", users);
 	const [selectedConversation, setSelectedConversation] =
 		useState<SelectedConversation | null>(null);
 	const [contextMenuPosition, setContextMenuPosition] = useState<{
@@ -72,13 +83,27 @@ function ConversationList() {
 					receivedRequests: groupRequests.incoming,
 					sentRequests: groupRequests.outgoing,
 				});
+
+				// update users
+				groupRequests.incoming.forEach(async (receivedRequest: Request) => {
+					const { senderId } = receivedRequest;
+					if (senderId in users) return;
+					const username = await getUsername(senderId);
+					setUsers(senderId, username);
+				});
+				groupRequests.outgoing.forEach(async (sentRequest: Request) => {
+					const { receiverId } = sentRequest;
+					if (receiverId in users) return;
+					const username = await getUsername(receiverId);
+					setUsers(receiverId, username);
+				});
 			} catch (error) {
 				console.log(error);
 			}
 		}
 
 		getRequests();
-	}, [userId, setGroupRequests]);
+	}, [userId, setGroupRequests, setUsers]);
 
 	return (
 		<ListContainer>

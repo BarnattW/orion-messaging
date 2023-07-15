@@ -1,9 +1,18 @@
+import { shallow } from "zustand/shallow";
+
+import { useUserStore } from "@/app/store/userStore";
 import { ReceviedRequestsProps } from "@/app/types/FriendRequests";
 
 import ListHeading from "../../ListWrappers/ListHeading";
 import RecievedRequestListItem from "../RequestListItem/ReceivedRequestListItem";
 
 function ReceivedFriendRequests({ receivedRequests }: ReceviedRequestsProps) {
+	const { users } = useUserStore(
+		(state) => ({
+			users: state.users,
+		}),
+		shallow
+	);
 	if (!receivedRequests) {
 		return (
 			<>
@@ -17,14 +26,14 @@ function ReceivedFriendRequests({ receivedRequests }: ReceviedRequestsProps) {
 		<>
 			<ListHeading>Friend Requests</ListHeading>
 			<ul>
-				{receivedRequests?.map((ReceivedRequest) => {
+				{receivedRequests?.map((receivedRequest) => {
 					return (
 						<RecievedRequestListItem
-							userId={ReceivedRequest.senderId}
-							username={ReceivedRequest.senderUsername}
-							requestId={ReceivedRequest._id}
-							key={ReceivedRequest._id}
-							requestType={ReceivedRequest.requestType}
+							userId={receivedRequest.senderId}
+							username={users[receivedRequest.senderId].username}
+							requestId={receivedRequest._id}
+							key={receivedRequest._id}
+							requestType={receivedRequest.requestType}
 						/>
 					);
 				})}

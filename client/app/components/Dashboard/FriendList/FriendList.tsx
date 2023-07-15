@@ -12,8 +12,8 @@ import FriendContextMenu from "./FriendListItem/FriendContextMenu";
 import FriendListItem from "./FriendListItem/FriendListItem";
 
 function FriendList() {
-	const { friends } = useUserStore(
-		(state) => ({ friends: state.friends }),
+	const { friends, users } = useUserStore(
+		(state) => ({ friends: state.friends, users: state.users }),
 		shallow
 	);
 	const [friendsQuery, setFriendsQuery] = useState<string>("");
@@ -60,13 +60,15 @@ function FriendList() {
 				{friends.length > 0 &&
 					friends
 						.filter((friend) =>
-							friend.username.toLowerCase().includes(friendsQuery.toLowerCase())
+							users[friend.userId].username
+								.toLowerCase()
+								.includes(friendsQuery.toLowerCase())
 						)
 						.map((friend) => {
 							return (
 								<FriendListItem
-									altText={friend.username}
-									username={friend.username}
+									altText={users[friend.userId].username}
+									username={users[friend.userId].username}
 									userId={friend.userId}
 									key={friend.userId}
 									onlineStatus={true}

@@ -12,10 +12,11 @@ const iconClassNames: string =
 const maxCharacters: number = 2000;
 
 const SentMessage = memo(function SentMessage(message: SentMessage) {
-	const { activeConversation, userId } = useUserStore(
+	const { activeConversation, userId, users } = useUserStore(
 		(state) => ({
 			activeConversation: state.activeConversation,
 			userId: state.userId,
+			users: state.users,
 		}),
 		shallow
 	);
@@ -23,11 +24,11 @@ const SentMessage = memo(function SentMessage(message: SentMessage) {
 	const [isEditing, setIsEditing] = useState(false);
 	const [messageValue, setMessageValue] = useState(message.message);
 
-	const handleMouseEnter = () => {
+	const handleMouseMove = () => {
 		setDetails(true);
 	};
 
-	const handleMouseLeave = () => {
+	const handleMouseOut = () => {
 		setDetails(false);
 	};
 
@@ -84,8 +85,8 @@ const SentMessage = memo(function SentMessage(message: SentMessage) {
 		return (
 			<div
 				className="relative px-20 py-1 text-sm hover:bg-zinc-700"
-				onMouseEnter={handleMouseEnter}
-				onMouseLeave={handleMouseLeave}
+				onMouseMove={handleMouseMove}
+				onMouseOut={handleMouseOut}
 			>
 				<p
 					className="absolute z-20 -ml-16 text-xs text-neutral-400"
@@ -130,11 +131,11 @@ const SentMessage = memo(function SentMessage(message: SentMessage) {
 		<div className="flex grow flex-col text-sm ">
 			<div
 				className="relative"
-				onMouseEnter={handleMouseEnter}
-				onMouseLeave={handleMouseLeave}
+				onMouseMove={handleMouseMove}
+				onMouseOut={handleMouseOut}
 			>
 				<div className="flex gap-5">
-					<p className="font-semibold">{message.senderUsername}</p>
+					<p className="font-semibold">{users[message.senderId].username}</p>
 					<p className="mt-1 shrink-0 text-xs text-neutral-400">
 						{message.timestamp.toLocaleString(undefined, {
 							year: "numeric",

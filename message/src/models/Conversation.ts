@@ -58,6 +58,7 @@ ConversationSchema.method("addMessage", async function (message: IMessage) {
   if (latestContainer && latestContainer.messages.length < 50) {
     latestContainer.messages.push(message._id);
     await latestContainer.save();
+    this.latestMessageTimestamp = message.timestamp;
   } else {
     const container = new MessageContainer({
       messages: [message._id],
@@ -65,8 +66,8 @@ ConversationSchema.method("addMessage", async function (message: IMessage) {
     });
     await container.save();
     this.messages.push(container);
+    this.latestMessageTimestamp = Date.now()
   }
-  this.latestMessageTimestamp = message.timestamp;
   await this.save()
 });
 

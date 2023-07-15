@@ -23,16 +23,22 @@ function ChatMessages() {
 	const scrollRef = useRef<HTMLDivElement>(null);
 	const [showScrollButton, setShowScrollButton] = useState(false);
 	const { loading, latestTimestampRef } = useUserMessages();
-	const { activeConversation, setActiveConversation, setMessages, messages } =
-		useUserStore(
-			(state) => ({
-				activeConversation: state.activeConversation,
-				setActiveConversation: state.setActiveConversation,
-				setMessages: state.setMessages,
-				messages: state.messages,
-			}),
-			shallow
-		);
+	const {
+		activeConversation,
+		setActiveConversation,
+		setMessages,
+		messages,
+		users,
+	} = useUserStore(
+		(state) => ({
+			activeConversation: state.activeConversation,
+			setActiveConversation: state.setActiveConversation,
+			setMessages: state.setMessages,
+			messages: state.messages,
+			users: state.users,
+		}),
+		shallow
+	);
 
 	console.log("messages: ", messages, activeConversation);
 
@@ -272,16 +278,22 @@ function ChatMessages() {
 
 	if (conversationMessages?.length === 0) {
 		return (
-			<div className={renderStateClassName}>
-				<p>No messages found. Try sending some!</p>
-			</div>
+			<>
+				<div className={renderStateClassName}>
+					<p>No messages found. Try sending some!</p>
+				</div>
+				<ChatInput
+					scrollToBottom={scrollToBottom}
+					showScrollButton={showScrollButton}
+				/>
+			</>
 		);
 	}
 
 	return (
 		<>
 			<div
-				className="flex flex-col-reverse overflow-auto scrollbar-thin scrollbar-thumb-neutral-700"
+				className="flex grow flex-col-reverse overflow-auto scrollbar-thin scrollbar-thumb-neutral-700"
 				ref={scrollRef}
 				onScroll={handleScroll}
 			>
@@ -308,7 +320,7 @@ function ChatMessages() {
 									<>
 										<div className="pt-3"></div>
 										<UserMessages
-											senderUsername={message.senderUsername}
+											senderUsername={users[message.senderId].username}
 											senderId={message.senderId}
 											message={message.message}
 											_id={message._id}
@@ -318,7 +330,7 @@ function ChatMessages() {
 									</>
 								) : (
 									<SentMessage
-										senderUsername={message.senderUsername}
+										senderUsername={users[message.senderId].username}
 										senderId={message.senderId}
 										message={message.message}
 										_id={message._id}
