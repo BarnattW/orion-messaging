@@ -1,3 +1,4 @@
+import { useUserStore } from "@/app/store/userStore";
 import { RequestListItemProps } from "@/app/types/FriendRequests";
 
 import Avatar from "../../Avatar/Avatar";
@@ -5,6 +6,10 @@ import Avatar from "../../Avatar/Avatar";
 function ReceivedRequestListItem(
 	friendRequestListItemProps: RequestListItemProps
 ) {
+	const { snackbar, setSnackbar } = useUserStore((state) => ({
+		snackbar: state.snackbar,
+		setSnackbar: state.setSnackbar,
+	}));
 	async function acceptRequest() {
 		try {
 			if (friendRequestListItemProps.requestType === "friend") {
@@ -18,8 +23,17 @@ function ReceivedRequestListItem(
 					}
 				);
 				if (!response.ok) {
-					// update with common error handling
-					console.log(response);
+					snackbar.offer({
+						type: "error",
+						message: "Failed to Accept Friend Request",
+						showSnackbar: false,
+					});
+				} else {
+					snackbar.offer({
+						type: "success",
+						message: "Accepted Friend Request",
+						showSnackbar: false,
+					});
 				}
 			}
 
@@ -34,9 +48,19 @@ function ReceivedRequestListItem(
 					}
 				);
 				if (!response.ok) {
-					// update with common error handling
-					console.log(response);
+					snackbar.offer({
+						type: "error",
+						message: "Failed to Accept Group Request",
+						showSnackbar: false,
+					});
+				} else {
+					snackbar.offer({
+						type: "success",
+						message: "Accepted Group Request",
+						showSnackbar: false,
+					});
 				}
+				setSnackbar(snackbar);
 			}
 		} catch (error) {
 			console.log(error);

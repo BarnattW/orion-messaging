@@ -12,25 +12,33 @@ import getUsername from "../utils/getUsername";
 
 const fetcher = (url: string) => fetch(url).then((response) => response.json());
 
-export function UserData({ children }: { children: React.ReactNode }) {
+export function UserData({
+	children,
+	userId,
+}: {
+	children: React.ReactNode;
+	userId: string;
+}) {
 	const router = useRouter();
 	const {
-		userId,
 		setUserId,
 		setUsername,
 		setFriends,
 		setConversations,
 		users,
 		setUsers,
+		setSnackbar,
+		snackbar
 	} = useUserStore(
 		(state) => ({
-			userId: state.userId,
 			setUserId: state.setUserId,
 			setUsername: state.setUsername,
 			setFriends: state.setFriends,
 			setConversations: state.setConversations,
 			users: state.users,
 			setUsers: state.setUsers,
+			setSnackbar: state.setSnackbar,
+			snackbar: state.snackbar
 		}),
 		shallow
 	);
@@ -45,26 +53,15 @@ export function UserData({ children }: { children: React.ReactNode }) {
 		console.log(error);
 	}
 
-	useEffect(() => {
-		async function getUserId() {
-			const response = await fetch("/api/auth/getUserId", {
-				method: "GET",
-				headers: {
-					"Content-Type": "application/json",
-				},
-			});
-
-			if (response.status === 401) {
-				router.push("/auth/login");
-			}
-			const userId = await response.json();
-			setUserId(userId);
-			messageSocket.emit("userId", userId);
-		}
-		getUserId();
-	}, [setUserId, router]);
-
 	console.log(userId);
+	useEffect(() => {
+		function settingUserId() {
+			if (userId) {
+				setUserId(userId);
+			}
+		}
+		settingUserId();
+	}, [setUserId, userId]);
 
 	useEffect(() => {
 		async function getUserData() {
@@ -79,11 +76,19 @@ export function UserData({ children }: { children: React.ReactNode }) {
 					},
 				});
 
+				if (!response.ok) {
+					snackbar.offer({type: "error", message:response.json().message, showSnackbar: false})
+					setSnackbar(snackbar)
+				}
+
 				const friends = await response.json();
-				setFriends(friends.friends);
-				friends.friends.forEach((friend: Friend) => {
-					setUsers(friend.userId, friend.username);
-				});
+				if (friends.friends) {
+					setFriends(friends.friends);
+					friends.friends.forEach((friend: Friend) => {
+						setUsers(friend.userId, friend.username);
+					});
+				}
+
 			}
 		}
 		getUserData();

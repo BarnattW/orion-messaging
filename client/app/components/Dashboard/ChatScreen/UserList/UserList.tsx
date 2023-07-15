@@ -11,11 +11,12 @@ import UserListContainer from "./UserListContainer";
 import UserListHeading from "./UserListHeading";
 
 function UserList() {
-	const { activeConversation, userId, users } = useUserStore(
+	const { activeConversation, userId, users, showUserList } = useUserStore(
 		(state) => ({
 			activeConversation: state.activeConversation,
 			userId: state.userId,
 			users: state.users,
+			showUserList: state.showUserList,
 		}),
 		shallow
 	);
@@ -42,6 +43,10 @@ function UserList() {
 	const closeContextMenu = () => {
 		setSelectedFriend(null);
 	};
+
+	if (!showUserList) {
+		return null;
+	}
 
 	return (
 		<UserListContainer>
@@ -76,6 +81,7 @@ function UserList() {
 				)}
 		</UserListContainer>
 	);
+
 }
 
 export default UserList;
