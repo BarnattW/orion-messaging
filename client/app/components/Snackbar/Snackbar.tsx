@@ -24,9 +24,13 @@ function Snackbar() {
 	const [visible, setVisible] = useState(false);
 	const [progress, setProgress] = useState(100);
 	const errorClassName =
-		"fixed bottom-4 left-1/2 z-50 w-11/12 -translate-x-1/2 transform rounded bg-red-700 text-white py-4 shadow md:w-1/2";
+		"fixed bottom-4 left-1/2 z-50 w-11/12 -translate-x-1/2 transform rounded bg-red-600 text-white py-4 shadow md:w-1/2";
 	const successClassName =
 		"fixed bottom-4 left-1/2 z-50 w-11/12 -translate-x-1/2 transform rounded bg-green-600 text-white py-4 shadow md:w-1/2";
+	const errorTimeBarClassName =
+		"absolute bottom-0 h-1 rounded bg-rose-900 transition-all";
+	const successTimeBarClassName =
+		"absolute bottom-0 h-1 rounded bg-green-300 transition-all";
 	console.log(snackbar, snackbar.isEmpty());
 	console.log(currentSnackbar);
 
@@ -96,7 +100,11 @@ function Snackbar() {
 				</span>
 			</div>
 			<div
-				className="absolute bottom-0 h-1 rounded bg-green-300 transition-all"
+				className={
+					currentSnackbar.type === "success"
+						? successTimeBarClassName
+						: errorTimeBarClassName
+				}
 				style={{ width: `${progress}%` }}
 			/>
 		</div>

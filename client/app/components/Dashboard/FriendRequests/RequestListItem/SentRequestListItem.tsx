@@ -60,6 +60,7 @@ function SentRequestListItem(friendRequestListItemProps: RequestListItemProps) {
 					});
 				}
 			}
+			setSnackbar(snackbar);
 		} catch (error) {
 			console.log(error);
 		}

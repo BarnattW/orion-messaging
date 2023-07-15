@@ -21,8 +21,8 @@ async function fetchUserId() {
 			}
 		);
 		console.log(response);
-		if (response.status === 401) {
-			return;
+		if (!response.ok) {
+			throw new Error();
 		}
 		const userId = await response.json();
 		return userId;
@@ -36,14 +36,14 @@ export default async function DashboardLayout({
 }: {
 	children: React.ReactNode;
 }) {
-	// const userId = await fetchUserId();
-	// console.log(userId);
-	// if (!userId) {
-	// 	redirect("/auth/login");
-	// }
+	const userId = await fetchUserId();
+	console.log(userId);
+	if (!userId) {
+		redirect("/auth/login");
+	}
 
 	return (
-		<UserData userId={"a"}>
+		<UserData userId={userId}>
 			<div className="h-full min-h-full bg-zinc-800">
 				<div className="flex h-full">
 					{children}

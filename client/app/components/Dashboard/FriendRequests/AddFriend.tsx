@@ -43,16 +43,17 @@ function AddFriend() {
 			snackbar.offer({
 				type: "success",
 				message: "Friend Request Successfully Sent",
-				showSnackbar: false,
+				showSnackbar: true,
 			});
+			setSnackbar(snackbar);
 		} else {
 			snackbar.offer({
 				type: "error",
 				message: "Failed to Send Friend Request",
-				showSnackbar: false,
+				showSnackbar: true,
 			});
+			setSnackbar(snackbar);
 		}
-		setSnackbar(snackbar);
 		addUsername.current!.value = "";
 	}
 
