@@ -39,7 +39,7 @@ function OptionsPopout({
 				};
 			} else {
 				newSnackbar = {
-					type: "error",
+					type: "success",
 					message: "Successfully Deleted Friend",
 					showSnackbar: true,
 				};
@@ -72,7 +72,7 @@ function OptionsPopout({
 				};
 			} else {
 				newSnackbar = {
-					type: "error",
+					type: "success",
 					message: "Friend Request Successfully Sent",
 					showSnackbar: true,
 				};
