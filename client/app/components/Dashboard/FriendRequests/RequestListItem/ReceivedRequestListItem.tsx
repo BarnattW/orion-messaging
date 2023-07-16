@@ -6,12 +6,12 @@ import Avatar from "../../Avatar/Avatar";
 function ReceivedRequestListItem(
 	friendRequestListItemProps: RequestListItemProps
 ) {
-	const { snackbar, setSnackbar } = useUserStore((state) => ({
-		snackbar: state.snackbar,
-		setSnackbar: state.setSnackbar,
+	const { enqueueSnackbar } = useUserStore((state) => ({
+		enqueueSnackbar: state.enqueueSnackbar,
 	}));
 	async function acceptRequest() {
 		try {
+			let newSnackbar;
 			if (friendRequestListItemProps.requestType === "friend") {
 				const response = await fetch(
 					`/api/connect/acceptFriendRequest/${friendRequestListItemProps.requestId}`,
@@ -23,17 +23,17 @@ function ReceivedRequestListItem(
 					}
 				);
 				if (!response.ok) {
-					snackbar.offer({
+					newSnackbar = {
 						type: "error",
 						message: "Failed to Accept Friend Request",
-						showSnackbar: false,
-					});
+						showSnackbar: true,
+					};
 				} else {
-					snackbar.offer({
+					newSnackbar = {
 						type: "success",
 						message: "Accepted Friend Request",
-						showSnackbar: false,
-					});
+						showSnackbar: true,
+					};
 				}
 			}
 
@@ -48,19 +48,19 @@ function ReceivedRequestListItem(
 					}
 				);
 				if (!response.ok) {
-					snackbar.offer({
+					newSnackbar = {
 						type: "error",
 						message: "Failed to Accept Group Request",
-						showSnackbar: false,
-					});
+						showSnackbar: true,
+					};
 				} else {
-					snackbar.offer({
+					newSnackbar = {
 						type: "success",
 						message: "Accepted Group Request",
-						showSnackbar: false,
-					});
+						showSnackbar: true,
+					};
 				}
-				setSnackbar(snackbar);
+				enqueueSnackbar(newSnackbar);
 			}
 		} catch (error) {
 			console.log(error);

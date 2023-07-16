@@ -10,8 +10,6 @@ import { useUserStore } from "../store/userStore";
 import { Conversation, Friend } from "../types/UserContextTypes";
 import getUsername from "../utils/getUsername";
 
-const fetcher = (url: string) => fetch(url).then((response) => response.json());
-
 export function UserData({
 	children,
 	userId,
@@ -27,8 +25,6 @@ export function UserData({
 		setConversations,
 		users,
 		setUsers,
-		setSnackbar,
-		snackbar
 	} = useUserStore(
 		(state) => ({
 			setUserId: state.setUserId,
@@ -37,21 +33,10 @@ export function UserData({
 			setConversations: state.setConversations,
 			users: state.users,
 			setUsers: state.setUsers,
-			setSnackbar: state.setSnackbar,
-			snackbar: state.snackbar
 		}),
 		shallow
 	);
 	console.log(users);
-
-	const { data: usernameSWR, error } = useSWR(
-		userId ? `/api/connect/${userId}/getUsername` : null,
-		fetcher
-	);
-
-	if (error) {
-		console.log(error);
-	}
 
 	console.log(userId);
 	useEffect(() => {
@@ -65,9 +50,9 @@ export function UserData({
 
 	useEffect(() => {
 		async function getUserData() {
-			if (usernameSWR && userId) {
-				setUsername(usernameSWR);
-				setUsers(userId, usernameSWR);
+			if (userId) {
+				setUsername(userId);
+				setUsers(userId, userId);
 
 				const response = await fetch(`/api/connect/getFriends/${userId}`, {
 					headers: {
@@ -75,24 +60,19 @@ export function UserData({
 						"Content-Type": "application/json",
 					},
 				});
-
-				if (!response.ok) {
-					snackbar.offer({type: "error", message:response.json().message, showSnackbar: false})
-					setSnackbar(snackbar)
-				}
-
+				console.log(response);
 				const friends = await response.json();
+				console.log(friends);
 				if (friends.friends) {
 					setFriends(friends.friends);
 					friends.friends.forEach((friend: Friend) => {
 						setUsers(friend.userId, friend.username);
 					});
 				}
-
 			}
 		}
 		getUserData();
-	}, [usernameSWR, setUsername, setFriends, userId, router, setUsers]);
+	}, [setUsername, setFriends, userId, router, setUsers]);
 
 	useEffect(() => {
 		async function getUserConversations() {

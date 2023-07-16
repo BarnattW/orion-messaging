@@ -8,11 +8,10 @@ import ListHeading from "../ListWrappers/ListHeading";
 
 function AddFriend() {
 	const addUsername: RefObject<HTMLInputElement> = useRef(null);
-	const { username, snackbar, setSnackbar } = useUserStore(
+	const { username, enqueueSnackbar } = useUserStore(
 		(state) => ({
 			username: state.username,
-			snackbar: state.snackbar,
-			setSnackbar: state.setSnackbar,
+			enqueueSnackbar: state.enqueueSnackbar,
 		}),
 		shallow
 	);
@@ -28,6 +27,7 @@ function AddFriend() {
 		const receiverUsername = addUsername.current?.value;
 		if (receiverUsername === "") return;
 
+		let newSnackbar;
 		const response = await fetch("/api/connect/sendFriendRequest", {
 			method: "POST",
 			body: JSON.stringify({
@@ -40,20 +40,19 @@ function AddFriend() {
 		});
 
 		if (response.ok) {
-			snackbar.offer({
+			newSnackbar = {
 				type: "success",
 				message: "Friend Request Successfully Sent",
 				showSnackbar: true,
-			});
-			setSnackbar(snackbar);
+			};
 		} else {
-			snackbar.offer({
+			newSnackbar = {
 				type: "error",
 				message: "Failed to Send Friend Request",
 				showSnackbar: true,
-			});
-			setSnackbar(snackbar);
+			};
 		}
+		enqueueSnackbar(newSnackbar);
 		addUsername.current!.value = "";
 	}
 
