@@ -60,6 +60,16 @@ function FriendList() {
 		enqueueSnackbar(newSnackbar);
 	};
 
+	const addErrorSnackbar = () => {
+		const newSnackbar = {
+			showSnackbar: true,
+			message: "test",
+			type: "error",
+		};
+
+		enqueueSnackbar(newSnackbar);
+	};
+
 	return (
 		<ListContainer>
 			<ListHeading>Friends</ListHeading>
@@ -101,6 +111,7 @@ function FriendList() {
 				/>
 			)}
 			<button onClick={addSnackbar}>Hi</button>
+			<button onClick={addErrorSnackbar}>Bye</button>
 		</ListContainer>
 	);
 }
