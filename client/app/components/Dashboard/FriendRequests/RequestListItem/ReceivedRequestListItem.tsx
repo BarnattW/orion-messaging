@@ -9,6 +9,7 @@ function ReceivedRequestListItem(
 	const { enqueueSnackbar } = useUserStore((state) => ({
 		enqueueSnackbar: state.enqueueSnackbar,
 	}));
+	console.log(friendRequestListItemProps);
 	async function acceptRequest() {
 		try {
 			let newSnackbar;
@@ -69,6 +70,7 @@ function ReceivedRequestListItem(
 
 	async function deleteRequest() {
 		try {
+			let newSnackbar;
 			const response = await fetch(
 				`/api/connect/rejectFriendRequest/${friendRequestListItemProps.requestId}`,
 				{
@@ -80,9 +82,19 @@ function ReceivedRequestListItem(
 			);
 
 			if (!response.ok) {
-				// update with common error handling
-				console.log(response);
+				newSnackbar = {
+					type: "error",
+					message: "Successfully Deleted Friend Request",
+					showSnackbar: true,
+				};
+			} else {
+				newSnackbar = {
+					type: "success",
+					message: "Failed to Delete Friend Request",
+					showSnackbar: true,
+				};
 			}
+			enqueueSnackbar(newSnackbar);
 		} catch (error) {
 			console.log(error);
 		}

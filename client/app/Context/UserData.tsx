@@ -10,6 +10,8 @@ import { useUserStore } from "../store/userStore";
 import { Conversation, Friend } from "../types/UserContextTypes";
 import getUsername from "../utils/getUsername";
 
+const fetcher = (url: string) => fetch(url).then((response) => response.json());
+
 export function UserData({
 	children,
 	userId,
@@ -38,6 +40,15 @@ export function UserData({
 	);
 	console.log(users);
 
+	const { data: usernameSWR, error } = useSWR(
+		userId ? `/api/connect/${userId}/getUsername` : null,
+		fetcher
+	);
+
+	if (error) {
+		console.log(error);
+	}
+
 	console.log(userId);
 	useEffect(() => {
 		function settingUserId() {
@@ -50,9 +61,9 @@ export function UserData({
 
 	useEffect(() => {
 		async function getUserData() {
-			if (userId) {
-				setUsername(userId);
-				setUsers(userId, userId);
+			if (usernameSWR && userId) {
+				setUsername(usernameSWR);
+				setUsers(userId, usernameSWR);
 
 				const response = await fetch(`/api/connect/getFriends/${userId}`, {
 					headers: {
@@ -60,9 +71,8 @@ export function UserData({
 						"Content-Type": "application/json",
 					},
 				});
-				console.log(response);
+
 				const friends = await response.json();
-				console.log(friends);
 				if (friends.friends) {
 					setFriends(friends.friends);
 					friends.friends.forEach((friend: Friend) => {
@@ -72,7 +82,7 @@ export function UserData({
 			}
 		}
 		getUserData();
-	}, [setUsername, setFriends, userId, router, setUsers]);
+	}, [usernameSWR, setUsername, setFriends, userId, router, setUsers]);
 
 	useEffect(() => {
 		async function getUserConversations() {

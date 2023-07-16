@@ -13,12 +13,13 @@ const iconClassNames: string =
 const maxTitleCharacterLimit = 75;
 
 function CreateGroupChat() {
-	const { friends, userId, username, users } = useUserStore(
+	const { friends, userId, username, users, enqueueSnackbar } = useUserStore(
 		(state) => ({
 			friends: state.friends,
 			userId: state.userId,
 			username: state.username,
 			users: state.users,
+			enqueueSnackbar: state.enqueueSnackbar,
 		}),
 		shallow
 	);
@@ -35,6 +36,7 @@ function CreateGroupChat() {
 	const createChat = async () => {
 		if (title.current && title.current?.value.trim() === "") return;
 		try {
+			let newSnackbar;
 			const response = await fetch("/api/connect/createGroup", {
 				method: "POST",
 				body: JSON.stringify({
@@ -46,9 +48,20 @@ function CreateGroupChat() {
 				},
 			});
 			if (!response.ok) {
-				// update with common error handling
-				console.log(response);
+				newSnackbar = {
+					type: "error",
+					message: "Failed to Create Group",
+					showSnackbar: true,
+				};
+			} else {
+				newSnackbar = {
+					type: "success",
+					message: "Successfully Created Group",
+					showSnackbar: true,
+				};
 			}
+			enqueueSnackbar(newSnackbar);
+
 			const parsedResponse = await response.json();
 			const groupId = parsedResponse.data._id;
 

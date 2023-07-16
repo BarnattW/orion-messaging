@@ -29,6 +29,8 @@ function ChatMessages() {
 		setMessages,
 		messages,
 		users,
+		conversations,
+		updateConversations,
 	} = useUserStore(
 		(state) => ({
 			activeConversation: state.activeConversation,
@@ -36,10 +38,13 @@ function ChatMessages() {
 			setMessages: state.setMessages,
 			messages: state.messages,
 			users: state.users,
+			conversations: state.conversations,
+			updateConversations: state.updateConversations,
 		}),
 		shallow
 	);
 
+	console.log(conversations);
 	console.log("messages: ", messages, activeConversation);
 
 	const scrollToBottom = useCallback(() => {
@@ -108,6 +113,17 @@ function ChatMessages() {
 			}
 
 			const { message, conversationId } = socketEvent.data;
+
+			const index = conversations.findIndex((conversation) => {
+				return conversation._id === conversationId;
+			});
+
+			if (index === -1) return;
+			let updatedConversation = conversations[index];
+			// @ts-ignore
+			updatedConversation.latestMessageTimestamp = message.timestamp;
+			updateConversations(updatedConversation, index);
+
 			if (
 				!messages[conversationId] &&
 				!messages[conversationId]?.initialLoadComplete
@@ -135,7 +151,14 @@ function ChatMessages() {
 		return () => {
 			messageSocket.off("sentMessage", handleSentMessage);
 		};
-	}, [setMessages, messages, scrollToBottom]);
+	}, [
+		setMessages,
+		messages,
+		scrollToBottom,
+		conversations,
+		updateConversations,
+		latestTimestampRef,
+	]);
 
 	useEffect(() => {
 		const handleEditedMessage = (socketEvent: {
