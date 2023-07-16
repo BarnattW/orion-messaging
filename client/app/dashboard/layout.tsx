@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
+import Snackbar from "../components/Snackbar/Snackbar";
 import { UserData } from "../Context/UserData";
 
 async function fetchUserId() {
@@ -14,13 +15,14 @@ async function fetchUserId() {
 				method: "GET",
 				credentials: "include",
 				headers: {
+					"Content-Type": "application/json",
 					cookie: userJWT?.value,
 				},
 			}
 		);
 		console.log(response);
-		if (response.status === 401) {
-			return;
+		if (!response.ok) {
+			throw new Error();
 		}
 		const userId = await response.json();
 		return userId;
@@ -34,16 +36,19 @@ export default async function DashboardLayout({
 }: {
 	children: React.ReactNode;
 }) {
-	// const userId = await fetchUserId();
-	// console.log(userId);
-	// if (!userId) {
-	// 	redirect("/auth/login");
-	// }
+	const userId = await fetchUserId();
+	console.log(userId);
+	if (!userId) {
+		redirect("/auth/login");
+	}
 
 	return (
-		<UserData>
-			<div className="bg-gradient-to-r from-zinc-800 to-neutral-800 h-full min-h-full">
-				<div className="flex h-full">{children}</div>
+		<UserData userId={userId}>
+			<div className="h-full min-h-full bg-zinc-800">
+				<div className="flex h-full">
+					{children}
+					<Snackbar />
+				</div>
 			</div>
 		</UserData>
 	);

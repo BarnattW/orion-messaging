@@ -55,19 +55,20 @@ const useUserMessages = () => {
 					const activeConversationId = activeConversation.conversationId;
 
 					if (!socketEvent.data) return;
+					console.log(socketEvent.data);
 					const latestTimestamp = socketEvent.data.timestamp;
 
 					const messagesArray = messages[activeConversationId]?.messages ?? [];
 					const messagesLength = messagesArray.length;
-					const startIndex = messagesLength > 0 ? messagesLength - 1 : 0;
+					const additionalIndex = messagesLength > 0 ? 1 : 0;
 					const updatedFields = {
 						messages: sortMessagesByTimestamps(
 							[
 								...socketEvent.data.messages,
 								...(messages[activeConversationId]?.messages || []),
 							],
-							startIndex,
-							messagesLength + socketEvent.data.messages.length
+							0,
+							socketEvent.data.messages.length + additionalIndex
 						),
 						hasMore: socketEvent.data.hasMore,
 						latestMessageTimestamp: latestTimestamp,

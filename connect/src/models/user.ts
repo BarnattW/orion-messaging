@@ -6,15 +6,9 @@ export interface IUser{
     friends: Array<String>
     outgoingrequests: Array<mongoose.Types.ObjectId>
     incomingrequests: Array<mongoose.Types.ObjectId>
-    onlineStatus: boolean
 }
 
 const UserSchema = new Schema<IUser>({
-	onlineStatus: {
-		type: Boolean,
-		default: false,
-		required: true,
-	},
 	userId: {
 		type: String,
 		required: true,

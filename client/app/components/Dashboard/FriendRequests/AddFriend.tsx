@@ -1,5 +1,6 @@
 "use client";
 import { RefObject, useRef } from "react";
+import { shallow } from "zustand/shallow";
 
 import { useUserStore } from "@/app/store/userStore";
 
@@ -7,7 +8,14 @@ import ListHeading from "../ListWrappers/ListHeading";
 
 function AddFriend() {
 	const addUsername: RefObject<HTMLInputElement> = useRef(null);
-	const username = useUserStore((state) => state.username);
+	const { username, snackbar, setSnackbar } = useUserStore(
+		(state) => ({
+			username: state.username,
+			snackbar: state.snackbar,
+			setSnackbar: state.setSnackbar,
+		}),
+		shallow
+	);
 
 	// submitting friend requests
 	function keyDownHandler(event: React.KeyboardEvent<HTMLInputElement>) {
@@ -32,11 +40,19 @@ function AddFriend() {
 		});
 
 		if (response.ok) {
-			// update with common error handling
-			console.log(response);
+			snackbar.offer({
+				type: "success",
+				message: "Friend Request Successfully Sent",
+				showSnackbar: true,
+			});
+			setSnackbar(snackbar);
 		} else {
-			//update the ui
-			console.log(response);
+			snackbar.offer({
+				type: "error",
+				message: "Failed to Send Friend Request",
+				showSnackbar: true,
+			});
+			setSnackbar(snackbar);
 		}
 		addUsername.current!.value = "";
 	}
@@ -46,12 +62,12 @@ function AddFriend() {
 			<ListHeading>Add Friends</ListHeading>
 			<input
 				ref={addUsername}
-				className="mx-5 rounded-md bg-zinc-700 p-1 outline-none"
+				className="mx-5 mb-1 rounded-md bg-zinc-700 p-1 outline-none"
 				placeholder="Search username"
 				onKeyDown={keyDownHandler}
 			></input>
 			<button
-				className="bg- text-md mx-10 rounded-md bg-indigo-600 py-1 hover:bg-indigo-500"
+				className="text-md mx-10 rounded-md bg-indigo-600 py-1 hover:bg-indigo-500"
 				onClick={submitFriendRequest}
 			>
 				Send Friend Request

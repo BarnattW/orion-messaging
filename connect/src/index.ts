@@ -6,7 +6,8 @@ import { friends } from "../src/routes/api/friends";
 import { createUser } from "../src/routes/api/user";
 import { userOps } from "../src/routes/api/user";
 import { groupRoutes } from "./routes/api/groups";
-
+import { Server, Socket } from "socket.io";
+import { User } from "./models/user";
 
 const app = express();
 const PORT = 3000;
@@ -46,3 +47,4 @@ createUser();
 app.listen(3000, () => {
 	console.log(`Server Started on Port 3000`);
 });
+

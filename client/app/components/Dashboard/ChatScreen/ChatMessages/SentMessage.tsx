@@ -7,14 +7,16 @@ import messageSocket from "@/app/sockets/messageSocket";
 import { useUserStore } from "@/app/store/userStore";
 import { SentMessage } from "@/app/types/Messages";
 
-const iconClassNames: string = "fill-gray-100 h-5 w-5 m-1";
+const iconClassNames: string =
+	"fill-gray-100 hover:fill-gray-400 h-5 w-5 m-1 stroke-gray-100 hover:stroke-gray-400";
 const maxCharacters: number = 2000;
 
 const SentMessage = memo(function SentMessage(message: SentMessage) {
-	const { activeConversation, userId } = useUserStore(
+	const { activeConversation, userId, users } = useUserStore(
 		(state) => ({
 			activeConversation: state.activeConversation,
 			userId: state.userId,
+			users: state.users,
 		}),
 		shallow
 	);
@@ -22,11 +24,11 @@ const SentMessage = memo(function SentMessage(message: SentMessage) {
 	const [isEditing, setIsEditing] = useState(false);
 	const [messageValue, setMessageValue] = useState(message.message);
 
-	const handleMouseEnter = () => {
+	const handleMouseMove = () => {
 		setDetails(true);
 	};
 
-	const handleMouseLeave = () => {
+	const handleMouseOut = () => {
 		setDetails(false);
 	};
 
@@ -83,8 +85,8 @@ const SentMessage = memo(function SentMessage(message: SentMessage) {
 		return (
 			<div
 				className="relative px-20 py-1 text-sm hover:bg-zinc-700"
-				onMouseEnter={handleMouseEnter}
-				onMouseLeave={handleMouseLeave}
+				onMouseMove={handleMouseMove}
+				onMouseOut={handleMouseOut}
 			>
 				<p
 					className="absolute z-20 -ml-16 text-xs text-neutral-400"
@@ -129,11 +131,11 @@ const SentMessage = memo(function SentMessage(message: SentMessage) {
 		<div className="flex grow flex-col text-sm ">
 			<div
 				className="relative"
-				onMouseEnter={handleMouseEnter}
-				onMouseLeave={handleMouseLeave}
+				onMouseMove={handleMouseMove}
+				onMouseOut={handleMouseOut}
 			>
 				<div className="flex gap-5">
-					<p className="font-semibold">{message.senderUsername}</p>
+					<p className="font-semibold">{users[message.senderId].username}</p>
 					<p className="mt-1 shrink-0 text-xs text-neutral-400">
 						{message.timestamp.toLocaleString(undefined, {
 							year: "numeric",
@@ -159,12 +161,15 @@ const SentMessage = memo(function SentMessage(message: SentMessage) {
 				{showDetails && message.senderId === userId && (
 					<div className="absolute -top-5 right-3 rounded border-2 border-zinc-800 bg-zinc-700">
 						<div className="flex">
-							<div onClick={toggleEditingMode} className="hover:cursor-pointer">
+							<span
+								onClick={toggleEditingMode}
+								className="hover:cursor-pointer"
+							>
 								<EditIcon className={iconClassNames} />
-							</div>
-							<div onClick={deleteMessage} className="hover:cursor-pointer">
+							</span>
+							<span onClick={deleteMessage} className="hover:cursor-pointer">
 								<DeleteIcon className={iconClassNames} />
-							</div>
+							</span>
 						</div>
 					</div>
 				)}

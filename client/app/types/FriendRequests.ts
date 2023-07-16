@@ -13,6 +13,8 @@ export interface FriendRequests {
 	sentRequests?: Request[];
 }
 
+export interface GroupRequests extends FriendRequests {}
+
 export interface ReceviedRequestsProps {
 	receivedRequests?: Request[];
 }
@@ -21,7 +23,7 @@ export interface SentFriendRequestsProps {
 	sentRequests?: Request[];
 }
 
-export interface RequestCardProps {
+export interface RequestListItemProps {
 	imageUrl?: string;
 	altText?: string;
 	userId: string;

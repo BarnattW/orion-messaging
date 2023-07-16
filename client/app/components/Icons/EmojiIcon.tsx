@@ -5,13 +5,11 @@ function EmojiIcon({ className }: { className?: string }) {
 			viewBox="0 0 256 256"
 			className={className}
 		>
-			<path fill="none" d="M0 0h256v256H0z" />
 			<circle
 				cx="128"
 				cy="128"
 				r="96"
 				fill="none"
-				stroke="white"
 				strokeLinecap="round"
 				strokeLinejoin="round"
 				strokeWidth={16}
@@ -20,7 +18,6 @@ function EmojiIcon({ className }: { className?: string }) {
 			<circle cx="164" cy="108" r="12" />
 			<path
 				fill="none"
-				stroke="white"
 				strokeLinecap="round"
 				strokeLinejoin="round"
 				strokeWidth={16}
