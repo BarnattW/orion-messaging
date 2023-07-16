@@ -71,13 +71,13 @@ router.post("/api/connect/sendFriendRequest", async(req: Request, res: Response)
 		await publishMessage("friends", newRequest, "requestCreated")
 
 		return res.status(201).json({
-			message: `friend request created`,
+			message: `Friend Request Sent Sucessfully`,
 			data: newRequest,
 		});
 
 		
 	} catch (error) {
-		console.error(`Error creating friend request:`, error);
+		console.error(`Error sending friend request:`, error);
 
 		return res.status(500).json({ message: "Server error" });
 	}
@@ -146,7 +146,7 @@ router.put(
 				}
 			);
 
-			return res.status(200).json({ message: "Friend request accepted" });
+			return res.status(200).json({ message: "Friend Request Accepted" });
 		} catch (error) {
 			console.error("Error creating friend request:", error);
 
