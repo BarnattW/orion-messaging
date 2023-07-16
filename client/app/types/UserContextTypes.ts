@@ -1,3 +1,6 @@
+export interface Users {
+	[userId: string]: { username: string };
+}
 export interface Friend {
 	username: string;
 	userId: string;
@@ -7,10 +10,10 @@ export interface Conversation {
 	title: string;
 	groupId?: string;
 	conversationType: string;
-	users: Friend[];
 	messages: string[];
 	latestMessageTimestamp: Date;
 	_id: string;
+	userData: { userId: string }[];
 }
 
 export interface ActiveConversation {
@@ -21,7 +24,7 @@ export interface ActiveConversation {
 	lastScrollTop: number | null;
 	canLoad: boolean;
 	initialLoadComplete?: boolean;
-	users: Friend[];
+	users: { userId: string }[];
 	groupId?: string;
 }
 
@@ -33,7 +36,7 @@ export interface ActiveConversationFields {
 	lastScrollTop?: number | null;
 	canLoad?: boolean;
 	initialLoadComplete?: boolean;
-	users?: Friend[];
+	users?: { userId: string }[];
 	groupId?: string;
 }
 

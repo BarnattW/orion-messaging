@@ -7,14 +7,16 @@ import messageSocket from "@/app/sockets/messageSocket";
 import { useUserStore } from "@/app/store/userStore";
 import { SentMessage } from "@/app/types/Messages";
 
-const iconClassNames: string = "fill-gray-100 h-5 w-5 m-1";
+const iconClassNames: string =
+	"fill-gray-100 hover:fill-gray-400 h-5 w-5 m-1 stroke-gray-100 hover:stroke-gray-400";
 const maxCharacters: number = 2000;
 
 const SentMessage = memo(function SentMessage(message: SentMessage) {
-	const { activeConversation, userId } = useUserStore(
+	const { activeConversation, userId, isScrolling } = useUserStore(
 		(state) => ({
 			activeConversation: state.activeConversation,
 			userId: state.userId,
+			isScrolling: state.isScrolling,
 		}),
 		shallow
 	);
@@ -109,7 +111,7 @@ const SentMessage = memo(function SentMessage(message: SentMessage) {
 					<p>{message.message}</p>
 				)}
 
-				{showDetails && message.senderId === userId && (
+				{showDetails && message.senderId === userId && isScrolling && (
 					<div className="absolute -top-5 right-8 rounded border-2 border-zinc-800 bg-zinc-700">
 						<div className="flex">
 							<div onClick={toggleEditingMode} className="hover:cursor-pointer">
@@ -159,12 +161,15 @@ const SentMessage = memo(function SentMessage(message: SentMessage) {
 				{showDetails && message.senderId === userId && (
 					<div className="absolute -top-5 right-3 rounded border-2 border-zinc-800 bg-zinc-700">
 						<div className="flex">
-							<div onClick={toggleEditingMode} className="hover:cursor-pointer">
+							<span
+								onClick={toggleEditingMode}
+								className="hover:cursor-pointer"
+							>
 								<EditIcon className={iconClassNames} />
-							</div>
-							<div onClick={deleteMessage} className="hover:cursor-pointer">
+							</span>
+							<span onClick={deleteMessage} className="hover:cursor-pointer">
 								<DeleteIcon className={iconClassNames} />
-							</div>
+							</span>
 						</div>
 					</div>
 				)}

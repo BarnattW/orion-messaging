@@ -1,74 +1,154 @@
 "use client";
+import { useEffect } from "react";
+import { useState } from "react";
 import { shallow } from "zustand/shallow";
 
 import useComponentVisible from "@/app/custom-hooks/useComponentVisible";
 import { useUserStore } from "@/app/store/userStore";
+import { SelectedConversation } from "@/app/types/Conversations";
+import { Request } from "@/app/types/FriendRequests";
+import getUsername from "@/app/utils/getUsername";
 
-import AddIcon from "../../Icons/AddIcon";
 import ListContainer from "../ListWrappers/ListContainer";
 import ListHeading from "../ListWrappers/ListHeading";
-import ConversationCard from "./ConversationCard";
-import CreateGroupChat from "./CreateGroupChat";
-
-const iconClassNames: string = "fill-gray-100 h-7 w-7 hover:cursor-pointer";
+import ConversationContextMenu from "./ConversationListItem/ConversationContextMenu";
+import ConversationListItem from "./ConversationListItem/ConversationListItem";
+import CreateGroupChat from "./CreateGroup/CreateGroupChat";
+import ReceivedGroupRequests from "./ReceivedGroupRequests";
+import SentGroupRequests from "./SentGroupRequest";
 
 function ConversationList() {
-	const { conversations } = useUserStore(
+	const {
+		conversations,
+		groupRequests,
+		setGroupRequests,
+		userId,
+		users,
+		setUsers,
+	} = useUserStore(
 		(state) => ({
 			conversations: state.conversations,
+			groupRequests: state.groupRequests,
+			setGroupRequests: state.setGroupRequests,
+			userId: state.userId,
+			users: state.users,
+			setUsers: state.setUsers,
 		}),
 		shallow
 	);
+	console.log("users", users);
+	const [selectedConversation, setSelectedConversation] =
+		useState<SelectedConversation | null>(null);
+	const [contextMenuPosition, setContextMenuPosition] = useState<{
+		x: number;
+		y: number;
+	}>({ x: 0, y: 0 });
 	const { ref, isComponentVisible, setIsComponentVisible } =
 		useComponentVisible(false);
 
-	const toggleCreateGroup = () => {
-		setIsComponentVisible((prevBool) => !prevBool);
+	const handleContextMenu = (
+		event: React.MouseEvent<HTMLLIElement>,
+		selectedConversation: SelectedConversation
+	) => {
+		event.preventDefault();
+		setSelectedConversation(selectedConversation);
+		setContextMenuPosition({ x: event.clientX, y: event.clientY });
+		setIsComponentVisible(true);
 	};
+
+	const closeContextMenu = () => {
+		setSelectedConversation(null);
+	};
+
+	// fetch all incoming and outgoing group requests
+	useEffect(() => {
+		async function getRequests() {
+			try {
+				const responseGroup = await fetch(
+					`/api/connect/${userId}/getGroupReqs`,
+					{
+						method: "GET",
+						headers: {
+							"Content-Type": "application/json",
+						},
+					}
+				);
+
+				if (!responseGroup.ok) {
+					// update with common error handling
+					console.log(responseGroup);
+				}
+				const groupRequests = await responseGroup.json();
+				setGroupRequests({
+					receivedRequests: groupRequests.incoming,
+					sentRequests: groupRequests.outgoing,
+				});
+
+				// update users
+				groupRequests.incoming.forEach(async (receivedRequest: Request) => {
+					const { senderId } = receivedRequest;
+					if (senderId in users) return;
+					const username = await getUsername(senderId);
+					setUsers(senderId, username);
+				});
+				groupRequests.outgoing.forEach(async (sentRequest: Request) => {
+					const { receiverId } = sentRequest;
+					if (receiverId in users) return;
+					const username = await getUsername(receiverId);
+					setUsers(receiverId, username);
+				});
+			} catch (error) {
+				console.log(error);
+			}
+		}
+
+		getRequests();
+	}, [userId, setGroupRequests, setUsers]);
 
 	return (
 		<ListContainer>
+			{groupRequests.receivedRequests &&
+				groupRequests.receivedRequests.length > 0 && (
+					<ReceivedGroupRequests
+						receivedRequests={groupRequests.receivedRequests}
+					/>
+				)}
+			{groupRequests.sentRequests && groupRequests.sentRequests.length > 0 && (
+				<SentGroupRequests sentRequests={groupRequests.sentRequests} />
+			)}
 			<ListHeading>
 				<div className="flex justify-between">
 					Messages
-					<div className="relative" ref={ref}>
-						<div onClick={toggleCreateGroup}>
-							<AddIcon className={iconClassNames} />
-						</div>
-						{isComponentVisible && (
-							<CreateGroupChat setIsComponentVisible={setIsComponentVisible} />
-						)}
-					</div>
+					<CreateGroupChat />
 				</div>
 			</ListHeading>
-			<div className="overflow-y-scroll scrollbar-thin">
+			<ul className="overflow-y-scroll scrollbar-thin">
 				{conversations.length > 0 &&
 					conversations.map((conversation) => {
 						return (
-							<ConversationCard
+							<ConversationListItem
 								altText={conversation.title}
 								//imageUrl={conversation.conversationImageUrl}
-								users={conversation.users}
 								key={conversation._id}
 								type={conversation.conversationType}
 								conversationName={conversation.title}
 								conversationId={conversation._id}
 								latestMessageTimestamp={conversation.latestMessageTimestamp}
 								groupId={conversation.groupId}
+								userData={conversation.userData}
+								handleContextMenu={handleContextMenu}
 							/>
 						);
 					})}
-				<ConversationCard
-					altText="vany"
-					//imageUrl={conversation.conversationImageUrl}
-					users={[{ userId: "van", username: "vany" }]}
-					type="group"
-					conversationName="AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-					conversationId="vany"
-					latestMessageTimestamp={new Date()}
-					groupId="eh"
+			</ul>
+			{selectedConversation?.conversationId && isComponentVisible && (
+				<ConversationContextMenu
+					contextMenuPosition={contextMenuPosition}
+					closeContextMenu={closeContextMenu}
+					selectedConversation={selectedConversation}
+					ref={ref}
 				/>
-			</div>
+			)}
 		</ListContainer>
 	);
 }
