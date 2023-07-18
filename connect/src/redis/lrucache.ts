@@ -8,7 +8,6 @@ const redisClient = new Redis({
 
 redisClient.config('SET', 'maxmemory', '256mb');
 redisClient.config('REWRITE');
-redisClient.quit();
 
 
 const maxSize = 100;

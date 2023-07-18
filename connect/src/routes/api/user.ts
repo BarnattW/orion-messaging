@@ -1,6 +1,5 @@
 import { IUser, User } from "../../models/user";
 import express, { Request, Response } from "express";
-import { insertionSortFriends } from "./functions/sort";
 import { consumer } from "./kafka-ops/kafkaproducer";
 import { publishMessage } from "./kafka-ops/kafkaproducer";
 import { KafkaMessage } from "kafkajs";
@@ -63,14 +62,6 @@ router.put(
 			if (!user) {
 				return res.status(404).json({ message: "user not found" });
 			}
-
-
-			const usersWithUserAsFriend = await User.find({ friends: userId });
-
-			usersWithUserAsFriend.forEach(async (user) => {
-				await insertionSortFriends(user);
-				user.save();
-			});
 
 			return res.json(user);
 		} catch (error) {
