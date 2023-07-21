@@ -18,6 +18,8 @@ spec:
           env: 
             - name: MONGO_URI
               value: "mongodb://connect-mongo-srv:27017/connect"
+            - name: REDIS_HOST
+              value: "user-store-redis-srv"
 ---
 apiVersion: v1
 kind: Service
