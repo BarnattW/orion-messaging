@@ -12,8 +12,12 @@ import FriendContextMenu from "./FriendListItem/FriendContextMenu";
 import FriendListItem from "./FriendListItem/FriendListItem";
 
 function FriendList() {
-	const { friends } = useUserStore(
-		(state) => ({ friends: state.friends }),
+	const { friends, users, enqueueSnackbar } = useUserStore(
+		(state) => ({
+			friends: state.friends,
+			users: state.users,
+			enqueueSnackbar: state.enqueueSnackbar,
+		}),
 		shallow
 	);
 	const [friendsQuery, setFriendsQuery] = useState<string>("");
@@ -46,6 +50,26 @@ function FriendList() {
 		setSelectedFriend(null);
 	};
 
+	const addSnackbar = () => {
+		const newSnackbar = {
+			showSnackbar: true,
+			message: "test",
+			type: "success",
+		};
+
+		enqueueSnackbar(newSnackbar);
+	};
+
+	const addErrorSnackbar = () => {
+		const newSnackbar = {
+			showSnackbar: true,
+			message: "test",
+			type: "error",
+		};
+
+		enqueueSnackbar(newSnackbar);
+	};
+
 	return (
 		<ListContainer>
 			<ListHeading>Friends</ListHeading>
@@ -60,13 +84,15 @@ function FriendList() {
 				{friends.length > 0 &&
 					friends
 						.filter((friend) =>
-							friend.username.toLowerCase().includes(friendsQuery.toLowerCase())
+							users[friend.userId].username
+								.toLowerCase()
+								.includes(friendsQuery.toLowerCase())
 						)
 						.map((friend) => {
 							return (
 								<FriendListItem
-									altText={friend.username}
-									username={friend.username}
+									altText={users[friend.userId].username}
+									username={users[friend.userId].username}
 									userId={friend.userId}
 									key={friend.userId}
 									onlineStatus={true}
@@ -84,6 +110,8 @@ function FriendList() {
 					ref={ref}
 				/>
 			)}
+			<button onClick={addSnackbar}>Hi</button>
+			<button onClick={addErrorSnackbar}>Bye</button>
 		</ListContainer>
 	);
 }

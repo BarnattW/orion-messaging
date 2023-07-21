@@ -81,7 +81,7 @@ function SettingsTab() {
 					</li>
 				</ul>
 			</SettingsContainer>
-			<div className="ml-2 flex h-full grow flex-col overflow-auto scrollbar-thin scrollbar-thumb-zinc-700 sm:ml-10">
+			<div className="ml-2 flex h-full grow flex-col items-center overflow-auto scrollbar-thin scrollbar-thumb-zinc-700 sm:ml-10 sm:items-baseline">
 				{toggleState === 1 && (
 					<>
 						<TabHeading content="Profile" />

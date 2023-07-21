@@ -12,11 +12,12 @@ const iconClassNames =
 	"fill-gray-100 h-6 w-6 hover:cursor-pointer flex-shrink-0 hover:fill-gray-400";
 
 function InviteFriends() {
-	const { friends, username, activeConversation } = useUserStore(
+	const { friends, username, activeConversation, users } = useUserStore(
 		(state) => ({
 			friends: state.friends,
 			username: state.username,
 			activeConversation: state.activeConversation,
+			users: state.users,
 		}),
 		shallow
 	);
@@ -97,11 +98,11 @@ function InviteFriends() {
 						{friends
 							.filter(
 								(friend) =>
-									friend.username
+									users[friend.userId].username
 										.toLowerCase()
 										.includes(friendsQuery.toLowerCase()) &&
 									!activeConversation?.users.some(
-										(user) => user.username === friend.username
+										(user) => user.userId === friend.userId
 									)
 							)
 							.map((friend) => (
@@ -111,8 +112,8 @@ function InviteFriends() {
 									key={friend.userId}
 								>
 									<InviteFriendCard
-										altText={friend.username}
-										username={friend.username}
+										altText={users[friend.userId].username}
+										username={users[friend.userId].username}
 										onlineStatus={true}
 										userId={friend.userId}
 									/>
@@ -120,8 +121,10 @@ function InviteFriends() {
 										className="h-4 w-4 bg-zinc-600"
 										type="checkbox"
 										id={friend.userId}
-										data-username={friend.username}
-										checked={selectedOptions.includes(`${friend.username}`)}
+										data-username={users[friend.userId].username}
+										checked={selectedOptions.includes(
+											`${users[friend.userId].username}`
+										)}
 										onChange={handleCheckboxChange}
 									></input>
 								</label>

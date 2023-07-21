@@ -14,15 +14,17 @@ const ConversationContextMenu = forwardRef(function (
 	}: ConversationContextMenuProps,
 	ref: ForwardedRef<HTMLDivElement>
 ) {
-	const { userId } = useUserStore(
+	const { userId, enqueueSnackbar } = useUserStore(
 		(state) => ({
 			userId: state.userId,
+			enqueueSnackbar: state.enqueueSnackbar,
 		}),
 		shallow
 	);
 
 	async function leaveGroup() {
 		try {
+			let newSnackbar;
 			const response = await fetch("/api/connect/leaveGroup", {
 				method: "PUT",
 				body: JSON.stringify({

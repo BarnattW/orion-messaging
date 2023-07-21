@@ -11,14 +11,18 @@ function OptionsPopout({
 	currentUserId,
 	currentUsername,
 }: OptionsPopoutProps) {
-	const { friends } = useUserStore(
-		(state) => ({ friends: state.friends }),
+	const { friends, enqueueSnackbar } = useUserStore(
+		(state) => ({
+			friends: state.friends,
+			enqueueSnackbar: state.enqueueSnackbar,
+		}),
 		shallow
 	);
 	const isFriends: boolean = friends.some((friend) => friend.userId === userId);
 
 	async function deleteFriend() {
 		try {
+			let newSnackbar;
 			const response = await fetch(`/api/connect/removeFriend`, {
 				method: "DELETE",
 				body: JSON.stringify({ friendId: userId, userId: currentUserId }),
@@ -28,12 +32,19 @@ function OptionsPopout({
 			});
 
 			if (!response.ok) {
-				// update with common error handling
-				console.log(response);
+				newSnackbar = {
+					type: "error",
+					message: "Failed to Delete Friend",
+					showSnackbar: true,
+				};
 			} else {
-				// update ui
-				console.log(response);
+				newSnackbar = {
+					type: "success",
+					message: "Successfully Deleted Friend",
+					showSnackbar: true,
+				};
 			}
+			enqueueSnackbar(newSnackbar);
 		} catch (error) {
 			console.log(error);
 		}
@@ -41,6 +52,7 @@ function OptionsPopout({
 
 	async function addFriend() {
 		try {
+			let newSnackbar;
 			const response = await fetch("/api/connect/sendFriendRequest", {
 				method: "POST",
 				body: JSON.stringify({
@@ -53,12 +65,19 @@ function OptionsPopout({
 			});
 
 			if (!response.ok) {
-				// update with common error handling
-				console.log(response);
+				newSnackbar = {
+					type: "error",
+					message: "Failed to Send Friend Request",
+					showSnackbar: true,
+				};
 			} else {
-				// update ui
-				console.log(response);
+				newSnackbar = {
+					type: "success",
+					message: "Friend Request Successfully Sent",
+					showSnackbar: true,
+				};
 			}
+			enqueueSnackbar(newSnackbar);
 		} catch (error) {
 			console.log(error);
 		}

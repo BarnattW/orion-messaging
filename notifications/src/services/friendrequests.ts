@@ -1,6 +1,7 @@
 import { redis } from '../redis/redis';
 import { consumer } from '../kafka/kafka_consumer';
 import { getKeySocketPairs } from '../utils/sockets';
+import { User } from '../models/user';
 
 import { Notification } from '../models/notifications';
 
@@ -17,17 +18,18 @@ export async function handleFriends() {
 
         if (messageType && value){   
             if (topic === "friends" && messageType === "requestCreated"){
-                const {receiverId, senderUsername, } = value.request;
-                const {receiverStatus} = value;
-                if (receiverStatus){
-                  const notifi = new Notification();
-                  notifi.message = `You have a new friend request from ${senderUsername}`;
-                  notifi.type = "friends"
-                  notifi.save();
-                  console.log(notifi);
-                }
-
-                await sendFriendRequestNotification(receiverId, `You have a new friend request from ${senderUsername}`);
+                const {receiverId, senderUsername, } = value;
+                const receiver = await User.findOne({userId: receiverId});
+                if (receiver && receiver.receiveNotifications){
+                  if (!receiver.onlineStatus){
+                    const notifi = new Notification();
+                    notifi.message = `You have a new friend request from ${senderUsername}`;
+                    notifi.type = "friends"
+                    notifi.save();
+                    console.log(notifi);
+                  }
+                  await sendFriendRequestNotification(receiverId, `You have a new friend request from ${senderUsername}`);
+                } 
             }
         }
       },

@@ -15,13 +15,15 @@ export async function isAuthorized(
 ) {
   let token: string | null = null;
 
-  if (!req || !req.cookies["cookie"]) {
+  //@ts-ignore
+  console.log("Cookie: ", req.headers.cookie)
+  if (!req || !req.headers.cookie) {
     return res.status(401).json({ message: "Unauthorized" });
   }
 
   try {
     // Gets 'cookie' cookie from requests, decodes it, and converts to a string
-    token = Buffer.from(req.cookies["cookie"], "base64").toString("ascii");
+    token = Buffer.from(req.headers.cookie, "base64").toString("ascii");
 
     // Parses the string to get the jwt value
     token = JSON.parse(token).jwt;
@@ -42,6 +44,8 @@ export async function isAuthorized(
     if (!(await User.findOne({ userId: userId }))) {
       return res.status(404).json({ message: "User doesn't exist" });
     }
+
+    res.locals.userId = userId;
   } catch (e) {
     return res.status(401).json({ message: "Invalid token" });
   }

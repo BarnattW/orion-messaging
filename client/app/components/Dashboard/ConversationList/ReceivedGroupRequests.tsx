@@ -20,6 +20,7 @@ function ReceivedGroupRequests({ receivedRequests }: ReceviedRequestsProps) {
 		<>
 			<ListHeading>Group Invites</ListHeading>
 			{receivedRequests?.map((receivedRequest) => {
+				if (!users[receivedRequest.senderId]) return;
 				return (
 					<RecievedRequestListItem
 						userId={receivedRequest.senderId}
