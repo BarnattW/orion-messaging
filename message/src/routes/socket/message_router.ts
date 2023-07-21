@@ -6,6 +6,10 @@ import express, { Request, Response } from "express";
 import { Server, Socket } from "socket.io";
 import { socketsInConversation } from "../../lib/utils";
 import { MessageContainer } from "../../models/MessageContainer";
+import { messageProducer } from "../../kafka/kafka_producer";
+
+const producer = new messageProducer();
+producer.connect();
 
 export const sendMessage = (
   io: Server,
@@ -68,6 +72,12 @@ export const sendMessage = (
         message: "Message Sent",
         data: { message: createdMessage, conversationId },
       });
+
+      producer.send({
+        message: message,
+        conversationName: conv.title
+      })
+      
     } catch (e) {
       socket.emit("requestError", {
         message: "Server Error (Send Message)",
