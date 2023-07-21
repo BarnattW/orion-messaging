@@ -73,11 +73,19 @@ export const sendMessage = (
         data: { message: createdMessage, conversationId },
       });
 
+      let receiverIds = [...conv.users];
+
+      const index = receiverIds.indexOf(userId);
+      if (index > -1) {
+        receiverIds.splice(index, 1);
+      }
+
       producer.send({
         message: message,
-        conversationName: conv.title
+        conversationName: conv.title,
+        receiverIds: receiverIds
       })
-      
+
     } catch (e) {
       socket.emit("requestError", {
         message: "Server Error (Send Message)",
