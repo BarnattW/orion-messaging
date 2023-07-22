@@ -19,18 +19,17 @@ export async function handleMessages() {
         if (messageType && value){   
             if (topic === "messages" && messageType === "send"){
                 const {message, conversationName, receiverIds} = value;
-                const truncatedMessage = message.length > 50 ? message.slice(0, 50) + " ..." : message;
                 const receivers = await User.find({ userId: { $in: receiverIds } });
                 receivers.forEach(async (receiver) => {
                   if (receiver && receiver.receiveNotifications){
                     if (!receiver.onlineStatus){
                       const notifi = new Notification();
-                      notifi.message = `You have a new message in ${conversationName} \n ${truncatedMessage}`;
+                      notifi.message = `You have a new message in ${conversationName} \n ${message}`;
                       notifi.type = "messages"
                       notifi.save();
                       console.log(notifi);
                     }
-                    await sendMessageNotification(receiver.userId, `You have a new message in ${conversationName} \n ${truncatedMessage}`);
+                    await sendMessageNotification(receiver.userId, `You have a new message in ${conversationName} \n ${message}`);
                   } 
                 });
                 
