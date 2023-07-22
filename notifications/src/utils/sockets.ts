@@ -1,4 +1,4 @@
-import { redis } from "../redis/redis";
+import { redisClient } from "../redis/redis";
 import {Socket} from "socket.io";
 
 import { sendFriendRequestNotification } from "../services/friendrequests";
@@ -7,7 +7,7 @@ import { Notification } from "../models/notifications";
 
 export function storeKeySocketPair(userId: string, key: string, socket: string) {
   try{
-    const store = redis.hset(`user:${userId}`, key, socket);
+    const store = redisClient.hset(`user:${userId}`, key, socket);
     console.log(`Key-socket pair stored for user ID ${userId}`);
   } catch(error){
         console.error('Error storing key-socket pair:', error);
@@ -17,7 +17,7 @@ export function storeKeySocketPair(userId: string, key: string, socket: string) 
 
 export async function getKeySocketPairs(userId: string, key: string) {
   try{
-    const socketString = await redis.hget(`user:${userId}`, key)
+    const socketString = await redisClient.hget(`user:${userId}`, key)
     if (socketString) {
       const socket = JSON.parse(socketString) as Socket;
       console.log(`Socket for user ID ${userId}:`, socket);
@@ -32,7 +32,7 @@ export async function getKeySocketPairs(userId: string, key: string) {
 
 export async function removeSocketForUser(userId: string, key: string) {
   try {
-    const deleted = await redis.hdel(userId, key);
+    const deleted = await redisClient.hdel(userId, key);
     if (deleted) {
       console.log(`Key-socket pair deleted for user ${userId}`);
     } else {
@@ -61,7 +61,7 @@ export async function pullNotificationsForUser(userId: string) {
           break;
         case 'groups':
           break;
-        case 'message':
+        case 'messages':
           break;
       }
 

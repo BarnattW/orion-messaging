@@ -1,7 +1,7 @@
 import mongoose, {Schema, model} from 'mongoose';
 
 export interface INotification{
-    type: 'message' | 'friends' | 'groups';
+    type: 'messages' | 'friends' | 'groups';
     receiverId: mongoose.Types.ObjectId,
     senderId: mongoose.Types.ObjectId,
 	message: string
@@ -10,7 +10,7 @@ export interface INotification{
 const NotificationSchema = new Schema<INotification>({
 	type:{
 		type: String,
-		enum: ['message', "friends", "groups"]
+		enum: ['messages', "friends", "groups"]
 	},
 	senderId: {
         type: mongoose.Schema.Types.ObjectId,
