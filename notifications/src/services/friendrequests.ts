@@ -1,4 +1,4 @@
-import { redis } from '../redis/redis';
+import { redisClient } from '../redis/redis';
 import { consumer } from '../kafka/kafka_consumer';
 import { getKeySocketPairs } from '../utils/sockets';
 import { User } from '../models/user';

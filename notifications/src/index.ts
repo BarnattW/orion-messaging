@@ -5,6 +5,9 @@ import { Server, Socket } from 'socket.io';
 import { removeSocketForUser, storeKeySocketPair } from "./utils/sockets";
 import { User } from "./models/user";
 import { addUser } from "./utils/userCreation";
+import { pullNotificationsForUser } from "./utils/sockets";
+import { handleFriends } from "./services/friendrequests";
+import { handleMessages } from "./services/messages";
 
 const app = express();
 const PORT = 3000;
@@ -14,8 +17,8 @@ mongoose
 	.connect(URI)
 	.catch((error) => console.error("Connection error:", error));
 
-
-
+handleMessages();
+handleFriends();
 app.use(express.json());
 
 const server = http.createServer(app);
@@ -39,6 +42,7 @@ io.on('connection', async(socket: Socket) => {
 			return;
 		}
 		user.onlineStatus = true;
+		pullNotificationsForUser(userId);
 	});
 
 	socket.on('disconnect', async(userId) => {
