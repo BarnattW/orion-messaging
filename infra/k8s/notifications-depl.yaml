@@ -1,35 +1,35 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: connect-depl
+  name: notifications-depl
 spec:
   replicas: 1
   selector:
     matchLabels: 
-      app: connect
+      app: notifications
   template:
     metadata:
       labels:
-        app: connect
+        app: notifications
     spec:
       containers:
-        - name: connect
-          image: us.gcr.io/orion-messaging-388417/connect
+        - name: notifications
+          image: us.gcr.io/orion-messaging-388417/notifications
           env: 
             - name: MONGO_URI
-              value: "mongodb://connect-mongo-srv:27017/connect"
+              value: "mongodb://notifications-mongo-srv:27017/notifications"
             - name: REDIS_HOST
               value: "user-store-redis-srv"
 ---
 apiVersion: v1
 kind: Service
 metadata: 
-  name: connect-srv
+  name: notifications-srv
 spec:
   selector:
-    app: connect
+    app: notifications
   ports:
-  - name: connect
+  - name: notifications
     protocol: TCP
     port: 3000
     targetPort: 3000

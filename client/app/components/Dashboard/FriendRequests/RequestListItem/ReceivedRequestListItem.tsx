@@ -1,3 +1,4 @@
+import { useUserStore } from "@/app/store/userStore";
 import { RequestListItemProps } from "@/app/types/FriendRequests";
 
 import Avatar from "../../Avatar/Avatar";
@@ -5,8 +6,13 @@ import Avatar from "../../Avatar/Avatar";
 function ReceivedRequestListItem(
 	friendRequestListItemProps: RequestListItemProps
 ) {
+	const { enqueueSnackbar } = useUserStore((state) => ({
+		enqueueSnackbar: state.enqueueSnackbar,
+	}));
+	console.log(friendRequestListItemProps);
 	async function acceptRequest() {
 		try {
+			let newSnackbar;
 			if (friendRequestListItemProps.requestType === "friend") {
 				const response = await fetch(
 					`/api/connect/acceptFriendRequest/${friendRequestListItemProps.requestId}`,
@@ -18,8 +24,17 @@ function ReceivedRequestListItem(
 					}
 				);
 				if (!response.ok) {
-					// update with common error handling
-					console.log(response);
+					newSnackbar = {
+						type: "error",
+						message: "Failed to Accept Friend Request",
+						showSnackbar: true,
+					};
+				} else {
+					newSnackbar = {
+						type: "success",
+						message: "Accepted Friend Request",
+						showSnackbar: true,
+					};
 				}
 			}
 
@@ -34,9 +49,19 @@ function ReceivedRequestListItem(
 					}
 				);
 				if (!response.ok) {
-					// update with common error handling
-					console.log(response);
+					newSnackbar = {
+						type: "error",
+						message: "Failed to Accept Group Request",
+						showSnackbar: true,
+					};
+				} else {
+					newSnackbar = {
+						type: "success",
+						message: "Accepted Group Request",
+						showSnackbar: true,
+					};
 				}
+				enqueueSnackbar(newSnackbar);
 			}
 		} catch (error) {
 			console.log(error);
@@ -45,6 +70,7 @@ function ReceivedRequestListItem(
 
 	async function deleteRequest() {
 		try {
+			let newSnackbar;
 			const response = await fetch(
 				`/api/connect/rejectFriendRequest/${friendRequestListItemProps.requestId}`,
 				{
@@ -56,9 +82,19 @@ function ReceivedRequestListItem(
 			);
 
 			if (!response.ok) {
-				// update with common error handling
-				console.log(response);
+				newSnackbar = {
+					type: "error",
+					message: "Successfully Deleted Friend Request",
+					showSnackbar: true,
+				};
+			} else {
+				newSnackbar = {
+					type: "success",
+					message: "Failed to Delete Friend Request",
+					showSnackbar: true,
+				};
 			}
+			enqueueSnackbar(newSnackbar);
 		} catch (error) {
 			console.log(error);
 		}

@@ -5,7 +5,7 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/use-regex: "true"
-    nginx.org/websocket-services: "message-srv"
+    nginx.org/websocket-services: "message-srv, notifications-srv"
 spec:
   rules:
     - host: orion-messaging.com
@@ -30,6 +30,13 @@ spec:
             backend:
               service:
                 name: message-srv
+                port:
+                  number: 8080
+          - path: /socket/notifications-socket/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: notifications-srv
                 port:
                   number: 8080
           - path: /?(.*)

@@ -8,6 +8,7 @@ import SentRequestListItem from "../RequestListItem/SentRequestListItem";
 
 function SentFriendRequests({ sentRequests }: SentFriendRequestsProps) {
 	const { users } = useUserStore((state) => ({ users: state.users }), shallow);
+	console.log("users", users);
 	if (!sentRequests) {
 		return (
 			<>
@@ -16,12 +17,13 @@ function SentFriendRequests({ sentRequests }: SentFriendRequestsProps) {
 			</>
 		);
 	}
-
 	return (
 		<>
 			<ListHeading>Sent Requests</ListHeading>
 			<ul>
 				{sentRequests.map((sentRequest) => {
+					if (!users[sentRequest.receiverId]) return;
+
 					return (
 						<SentRequestListItem
 							userId={sentRequest.receiverId}

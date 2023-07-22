@@ -8,8 +8,11 @@ import {
 	Friend,
 	MessageFields,
 	Messages,
+	Snackbar,
 	Users,
 } from "../types/UserContextTypes";
+import getUsername from "../utils/getUsername";
+import { Queue } from "../utils/Queue";
 
 type UserState = {
 	userId: string | null;
@@ -38,6 +41,11 @@ type UserState = {
 	setMessages: (conversationId: string, updatedFields: MessageFields) => void;
 	showUserList: boolean;
 	setShowUserList: () => void;
+	snackbar: Queue<Snackbar>;
+	enqueueSnackbar: (newSnackbar: Snackbar) => void;
+	setSnackbar: (updatedSnackbar: Queue<Snackbar>) => void;
+	currentSnackbar: Snackbar;
+	setCurrentSnackbar: (snackbar?: Snackbar) => void;
 };
 
 export const useUserStore = create<UserState>((set) => ({
@@ -48,7 +56,10 @@ export const useUserStore = create<UserState>((set) => ({
 	users: {},
 	setUsers: (userId, username) =>
 		set((state) => ({
-			users: { ...state.users, [userId]: { username } },
+			users: {
+				...state.users,
+				[userId]: { username: username },
+			},
 		})),
 	friends: [],
 	setFriends: (friends) => set(() => ({ friends })),
@@ -94,4 +105,20 @@ export const useUserStore = create<UserState>((set) => ({
 	showUserList: true,
 	setShowUserList: () =>
 		set((state) => ({ showUserList: !state.showUserList })),
+	snackbar: new Queue<Snackbar>(),
+	enqueueSnackbar: (newSnackbar) =>
+		set((state) => {
+			const updatedSnackbar = new Queue<Snackbar>(state.snackbar);
+			updatedSnackbar.offer(newSnackbar);
+			return {
+				snackbar: updatedSnackbar,
+			};
+		}),
+	setSnackbar: (updatedSnackbar) =>
+		set(() => ({ snackbar: new Queue<Snackbar>(updatedSnackbar) })),
+	currentSnackbar: { showSnackbar: false, message: null, type: "success" },
+	setCurrentSnackbar: (currentSnackbar) =>
+		set((state) => ({
+			currentSnackbar: { ...state.currentSnackbar, ...currentSnackbar },
+		})),
 }));

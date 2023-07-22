@@ -12,8 +12,12 @@ import FriendContextMenu from "./FriendListItem/FriendContextMenu";
 import FriendListItem from "./FriendListItem/FriendListItem";
 
 function FriendList() {
-	const { friends, users } = useUserStore(
-		(state) => ({ friends: state.friends, users: state.users }),
+	const { friends, users, enqueueSnackbar } = useUserStore(
+		(state) => ({
+			friends: state.friends,
+			users: state.users,
+			enqueueSnackbar: state.enqueueSnackbar,
+		}),
 		shallow
 	);
 	const [friendsQuery, setFriendsQuery] = useState<string>("");
@@ -44,6 +48,26 @@ function FriendList() {
 
 	const closeContextMenu = () => {
 		setSelectedFriend(null);
+	};
+
+	const addSnackbar = () => {
+		const newSnackbar = {
+			showSnackbar: true,
+			message: "test",
+			type: "success",
+		};
+
+		enqueueSnackbar(newSnackbar);
+	};
+
+	const addErrorSnackbar = () => {
+		const newSnackbar = {
+			showSnackbar: true,
+			message: "test",
+			type: "error",
+		};
+
+		enqueueSnackbar(newSnackbar);
 	};
 
 	return (
@@ -86,6 +110,8 @@ function FriendList() {
 					ref={ref}
 				/>
 			)}
+			<button onClick={addSnackbar}>Hi</button>
+			<button onClick={addErrorSnackbar}>Bye</button>
 		</ListContainer>
 	);
 }

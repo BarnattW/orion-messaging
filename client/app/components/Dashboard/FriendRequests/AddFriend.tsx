@@ -1,5 +1,6 @@
 "use client";
 import { RefObject, useRef } from "react";
+import { shallow } from "zustand/shallow";
 
 import { useUserStore } from "@/app/store/userStore";
 
@@ -7,7 +8,13 @@ import ListHeading from "../ListWrappers/ListHeading";
 
 function AddFriend() {
 	const addUsername: RefObject<HTMLInputElement> = useRef(null);
-	const username = useUserStore((state) => state.username);
+	const { username, enqueueSnackbar } = useUserStore(
+		(state) => ({
+			username: state.username,
+			enqueueSnackbar: state.enqueueSnackbar,
+		}),
+		shallow
+	);
 
 	// submitting friend requests
 	function keyDownHandler(event: React.KeyboardEvent<HTMLInputElement>) {
@@ -20,6 +27,7 @@ function AddFriend() {
 		const receiverUsername = addUsername.current?.value;
 		if (receiverUsername === "") return;
 
+		let newSnackbar;
 		const response = await fetch("/api/connect/sendFriendRequest", {
 			method: "POST",
 			body: JSON.stringify({
@@ -32,12 +40,19 @@ function AddFriend() {
 		});
 
 		if (response.ok) {
-			// update with common error handling
-			console.log(response);
+			newSnackbar = {
+				type: "success",
+				message: "Friend Request Successfully Sent",
+				showSnackbar: true,
+			};
 		} else {
-			//update the ui
-			console.log(response);
+			newSnackbar = {
+				type: "error",
+				message: "Failed to Send Friend Request",
+				showSnackbar: true,
+			};
 		}
+		enqueueSnackbar(newSnackbar);
 		addUsername.current!.value = "";
 	}
 

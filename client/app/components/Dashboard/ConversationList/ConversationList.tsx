@@ -87,15 +87,13 @@ function ConversationList() {
 				// update users
 				groupRequests.incoming.forEach(async (receivedRequest: Request) => {
 					const { senderId } = receivedRequest;
-					if (senderId in users) return;
-					const username = await getUsername(senderId);
-					setUsers(senderId, username);
+					const senderUsername = await getUsername(senderId);
+					setUsers(senderId, senderUsername);
 				});
 				groupRequests.outgoing.forEach(async (sentRequest: Request) => {
 					const { receiverId } = sentRequest;
-					if (receiverId in users) return;
-					const username = await getUsername(receiverId);
-					setUsers(receiverId, username);
+					const receiverUsername = await getUsername(receiverId);
+					setUsers(receiverId, receiverUsername);
 				});
 			} catch (error) {
 				console.log(error);
