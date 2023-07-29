@@ -89,7 +89,7 @@ function ConversationListItem({
 				setActiveConversation({
 					title: conversationTitle,
 					conversationId: conversationId,
-					latestMessageTimestamp: latestMessageTimestamp,
+					latestMessageTimestamp: new Date(),
 					hasMore: true,
 					lastScrollTop: null,
 					canLoad: true,

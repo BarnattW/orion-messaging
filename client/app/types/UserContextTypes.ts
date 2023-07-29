@@ -84,3 +84,9 @@ export interface UserContextProps {
 	messages: Messages;
 	setMessages: React.Dispatch<React.SetStateAction<Messages>>;
 }
+
+export interface Snackbar {
+	showSnackbar: boolean;
+	message: string | null;
+	type: string;
+}

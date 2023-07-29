@@ -29,8 +29,11 @@ export class messageProducer implements SimpleProducer {
 	public async send(message: any): Promise<void> {
 		try {
 			await this.producer.send({
-				topic: "user-created",
-				messages: [{ value: message }],
+				topic: "message",
+				messages: [{ value: JSON.stringify({
+					type: "send",
+					message: message 
+				})}],
 			});
 		} catch (e) {
 			console.log("Error sending message to Kafka", e);
