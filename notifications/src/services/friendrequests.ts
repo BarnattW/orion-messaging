@@ -1,9 +1,14 @@
 import { redisClient } from '../redis/redis';
 import { consumer } from '../kafka/kafka_consumer';
-import { getKeySocketPairs } from '../utils/sockets';
 import { User } from '../models/user';
+import { sendNotification } from './sendNotification';
+import { Notifications } from '../models/notifications';
 
-import { Notification } from '../models/notifications';
+enum NotificationType {
+  Friends = "friends",
+  Messages = "messages",
+  Groups = "groups",
+}
 
 export async function handleFriends() {
 
@@ -22,13 +27,22 @@ export async function handleFriends() {
                 const receiver = await User.findOne({userId: receiverId});
                 if (receiver && receiver.receiveNotifications){
                   if (!receiver.onlineStatus){
-                    const notifi = new Notification();
+                    const notifi = new Notifications();
                     notifi.message = `You have a new friend request from ${senderUsername}`;
                     notifi.type = "friends"
+                    notifi.receiverId = receiverId;
+                    notifi.conversationName = senderUsername;
                     notifi.save();
                     console.log(notifi);
                   }
-                  await sendFriendRequestNotification(receiverId, `You have a new friend request from ${senderUsername}`);
+                  const notifi = {
+                    senderUsername: senderUsername,
+                    receiverId: receiverId,
+                    type: NotificationType.Friends,
+                    conversationName: senderUsername,
+                    message: `You have a new friend request from ${senderUsername}`
+                  }
+                  await sendNotification(receiverId, notifi, "friendRequestReceived");
                 } 
             }
         }
@@ -37,18 +51,5 @@ export async function handleFriends() {
   }
 
 
-  export async function sendFriendRequestNotification(receiverId: string, message: string) {
-
-    try {
-      const socketInfo = await getKeySocketPairs(receiverId, "notification");
-      if (socketInfo) {
-        socketInfo.emit("friendRequestReceived", message);
-        console.log(`friend request received for receiver ID ${receiverId}`);
-      } else {
-        console.log(`No socket found for receiver ID ${receiverId}`);
-      }
-    } catch (error) {
-      console.error('Error emitting event:', error);
-    }
-  }
+  
 

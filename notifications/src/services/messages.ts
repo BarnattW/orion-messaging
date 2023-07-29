@@ -1,9 +1,14 @@
 import { redisClient } from '../redis/redis';
 import { consumer } from '../kafka/kafka_consumer';
-import { getKeySocketPairs } from '../utils/sockets';
 import { User } from '../models/user';
+import { sendNotification } from './sendNotification';
+import { Notifications } from '../models/notifications';
 
-import { Notification } from '../models/notifications';
+enum NotificationType {
+  Friends = "friends",
+  Messages = "messages",
+  Groups = "groups",
+}
 
 export async function handleMessages() {
 
@@ -18,18 +23,27 @@ export async function handleMessages() {
 
         if (messageType && value){   
             if (topic === "messages" && messageType === "send"){
-                const {message, conversationName, receiverIds} = value;
+                const {message, conversationName, receiverIds, senderUsername} = value;
                 const receivers = await User.find({ userId: { $in: receiverIds } });
                 receivers.forEach(async (receiver) => {
                   if (receiver && receiver.receiveNotifications){
                     if (!receiver.onlineStatus){
-                      const notifi = new Notification();
-                      notifi.message = `You have a new message in ${conversationName} \n ${message}`;
+                      const notifi = new Notifications();
+                      notifi.message = message;
                       notifi.type = "messages"
+                      notifi.receiverId = receiver.userId;
+                      notifi.conversationName = conversationName;
                       notifi.save();
                       console.log(notifi);
                     }
-                    await sendMessageNotification(receiver.userId, `You have a new message in ${conversationName} \n ${message}`);
+                    const notifi = {
+                      senderUsername: senderUsername,
+                      receiverId: receiver.userId,
+                      type: NotificationType.Messages,
+                      conversationName: conversationName,
+                      message: message
+                    }
+                    await sendNotification(receiver.userId, notifi, "messageReceived");
                   } 
                 });
                 
@@ -39,19 +53,4 @@ export async function handleMessages() {
     });
   }
 
-
-  export async function sendMessageNotification(receiverId: string, message: string) {
-
-    try {
-      const socketInfo = await getKeySocketPairs(receiverId, "notification");
-      if (socketInfo) {
-        socketInfo.emit("messageReceived", message);
-        console.log(`message received for receiver ID ${receiverId}`);
-      } else {
-        console.log(`No socket found for receiver ID ${receiverId}`);
-      }
-    } catch (error) {
-      console.error('Error emitting event:', error);
-    }
-  }
 
