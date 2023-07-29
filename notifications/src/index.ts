@@ -5,6 +5,7 @@ import { Server, Socket } from 'socket.io';
 import { addUser } from "./utils/userCreation";
 import { handleFriends } from "./services/friendrequests";
 import { handleMessages } from "./services/messages";
+import { handleGroups } from "./services/grouprequests";
 
 const app = express();
 const PORT = 3000;
@@ -16,6 +17,7 @@ mongoose
 
 handleMessages();
 handleFriends();
+handleGroups();
 addUser();
 app.use(express.json());
 
