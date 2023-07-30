@@ -10,10 +10,10 @@ enum NotificationType {
   Groups = "groups",
 }
 
-export async function handleFriends() {
+export async function handleGroups() {
 
     await consumer.connect();
-    await consumer.subscribe({ topic: 'friends', fromBeginning: true });
+    await consumer.subscribe({ topic: 'groups', fromBeginning: true });
   
     await consumer.run({
       eachMessage: async ({ topic, partition, message }) => {
@@ -22,27 +22,27 @@ export async function handleFriends() {
         const { messageType, value } = parseMessage;
 
         if (messageType && value){   
-            if (topic === "friends" && messageType === "requestCreated"){
-                const {receiverId, senderUsername, } = value;
+            if (topic === "groups" && messageType === "requestCreated"){
+                const {receiverId, senderUsername, groupName} = value;
                 const receiver = await User.findOne({userId: receiverId});
                 if (receiver && receiver.receiveNotifications){
                   if (!receiver.onlineStatus){
                     const notifi = new Notifications();
-                    notifi.message = `You have a new friend request from ${senderUsername}`;
-                    notifi.type = "friends"
+                    notifi.message = `${senderUsername} invited you to ${groupName}`;
+                    notifi.type = "groups"
                     notifi.receiverId = receiverId;
-                    notifi.conversationName = senderUsername;
+                    notifi.conversationName = groupName;
                     notifi.save();
                     console.log(notifi);
                   }
                   const notifi = {
                     senderUsername: senderUsername,
                     receiverId: receiverId,
-                    type: NotificationType.Friends,
+                    type: NotificationType.Groups,
                     conversationName: senderUsername,
-                    message: `You have a new friend request from ${senderUsername}`
+                    message: `${senderUsername} invited you to ${groupName}`
                   }
-                  await sendNotification(receiverId, notifi, "friendRequestReceived");
+                  await sendNotification(receiverId, notifi, "groupRequestReceived");
                 } 
             }
         }
