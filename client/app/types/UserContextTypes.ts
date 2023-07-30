@@ -90,3 +90,10 @@ export interface Snackbar {
 	message: string | null;
 	type: string;
 }
+
+export interface Notification {
+	senderId: string;
+	receiverId: string;
+	message: string;
+	type: string;
+}

@@ -23,7 +23,6 @@ export const io = new Server(server, {
 	path: "/socket/notifications-socket"
   });
 
-
 server.listen(8080, () => {
   console.log('Socket.IO server is running');
 });
