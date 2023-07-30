@@ -16,6 +16,7 @@ export async function handleNotifications() {
     await consumer.subscribe({ topic: 'friends', fromBeginning: true });
     await consumer.subscribe({ topic: 'messages', fromBeginning: true });
     await consumer.subscribe({ topic: 'groups', fromBeginning: true });
+    await consumer.subscribe({ topic: 'user-created', fromBeginning: true });
   
     await consumer.run({
       eachMessage: async ({ topic, partition, message }) => {
@@ -24,6 +25,14 @@ export async function handleNotifications() {
         const { messageType, value } = parseMessage;
 
         if (messageType && value){   
+            if (topic === "user-created"){
+                if (message.value){
+                    const newUser = new User();
+                    //@ts-ignore
+                    newUser.userId = message.value; //assuming message is a json with userId
+                    newUser.save();
+                }
+            }
             if (topic === "friends" && messageType === "requestCreated"){
                 const {receiverId, senderUsername, } = value;
                 const receiver = await User.findOne({userId: receiverId});
