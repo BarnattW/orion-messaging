@@ -2,7 +2,6 @@ import mongoose from "mongoose";
 import express from 'express';
 import http from 'http';
 import { Server, Socket } from 'socket.io';
-import { addUser } from "./utils/userCreation";
 import { handleNotifications } from "./services/handleNotifications";
 
 const app = express();
@@ -13,8 +12,6 @@ mongoose
 	.connect(URI)
 	.catch((error) => console.error("Connection error:", error));
 
-
-addUser();
 handleNotifications();
 app.use(express.json());
 
