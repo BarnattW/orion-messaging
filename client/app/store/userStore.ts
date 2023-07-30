@@ -8,10 +8,10 @@ import {
 	Friend,
 	MessageFields,
 	Messages,
+	Notification,
 	Snackbar,
 	Users,
 } from "../types/UserContextTypes";
-import getUsername from "../utils/getUsername";
 import { Queue } from "../utils/Queue";
 
 type UserState = {
@@ -46,6 +46,8 @@ type UserState = {
 	setSnackbar: (updatedSnackbar: Queue<Snackbar>) => void;
 	currentSnackbar: Snackbar;
 	setCurrentSnackbar: (snackbar?: Snackbar) => void;
+	notifications: Notification[];
+	setNotifications: (notifications: Notification[]) => void;
 };
 
 export const useUserStore = create<UserState>((set) => ({
@@ -120,5 +122,10 @@ export const useUserStore = create<UserState>((set) => ({
 	setCurrentSnackbar: (currentSnackbar) =>
 		set((state) => ({
 			currentSnackbar: { ...state.currentSnackbar, ...currentSnackbar },
+		})),
+	notifications: [],
+	setNotifications: (newNotifications) =>
+		set((state) => ({
+			notifications: [...state.notifications, ...newNotifications],
 		})),
 }));

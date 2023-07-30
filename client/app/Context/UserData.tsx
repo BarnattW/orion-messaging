@@ -6,6 +6,7 @@ import useSWR from "swr";
 import { shallow } from "zustand/shallow";
 
 import messageSocket from "../sockets/messageSocket";
+import notificationSocket from "../sockets/notificationSocket";
 import { useUserStore } from "../store/userStore";
 import { Conversation, Friend } from "../types/UserContextTypes";
 import getUsername from "../utils/getUsername";
@@ -27,6 +28,7 @@ export function UserData({
 		setConversations,
 		users,
 		setUsers,
+		setNotifications,
 	} = useUserStore(
 		(state) => ({
 			setUserId: state.setUserId,
@@ -35,6 +37,7 @@ export function UserData({
 			setConversations: state.setConversations,
 			users: state.users,
 			setUsers: state.setUsers,
+			setNotifications: state.setNotifications,
 		}),
 		shallow
 	);
@@ -58,6 +61,16 @@ export function UserData({
 		}
 		settingUserId();
 	}, [setUserId, userId]);
+
+	useEffect(() => {
+		messageSocket.emit("userId", { userId });
+		notificationSocket.emit("userId", { userId });
+
+		return () => {
+			messageSocket.off("userId");
+			notificationSocket.off("userId");
+		};
+	}, [userId]);
 
 	useEffect(() => {
 		async function getUserData() {
@@ -121,6 +134,40 @@ export function UserData({
 		}
 		getUserConversations();
 	}, [setConversations, userId, setUsers]);
+
+	useEffect(() => {
+		function receiveUserConversationsUpdates() {
+			try {
+				// when adding a group
+				messageSocket.on(
+					"createdConversation",
+					(conversation: { data: Conversation }) => {
+						console.log(conversation);
+						if (conversation.data) {
+							setConversations([conversation.data]);
+							conversation.data.userData.forEach(async (userData) => {
+								const { userId } = userData;
+								if (userId in users) return;
+								try {
+									const username = await getUsername(userId);
+									setUsers(userId, username);
+								} catch (error) {
+									console.log(
+										`Error retrieving username for userId: ${userId}`,
+										error
+									);
+									// Handle the error, e.g., show an error message to the user
+								}
+							});
+						}
+					}
+				);
+			} catch (error) {
+				console.log(error);
+			}
+		}
+		receiveUserConversationsUpdates();
+	}, [setConversations, setUsers]);
 
 	useEffect(() => {
 		function receiveUserConversationsUpdates() {

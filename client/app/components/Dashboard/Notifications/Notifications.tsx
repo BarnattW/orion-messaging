@@ -1,6 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { shallow } from "zustand/shallow";
 
 import useComponentVisible from "@/app/custom-hooks/useComponentVisible";
+import notificationSocket from "@/app/sockets/notificationSocket";
+import { useUserStore } from "@/app/store/userStore";
 
 import NotificationBellIcon from "../../Icons/NotificationBellIcon";
 import NotificationCard from "./NotificationCard";
@@ -16,6 +19,13 @@ function Notifications() {
 		x: number;
 		y: number;
 	}>({ x: 0, y: 0 });
+	const { notifications, setNotifications } = useUserStore(
+		(state) => ({
+			notifications: state.notifications,
+			setNotifications: state.setNotifications,
+		}),
+		shallow
+	);
 
 	function handleNotificationClick(event: React.MouseEvent<HTMLDivElement>) {
 		const bellIconRect = event.currentTarget.getBoundingClientRect();
@@ -24,6 +34,30 @@ function Notifications() {
 		setNotificationMenuPosition({ x, y });
 		setIsComponentVisible((prevBool) => !prevBool);
 	}
+
+	useEffect(() => {
+		async function handleNotifications() {
+			try {
+				await notificationSocket.on("friendRequestReceived", (socketEvent) => {
+					if (!socketEvent) return;
+					console.log(socketEvent);
+					setNotifications([socketEvent]);
+				});
+				await notificationSocket.on("messageReceived", (socketEvent) => {
+					if (!socketEvent) return;
+					console.log(socketEvent);
+					setNotifications([socketEvent]);
+				});
+			} catch (error) {
+				console.log(error);
+			}
+		}
+		handleNotifications();
+
+		return () => {
+			notificationSocket.off("friendRequestReceived");
+		};
+	}, [setNotifications]);
 
 	return (
 		<NotificationWrapper>
@@ -38,6 +72,17 @@ function Notifications() {
 						}}
 					>
 						<NotificationHeading>Notifications</NotificationHeading>
+						{notifications.map((notification) => {
+							return (
+								<NotificationCard
+									key={notification.message}
+									altText={notification.message}
+									users={["a"]}
+									type="default"
+									conversationName="vanyDOG"
+								/>
+							);
+						})}
 						<NotificationCard
 							altText="dummy"
 							users={["a", "b"]}
