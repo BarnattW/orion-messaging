@@ -3,9 +3,7 @@ import express from 'express';
 import http from 'http';
 import { Server, Socket } from 'socket.io';
 import { addUser } from "./utils/userCreation";
-import { handleFriends } from "./services/friendrequests";
-import { handleMessages } from "./services/messages";
-import { handleGroups } from "./services/grouprequests";
+import { handleNotifications } from "./services/handleNotifications";
 
 const app = express();
 const PORT = 3000;
@@ -15,10 +13,9 @@ mongoose
 	.connect(URI)
 	.catch((error) => console.error("Connection error:", error));
 
-handleMessages();
-handleFriends();
-handleGroups();
+
 addUser();
+handleNotifications();
 app.use(express.json());
 
 const server = http.createServer(app);
