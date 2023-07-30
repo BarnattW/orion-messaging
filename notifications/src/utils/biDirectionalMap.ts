@@ -10,25 +10,25 @@ export function addToMap(userId: string, socketId: string) {
     }
   }
   
-  export async function getSocketIdForUser(userId: string){
-    try {
-      const members = await redisClient.smembers("usersToSockets");
-  
-      for (const member of members) {
-        if (member.includes(userId)) {
-          const socketId = member.split(":")[1];
-          console.log(`Socket ID for userId ${userId}:`, socketId);
-          return socketId;
-        }
+export async function getSocketIdForUser(userId: string){
+  try {
+    const members = await redisClient.smembers("usersToSockets");
+
+    for (const member of members) {
+      if (member.includes(userId)) {
+        const socketId = member.split(":")[1];
+        console.log(`Socket ID for userId ${userId}:`, socketId);
+        return socketId;
       }
-  
-      console.log(`No socket found for userId ${userId}`);
-      return null;
-    } catch (error) {
-      console.error('Error retrieving socketId:', error);
-      return null;
     }
+
+    console.log(`No socket found for userId ${userId}`);
+    return null;
+  } catch (error) {
+    console.error('Error retrieving socketId:', error);
+    return null;
   }
+}
   
   export async function getUserIdForSocket(socketId: string){
     try {
