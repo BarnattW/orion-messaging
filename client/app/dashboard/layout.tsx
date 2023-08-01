@@ -8,7 +8,6 @@ async function fetchUserId() {
 	try {
 		const cookieStore = cookies();
 		const userJWT = cookieStore.get("cookie");
-		console.log(userJWT);
 		const response = await fetch(
 			"http://auth-srv.default.svc.cluster.local:3000/api/auth/getUserId",
 			{
@@ -20,7 +19,6 @@ async function fetchUserId() {
 				},
 			}
 		);
-		console.log(response);
 		if (!response.ok) {
 			throw new Error();
 		}
@@ -37,7 +35,6 @@ export default async function DashboardLayout({
 	children: React.ReactNode;
 }) {
 	const userId = await fetchUserId();
-	console.log(userId);
 	if (!userId) {
 		redirect("/auth/login");
 	}

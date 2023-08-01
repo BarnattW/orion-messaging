@@ -1,10 +1,14 @@
 import mongoose from "mongoose";
-import express, {Request, Response } from 'express';
+import express from 'express';
 import http from 'http';
 import { Server, Socket } from 'socket.io';
-import { removeSocketForUser, storeKeySocketPair } from "./utils/sockets";
+import { handleNotifications } from "./services/handleNotifications";
 import { User } from "./models/user";
-import { addUser } from "./utils/userCreation";
+import { sendCachedNotifications } from "./services/sendNotification";
+import { addToMap, getSocketIdForUser, getUserIdForSocket, removeFromMap  } from "./utils/biDirectionalMap";
+import { deleteNotification } from "./services/deleteNotifications";
+import { pullNotificationsForUser } from "./utils/sockets";
+
 
 const app = express();
 const PORT = 3000;
@@ -14,16 +18,15 @@ mongoose
 	.connect(URI)
 	.catch((error) => console.error("Connection error:", error));
 
-
-
+handleNotifications();
 app.use(express.json());
 
 const server = http.createServer(app);
-const io = new Server(server, {
+export const io = new Server(server, {
 	path: "/socket/notifications-socket"
   });
 
-io.on('connection', async(socket: Socket) => {
+  io.on('connection', async(socket: Socket) => {
 	console.log('socket connected');
 	socket.on("connection", () => {
 	socket.emit("connection", {
@@ -32,27 +35,41 @@ io.on('connection', async(socket: Socket) => {
 });
 
 	socket.on("userId", async (userId) => {
-		const socketString = JSON.stringify(socket);
-		storeKeySocketPair(userId, "notification", socketString);
+		addToMap(userId, socket.id);
 		const user = await User.findOne({userId: userId});
 		if (!user){
 			return;
 		}
 		user.onlineStatus = true;
+		const notifications = await pullNotificationsForUser(userId);
+		if (notifications.length != 0){
+			sendCachedNotifications(userId, notifications, "cached");
+		}
+
+		else{
+			console.log("no notifications found")
+		}
+		
 	});
 
-	socket.on('disconnect', async(userId) => {
+	socket.on("deleteNotification", async (notifId) =>{
+		const deleted = await deleteNotification(notifId);
+		if (deleted.length != 0){
+			socket.emit("error deleting notification")
+		}
+	})
+
+	socket.on('disconnect', async() => {
 		console.log('socket connection closed');
-		removeSocketForUser(userId, "notification");
+		const userId = await getUserIdForSocket(socket.id);
 		const user = await User.findOne({userId: userId});
-		if (!user){
+		if (!user || !userId){
+			console.log("error while disconnecting")
 			return;
 		}
+		removeFromMap(userId,socket.id);
 		user.onlineStatus = false;
   });
-
-addUser();
-
 });
 
 server.listen(8080, () => {

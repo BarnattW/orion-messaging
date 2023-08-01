@@ -12,12 +12,11 @@ import FriendContextMenu from "./FriendListItem/FriendContextMenu";
 import FriendListItem from "./FriendListItem/FriendListItem";
 
 function FriendList() {
-	const { friends, users, snackbar, setSnackbar } = useUserStore(
+	const { friends, users, enqueueSnackbar } = useUserStore(
 		(state) => ({
 			friends: state.friends,
 			users: state.users,
-			snackbar: state.snackbar,
-			setSnackbar: state.setSnackbar,
+			enqueueSnackbar: state.enqueueSnackbar,
 		}),
 		shallow
 	);
@@ -52,9 +51,23 @@ function FriendList() {
 	};
 
 	const addSnackbar = () => {
-		snackbar.offer({ showSnackbar: true, message: "test", type: "success" });
+		const newSnackbar = {
+			showSnackbar: true,
+			message: "test",
+			type: "success",
+		};
 
-		setSnackbar(snackbar);
+		enqueueSnackbar(newSnackbar);
+	};
+
+	const addErrorSnackbar = () => {
+		const newSnackbar = {
+			showSnackbar: true,
+			message: "test",
+			type: "error",
+		};
+
+		enqueueSnackbar(newSnackbar);
 	};
 
 	return (
@@ -98,6 +111,7 @@ function FriendList() {
 				/>
 			)}
 			<button onClick={addSnackbar}>Hi</button>
+			<button onClick={addErrorSnackbar}>Bye</button>
 		</ListContainer>
 	);
 }

@@ -27,6 +27,7 @@ function ReceivedFriendRequests({ receivedRequests }: ReceviedRequestsProps) {
 			<ListHeading>Friend Requests</ListHeading>
 			<ul>
 				{receivedRequests?.map((receivedRequest) => {
+					if (!users[receivedRequest.senderId]) return;
 					return (
 						<RecievedRequestListItem
 							userId={receivedRequest.senderId}

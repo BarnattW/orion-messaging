@@ -1,15 +1,20 @@
+import { shallow } from "zustand/shallow";
+
 import { useUserStore } from "@/app/store/userStore";
 import { RequestListItemProps } from "@/app/types/FriendRequests";
 
 import Avatar from "../../Avatar/Avatar";
 
 function SentRequestListItem(friendRequestListItemProps: RequestListItemProps) {
-	const { snackbar, setSnackbar } = useUserStore((state) => ({
-		snackbar: state.snackbar,
-		setSnackbar: state.setSnackbar,
-	}));
+	const { enqueueSnackbar } = useUserStore(
+		(state) => ({
+			enqueueSnackbar: state.enqueueSnackbar,
+		}),
+		shallow
+	);
 	async function deleteRequest() {
 		try {
+			let newSnackbar;
 			if (friendRequestListItemProps.requestType === "friend") {
 				const response = await fetch(
 					`/api/connect/rejectFriendRequest/${friendRequestListItemProps.requestId}`,
@@ -22,17 +27,17 @@ function SentRequestListItem(friendRequestListItemProps: RequestListItemProps) {
 				);
 
 				if (!response.ok) {
-					snackbar.offer({
+					newSnackbar = {
 						type: "error",
-						message: "Failed to Send Friend Request",
-						showSnackbar: false,
-					});
+						message: "Failed to Delete Friend Request",
+						showSnackbar: true,
+					};
 				} else {
-					snackbar.offer({
+					newSnackbar = {
 						type: "success",
-						message: "Sent Friend Request",
-						showSnackbar: false,
-					});
+						message: "Deleted Friend Request Successfully",
+						showSnackbar: true,
+					};
 				}
 			}
 			if (friendRequestListItemProps.requestType === "group") {
@@ -47,20 +52,20 @@ function SentRequestListItem(friendRequestListItemProps: RequestListItemProps) {
 				);
 
 				if (!response.ok) {
-					snackbar.offer({
+					newSnackbar = {
 						type: "error",
-						message: "Failed to Send Friend Request",
-						showSnackbar: false,
-					});
+						message: "Failed to Delete Group Request",
+						showSnackbar: true,
+					};
 				} else {
-					snackbar.offer({
+					newSnackbar = {
 						type: "success",
-						message: "Sent Friend Request",
-						showSnackbar: false,
-					});
+						message: "Deleted Group Request Successfully",
+						showSnackbar: true,
+					};
 				}
 			}
-			setSnackbar(snackbar);
+			if (newSnackbar) enqueueSnackbar(newSnackbar);
 		} catch (error) {
 			console.log(error);
 		}

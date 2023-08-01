@@ -1,9 +1,9 @@
 import { IUser, User } from "../../models/user";
 import express, { Request, Response } from "express";
-import { insertionSortFriends } from "./functions/sort";
 import { consumer } from "./kafka-ops/kafkaproducer";
 import { publishMessage } from "./kafka-ops/kafkaproducer";
 import { KafkaMessage } from "kafkajs";
+import { getUsername, setUsername } from "../../redis/lrucache";
 
 const router = express.Router();
 
@@ -33,6 +33,7 @@ export async function createUser() {
 							username: savedUser.username,
 							userId: savedUser.userId,
 						};
+						setUsername(newUser.userId, newUser.username);
 						publishMessage("user-data", userData, "data");
 					})
 					.catch((error) => {
@@ -55,16 +56,12 @@ router.put(
 				{ username: newUsername },
 				{ new: true }
 			);
+			
+			await setUsername(userId, newUsername);
+
 			if (!user) {
 				return res.status(404).json({ message: "user not found" });
 			}
-
-			const usersWithUserAsFriend = await User.find({ friends: userId });
-
-			usersWithUserAsFriend.forEach(async (user) => {
-				await insertionSortFriends(user);
-				user.save();
-			});
 
 			return res.json(user);
 		} catch (error) {
@@ -86,7 +83,9 @@ router.get(
 			if (!user) {
 				return res.status(404).json({ message: "user not found" });
 			}
-			return res.json(user.username);
+			const username = await getUsername(userId);
+
+			return res.json(username);
 		} catch (error) {
 			console.error(error);
 			return res.status(500).json({ message: "Server error" });

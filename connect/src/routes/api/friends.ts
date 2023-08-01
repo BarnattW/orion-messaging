@@ -32,7 +32,7 @@ router.delete(
 			if (friendIndex === -1) {
 				return res
 					.status(404)
-					.json({ message: "Friend not found in ${user}'s friends list" });
+					.json({ message: `Friend not found in ${user}'s friends list` });
 			}
 
 			user.friends.splice(friendIndex, 1);

@@ -4,13 +4,21 @@ import { shallow } from "zustand/shallow";
 
 import { useUserStore } from "@/app/store/userStore";
 
+import ErrorIcon from "../Icons/ErrorIcon";
 import ExitIcon from "../Icons/ExitIcon";
+import SuccessIcon from "../Icons/SuccessIcon";
+
+const errorClassName =
+	"fixed bottom-4 left-1/2 z-50 w-11/12 -translate-x-1/2 transform rounded bg-red-600 text-white py-4 shadow md:w-1/2";
+const successClassName =
+	"fixed bottom-4 left-1/2 z-50 w-11/12 -translate-x-1/2 transform rounded bg-green-600 text-white py-4 shadow md:w-1/2";
+const errorTimeBarClassName =
+	"absolute bottom-0 h-1 rounded bg-rose-950 transition-all";
+const successTimeBarClassName =
+	"absolute bottom-0 h-1 rounded bg-green-300 transition-all";
 
 function Snackbar() {
-	// to-do -> implement visuals (html and css), snackbar methods, and a queue
-	// snackbar methods: timer, close button, pause on tab and hover
-	// props: message, snackbar type (error, success), and
-	// state from zustand: snackbarQueue -> each queue item has a message and type
+	// snackbar methods: pause on tab and hover
 	const { snackbar, setSnackbar, currentSnackbar, setCurrentSnackbar } =
 		useUserStore(
 			(state) => ({
@@ -23,16 +31,6 @@ function Snackbar() {
 		);
 	const [visible, setVisible] = useState(false);
 	const [progress, setProgress] = useState(100);
-	const errorClassName =
-		"fixed bottom-4 left-1/2 z-50 w-11/12 -translate-x-1/2 transform rounded bg-red-600 text-white py-4 shadow md:w-1/2";
-	const successClassName =
-		"fixed bottom-4 left-1/2 z-50 w-11/12 -translate-x-1/2 transform rounded bg-green-600 text-white py-4 shadow md:w-1/2";
-	const errorTimeBarClassName =
-		"absolute bottom-0 h-1 rounded bg-rose-900 transition-all";
-	const successTimeBarClassName =
-		"absolute bottom-0 h-1 rounded bg-green-300 transition-all";
-	console.log(snackbar, snackbar.isEmpty());
-	console.log(currentSnackbar);
 
 	const closeSnackbar = useCallback(() => {
 		console.log("closing snackbar");
@@ -69,7 +67,6 @@ function Snackbar() {
 	}, [currentSnackbar.showSnackbar, closeSnackbar]);
 
 	useEffect(() => {
-		console.log(!snackbar.isEmpty(), currentSnackbar.showSnackbar);
 		if (!snackbar.isEmpty() && currentSnackbar.showSnackbar == false) {
 			const newSnackbar = snackbar.poll();
 			//@ts-ignore
@@ -89,8 +86,15 @@ function Snackbar() {
 			}`}
 		>
 			<div className="flex justify-between px-4">
-				<div>
-					<span>{currentSnackbar.message}</span>
+				<div className="flex items-center justify-normal gap-2">
+					<span>
+						{currentSnackbar.type === "success" ? (
+							<SuccessIcon className="h-7 w-7 fill-gray-100" />
+						) : (
+							<ErrorIcon className="h-7 w-7 fill-gray-100" />
+						)}
+					</span>
+					<span className="text-lg">{currentSnackbar.message}</span>
 				</div>
 				<span
 					className="cursor-pointer hover:opacity-50"
