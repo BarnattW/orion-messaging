@@ -63,8 +63,8 @@ export function UserData({
 	}, [setUserId, userId]);
 
 	useEffect(() => {
-		messageSocket.emit("userId", { userId });
-		notificationSocket.emit("userId", { userId });
+		messageSocket.emit("userId", userId);
+		notificationSocket.emit("userId", userId);
 
 		return () => {
 			messageSocket.off("userId");
