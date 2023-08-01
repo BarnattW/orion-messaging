@@ -10,7 +10,6 @@ import { MessageContainer } from "../../models/MessageContainer";
 export const createConversation = (
   io: Server,
   socket: Socket,
-  connectedClients: Map<string, Socket>
 ) => {
   socket.on("createConversation", async (data) => {
     try {
@@ -54,7 +53,7 @@ export const createConversation = (
       }
 
       // Finds users connected and emits an event
-      const result = await socketsInConversation(conversation, connectedClients);
+      const result = await socketsInConversation(conversation);
 
       io.to(result as string[]).emit("createdConversation", {
         message: `Conversation of Type ${conversation.conversationType} created`,
@@ -72,7 +71,6 @@ export const createConversation = (
 export const addUser = (
   io: Server,
   socket: Socket,
-  connectedClients: Map<string, Socket>
 ) => {
   socket.on("addUser", async (data) => {
     try {
@@ -129,7 +127,7 @@ export const addUser = (
       }
 
       // Finds users connected and emits an event
-      const result = await socketsInConversation(conversation, connectedClients);
+      const result = await socketsInConversation(conversation);
 
       io.to(result as string[]).emit("addedUser", {
         message: `Added user ${userId} to conversation ${conversation._id}`,
@@ -147,7 +145,6 @@ export const addUser = (
 export const removeUser = (
   io: Server,
   socket: Socket,
-  connectedClients: Map<string, Socket>
 ) => {
   socket.on("removeUser", async (data) => {
     try {
@@ -196,8 +193,7 @@ export const removeUser = (
       
       // Finds users connected and emits an event 
       const result = await socketsInConversation(
-        conversation,
-        connectedClients
+        conversation
       );
 
       io.to(result as string[]).emit("removedUser", {
@@ -245,9 +241,7 @@ export const getUsers = (socket: Socket) => {
 };
 
 export const deleteConversation = (
-  io: Server,
   socket: Socket,
-  connectedClients: Map<string, Socket>
 ) => {
   socket.on("deleteConversation", async (data) => {
     try {

@@ -8,7 +8,6 @@ export async function createConversation(
   data: any,
   type: string,
   io: Server,
-  connectedClients: Map<string, Socket>
 ) {
   try {
     let newChat: any = {};
@@ -62,8 +61,7 @@ export async function createConversation(
       return console.log("Create Conversation: Failed to create conversation");
     }
     
-    const result = await socketsInConversation(conv, connectedClients);
-    console.log("Connected Clients: ", connectedClients)
+    const result = await socketsInConversation(conv);
     console.log("Result: ", result)
     io.to(result as string[]).emit("createdConversation", {
       message: `Conversation of Type ${conv.conversationType} created`,
@@ -79,7 +77,6 @@ export async function createConversation(
 export const addUser = async (
   data: any,
   io: Server,
-  connectedClients: Map<string, Socket>
 ) => {
   try {
     const { groupId, newUser }: { groupId: Types.ObjectId; newUser: string } =
@@ -114,7 +111,7 @@ export const addUser = async (
       userData,
     };
 
-    const result = await socketsInConversation(conv, connectedClients);
+    const result = await socketsInConversation(conv);
 
     io.to(result as string[]).emit("addedUser", {
       message: `Added user ${newUser} to conversation ${conv._id}`,
@@ -128,7 +125,6 @@ export const addUser = async (
 export const removeUser = async (
   data: any,
   io: Server,
-  connectedClients: Map<string, Socket>
 ) => {
   try {
 
@@ -174,8 +170,7 @@ export const removeUser = async (
     console.log(conversationWithUserInfo)
     // Finds users connected and emits an event 
     const result = await socketsInConversation(
-      conversation,
-      connectedClients
+      conversation
     );
 
     io.to(result as string[]).emit("removedUser", {
@@ -190,7 +185,6 @@ export const removeUser = async (
 export const renameConversation = async (
   data: any,
   io: Server,
-  connectedClients: Map<string, Socket>
 ) => {
   try {
     const { groupId, newTitle }: { groupId: Types.ObjectId, newTitle: string} = data;
@@ -215,8 +209,7 @@ export const renameConversation = async (
       userData
     }
     const result = await socketsInConversation(
-      conversation,
-      connectedClients
+      conversation
     );
 
     io.to(result as string[]).emit("renamedConversation", {
@@ -231,7 +224,6 @@ export const renameConversation = async (
 export const deleteConversation = async (
   data: any,
   io: Server,
-  connectedClients: Map<string, Socket>
 ) => {
   try {
     const { _id }: { _id: Types.ObjectId } = data;
@@ -243,8 +235,7 @@ export const deleteConversation = async (
     }
 
     const result = await socketsInConversation(
-      conversation,
-      connectedClients
+      conversation
     );
 
     io.to(result as string[]).emit("deletedConversation", {

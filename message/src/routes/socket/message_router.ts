@@ -14,7 +14,6 @@ producer.connect();
 export const sendMessage = (
   io: Server,
   socket: Socket,
-  connectedClients: Map<string, Socket>
 ) => {
   socket.on("sendMessage", async (data) => {
     try {
@@ -67,7 +66,7 @@ export const sendMessage = (
       conv.addMessage(createdMessage);
 
       // Finds users connected and emits an event
-      let result = await socketsInConversation(conv, connectedClients);
+      let result = await socketsInConversation(conv);
       io.sockets.to(result as string[]).emit("sentMessage", {
         message: "Message Sent",
         data: { message: createdMessage, conversationId },
@@ -162,7 +161,6 @@ export const getMessages = (socket: Socket) => {
 export const editMessage = (
   io: Server,
   socket: Socket,
-  connectedClients: Map<string, Socket>
 ) => {
   socket.on("editMessage", async (data) => {
     try {
@@ -202,7 +200,7 @@ export const editMessage = (
 			}
 
 			// Finds users connected and emits an event
-			let result = await socketsInConversation(conversation, connectedClients);
+			let result = await socketsInConversation(conversation);
 			io.sockets.to(result as string[]).emit("editedMessage", {
 				message: "Message Edited",
 				data: {
@@ -223,7 +221,6 @@ export const editMessage = (
 export const deleteMessage = (
   io: Server,
   socket: Socket,
-  connectedClients: Map<string, Socket>
 ) => {
   socket.on("deleteMessage", async (data) => {
     try {
@@ -267,7 +264,6 @@ export const deleteMessage = (
       // Finds users connected and emits an event
       const result = await socketsInConversation(
         conversation,
-        connectedClients
       );
 
       io.to(result as string[]).emit("deletedMessage", {

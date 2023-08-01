@@ -16,12 +16,10 @@ export interface SimpleConsumer {
 export class messageConsumer implements SimpleConsumer {
   private io: Server;
   private consumer: Consumer;
-  private connectedClients: Map<string, Socket>
 
-  constructor(io: Server, connectedClients: Map<string, Socket>) {
+  constructor(io: Server) {
     this.io = io;
     this.consumer = this.createConsumer();
-    this.connectedClients = connectedClients
   }
 
   private createConsumer(): Consumer {
@@ -62,27 +60,27 @@ export class messageConsumer implements SimpleConsumer {
 		}
 
 		if (topic == "friends" && messageType == "request-accepted") {
-			createConversation(value, topic, this.io, this.connectedClients);
+			createConversation(value, topic, this.io);
 		}
 
     if (topic == "group" && messageType == "create") {
-      createConversation(value, topic, this.io, this.connectedClients)
+      createConversation(value, topic, this.io)
     }
 
     if (topic == "group" && messageType == "accept") {
-      addUser(value, this.io, this.connectedClients)
+      addUser(value, this.io)
     }
 
     if (topic == "group" && messageType == "delete") {
-      deleteConversation(value, this.io, this.connectedClients)
+      deleteConversation(value, this.io)
     }
 
     if (topic == "group" && messageType == "rename") {
-      renameConversation(value, this.io, this.connectedClients)
+      renameConversation(value, this.io)
     }
 
     if (topic == "group" && messageType == "leave") {
-      removeUser(value, this.io, this.connectedClients)
+      removeUser(value, this.io)
     }
 	}
 

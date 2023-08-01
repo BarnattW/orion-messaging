@@ -16,6 +16,8 @@ import { deleteMessage, editMessage, getMessages,
   sendMessage, } from "./routes/socket/message_router";
 import { messageConsumer } from "./kafka/kafka_consumer";
 import { getConversations } from "./routes/socket/user_router";
+import { messageProducer } from "./kafka/kafka_producer";
+import { redis } from "./redis/redis";
 
 mongoose
   .connect(
@@ -37,8 +39,6 @@ const io = new Server(server, {
   path: "/socket/message-socket"
 });
 
-const connectedClients: Map<string, Socket> = new Map();
-
 io.on("connection", async (socket: Socket) => {
 	console.log("Socket Connected " + socket.id);
 	socket.on("connection", () => {
@@ -48,31 +48,35 @@ io.on("connection", async (socket: Socket) => {
 	});
 
   socket.on("userId", async (userId) => {
-    connectedClients.set(userId, socket);
+    console.log("userId called", userId)
+    await redis.sadd(`${userId}:sockets:message`, socket.id);
+    await redis.sadd(socket.id, userId);
   });
 
-  socket.on("disconnect", () => {
+  socket.on("disconnect", async () => {
     console.log("Disconnected");
-    const result = [...connectedClients].find(([key, value]) => socket === value)?.[0];
-    if (result) connectedClients.delete(result);
+    const userId = await redis.smembers(socket.id) as unknown as string;
+    console.log("Got userId on disconnect ", userId)
+    await redis.srem(`${userId}:sockets:message`, socket.id);
+    await redis.srem(socket.id, userId)
   });
 
   getMessages(socket);
-  sendMessage(io, socket, connectedClients);
-  editMessage(io, socket, connectedClients);
-  deleteMessage(io, socket, connectedClients);
+  sendMessage(io, socket);
+  editMessage(io, socket);
+  deleteMessage(io, socket);
 
-  createConversation(io, socket, connectedClients);
-  deleteConversation(io, socket, connectedClients);
-  addUser(io, socket, connectedClients);
-  removeUser(io, socket, connectedClients);
+  createConversation(io, socket);
+  deleteConversation(socket);
+  addUser(io, socket);
+  removeUser(io, socket);
   getUsers(socket);
 
   getConversations(socket)
 });
 
 async function run(){
-  const consumer = new messageConsumer(io, connectedClients);
+  const consumer = new messageConsumer(io);
   consumer.connect();
 }
 run();

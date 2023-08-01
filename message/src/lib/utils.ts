@@ -1,27 +1,31 @@
 import { Socket } from "socket.io";
 import { IConversation } from "../models/Conversation";
+import { redis } from "../redis/redis";
 
 export async function socketsInConversation(
   conv: IConversation,
-  connectedClients: Map<string, Socket>
 ) {
   try {
     const usersInConversation = conv.users;
-    const userIds = [...connectedClients.keys()];
+    const pipeline = redis.pipeline();
+    usersInConversation.forEach((userId) => {
+      console.log(`${userId}`)
+      pipeline.smembers(`${userId}:sockets:message`);
+    })
+    const results = await pipeline.exec();
 
-    const filteredArray = usersInConversation.filter((value) =>
-      userIds.includes(value.toString())
-    );
-
-    const sockets = filteredArray
-      .filter((key) => connectedClients.has(key.toString()))
-      .map((key) => connectedClients.get(key.toString()));
-
-    console.log("Added Message");
-    let result = sockets.map((a) => a?.id);
-
-    return result;
+    if (results == null) {
+      console.log("Pipeline execution failed or no commands queued.");
+      return;
+    }
+    console.log(results)
+    const socketIds = results.map((result) => result[1]) as (string | null)[];
+    const validSockets = socketIds.filter((socketId: string | null) => socketId != null)
+    const flattendArray = validSockets.flat();
+    console.log("socket: ", flattendArray)
+    return flattendArray;
   } catch (e) {
     console.log('Unable to get sockets')
   }
 }
+ 
