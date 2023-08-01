@@ -7,54 +7,6 @@ import { sendCachedNotifications } from "../services/sendNotification";
 import { addToMap, getSocketIdForUser, getUserIdForSocket, removeFromMap  } from "./biDirectionalMap";
 import { deleteNotification } from "../services/deleteNotifications";
 
-
-
-io.on('connection', async(socket: Socket) => {
-	console.log('socket connected');
-	socket.on("connection", () => {
-	socket.emit("connection", {
-		message: "user connected",
-	});
-});
-
-	socket.on("userId", async (userId) => {
-		addToMap(userId, socket.id);
-		const user = await User.findOne({userId: userId});
-		if (!user){
-			return;
-		}
-		user.onlineStatus = true;
-		const notifications = await pullNotificationsForUser(userId);
-		if (notifications.length != 0){
-			sendCachedNotifications(userId, notifications, "cached");
-		}
-
-		else{
-			console.log("no notifications found")
-		}
-		
-	});
-
-	socket.on("deleteNotification", async (notifId) =>{
-		const deleted = await deleteNotification(notifId);
-		if (deleted.length != 0){
-			socket.emit("error deleting notification")
-		}
-	})
-
-	socket.on('disconnect', async() => {
-		console.log('socket connection closed');
-		const userId = await getUserIdForSocket(socket.id);
-		const user = await User.findOne({userId: userId});
-		if (!user || !userId){
-			console.log("error while disconnecting")
-			return;
-		}
-		removeFromMap(userId,socket.id);
-		user.onlineStatus = false;
-  });
-});
-
 export async function pullNotificationsForUser(userId: string) {
 	try {
 	const cached = await Notifications.find({ receiverId: userId });
