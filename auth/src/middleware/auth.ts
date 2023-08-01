@@ -15,7 +15,6 @@ export async function isAuthorized(
 ) {
   let token: string | null = null;
 
-  console.log("Req:", req)
   //@ts-ignore
   console.log("Cookie: ", req.headers.cookie)
   if (!req || !req.headers.cookie) {
@@ -24,7 +23,7 @@ export async function isAuthorized(
 
   try {
     // Gets 'cookie' cookie from requests, decodes it, and converts to a string
-    token = Buffer.from(req.cookies["cookie"], "base64").toString("ascii");
+    token = Buffer.from(req.headers.cookie, "base64").toString("ascii");
 
     // Parses the string to get the jwt value
     token = JSON.parse(token).jwt;
