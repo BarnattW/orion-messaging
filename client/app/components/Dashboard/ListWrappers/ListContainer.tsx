@@ -4,7 +4,7 @@ interface ContainerProps {
 
 function ListContainer({ children }: ContainerProps) {
 	return (
-		<div className="h-full w-full sm:w-72 flex flex-col gap-6 border-r-2 border-neutral-700 overflow-auto text-neutral-200 scrollbar-thin scrollbar-thumb-neutral-900 sm:flex-shrink-0 select-none">
+		<div className="overflow-visble z-20 hidden h-full select-none gap-2 border-r-2 border-neutral-700 text-neutral-200 scrollbar-thin scrollbar-thumb-neutral-900 sm:flex sm:w-64 sm:flex-shrink-0 sm:flex-col lg:w-72">
 			{children}
 		</div>
 	);

@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notifications-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels: 
+      app: notifications
+  template:
+    metadata:
+      labels:
+        app: notifications
+    spec:
+      containers:
+        - name: notifications
+          image: us.gcr.io/orion-messaging-388417/notifications
+          env: 
+            - name: MONGO_URI
+              value: "mongodb://notifications-mongo-srv:27017/notifications"
+            - name: REDIS_HOST
+              value: "user-store-redis-srv"
+---
+apiVersion: v1
+kind: Service
+metadata: 
+  name: notifications-srv
+spec:
+  selector:
+    app: notifications
+  ports:
+  - name: notifications
+    protocol: TCP
+    port: 8080
+    targetPort: 8080

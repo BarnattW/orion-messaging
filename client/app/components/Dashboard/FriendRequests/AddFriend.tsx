@@ -1,11 +1,20 @@
 "use client";
-import { RefObject, useRef, useContext } from "react";
-import { UserContext } from "@/app/Context/UserContext";
+import { RefObject, useRef } from "react";
+import { shallow } from "zustand/shallow";
+
+import { useUserStore } from "@/app/store/userStore";
+
 import ListHeading from "../ListWrappers/ListHeading";
 
 function AddFriend() {
 	const addUsername: RefObject<HTMLInputElement> = useRef(null);
-	const { username } = useContext(UserContext);
+	const { username, enqueueSnackbar } = useUserStore(
+		(state) => ({
+			username: state.username,
+			enqueueSnackbar: state.enqueueSnackbar,
+		}),
+		shallow
+	);
 
 	// submitting friend requests
 	function keyDownHandler(event: React.KeyboardEvent<HTMLInputElement>) {
@@ -18,6 +27,7 @@ function AddFriend() {
 		const receiverUsername = addUsername.current?.value;
 		if (receiverUsername === "") return;
 
+		let newSnackbar;
 		const response = await fetch("/api/connect/sendFriendRequest", {
 			method: "POST",
 			body: JSON.stringify({
@@ -30,12 +40,19 @@ function AddFriend() {
 		});
 
 		if (response.ok) {
-			// update with common error handling
-			console.log(response);
+			newSnackbar = {
+				type: "success",
+				message: "Friend Request Successfully Sent",
+				showSnackbar: true,
+			};
 		} else {
-			//update the ui
-			console.log(response);
+			newSnackbar = {
+				type: "error",
+				message: "Failed to Send Friend Request",
+				showSnackbar: true,
+			};
 		}
+		enqueueSnackbar(newSnackbar);
 		addUsername.current!.value = "";
 	}
 
@@ -44,12 +61,12 @@ function AddFriend() {
 			<ListHeading>Add Friends</ListHeading>
 			<input
 				ref={addUsername}
-				className="mx-5 bg-zinc-700 outline-none rounded-md p-1"
+				className="mx-5 mb-1 rounded-md bg-zinc-700 p-1 outline-none"
 				placeholder="Search username"
 				onKeyDown={keyDownHandler}
 			></input>
 			<button
-				className="mx-10 py-1 rounded-md bg-indigo-600 hover:bg-indigo-500 bg- text-md"
+				className="text-md mx-10 rounded-md bg-indigo-600 py-1 hover:bg-indigo-500"
 				onClick={submitFriendRequest}
 			>
 				Send Friend Request
