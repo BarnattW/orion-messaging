@@ -1,11 +1,8 @@
-import mongoose, { Types } from "mongoose";
+import { Types } from "mongoose";
 import { IUser, User } from "../../models/User";
-import { Message } from "../../models/Message";
 import { Conversation, IConversation } from "../../models/Conversation";
-import express, { Request, Response } from "express";
 import { Server, Socket } from "socket.io";
 import { socketsInConversation } from "../../lib/utils";
-import { MessageContainer } from "../../models/MessageContainer";
 
 export const createConversation = (
   io: Server,

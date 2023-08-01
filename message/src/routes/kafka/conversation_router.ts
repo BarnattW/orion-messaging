@@ -1,6 +1,6 @@
-import { Server, Socket } from "socket.io";
+import { Server } from "socket.io";
 import { Conversation } from "../../models/Conversation";
-import { IUser, User } from "../../models/User";
+import { User } from "../../models/User";
 import { Types } from "mongoose";
 import { socketsInConversation } from "../../lib/utils";
 

@@ -2,9 +2,6 @@ import mongoose, { connect } from "mongoose";
 import express from "express";
 import http from "http";
 import { Server, Socket } from "socket.io";
-import { User } from "./models/User";
-import { Conversation } from "./models/Conversation";
-import { Message } from "./models/Message";
 import {
   addUser,
   createConversation,
@@ -16,7 +13,6 @@ import { deleteMessage, editMessage, getMessages,
   sendMessage, } from "./routes/socket/message_router";
 import { messageConsumer } from "./kafka/kafka_consumer";
 import { getConversations } from "./routes/socket/user_router";
-import { messageProducer } from "./kafka/kafka_producer";
 import { redis } from "./redis/redis";
 
 mongoose
