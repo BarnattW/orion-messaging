@@ -21,11 +21,15 @@ export async function handleNotifications() {
     await consumer.run({
       eachMessage: async ({ topic, partition, message }) => {
         let parseMessage;
-        try{
-            //@ts-ignore
-            parseMessage = JSON.parse(message.value?.toString());
-        } catch (error){
-            parseMessage = message.value;
+        try {
+          //@ts-ignore
+          parseMessage = JSON.parse(message.value?.toString());
+  
+          if (typeof parseMessage !== 'object' || parseMessage === null || Array.isArray(parseMessage)) {
+            parseMessage = message.value?.toString();
+          }
+        } catch (error) {
+          parseMessage = message.value?.toString();
         }
         const { messageType, value } = parseMessage;
         if (messageType && value){   
@@ -34,6 +38,7 @@ export async function handleNotifications() {
                 //@ts-ignore
                 newUser.userId = message.value; //assuming message is a json with userId
                 newUser.save();
+                console.log("user created");
             }
             if (topic === "friends" && messageType === "requestCreated"){
                 const {receiverId, senderUsername, } = value;
