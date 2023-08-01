@@ -5,6 +5,7 @@ import { User } from "../models/user";
 import { Notifications } from "../models/notifications";
 import { sendCachedNotifications } from "../services/sendNotification";
 import { addToMap, getSocketIdForUser, getUserIdForSocket, removeFromMap  } from "./biDirectionalMap";
+import { deleteNotification } from "../services/deleteNotifications";
 
 
 
@@ -33,6 +34,13 @@ io.on('connection', async(socket: Socket) => {
 		}
 		
 	});
+
+	socket.on("deleteNotification", async (notifId) =>{
+		const deleted = await deleteNotification(notifId);
+		if (deleted.length != 0){
+			socket.emit("error deleting notification")
+		}
+	})
 
 	socket.on('disconnect', async() => {
 		console.log('socket connection closed');
