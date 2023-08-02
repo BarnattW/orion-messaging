@@ -24,21 +24,27 @@ export async function handleNotifications() {
         //@ts-ignore
         const parseMessage = JSON.parse(message.value?.toString());
         console.log(parseMessage);
-        const { messageType, value } = parseMessage;
-        if (value){
+        const { messageType } = parseMessage;
+        if (parseMessage){
           if (topic === "user-created"){
             const newUser = new User();
             //@ts-ignore
-            newUser.userId = message.value.userId; //assuming message is a json with userId
+            newUser.userId = parseMessage.userId; //assuming message is a json with userId
             newUser.save();
             console.log("user created");
+            console.log(newUser);
         }
         }
-        if (messageType && value){   
+        if (messageType){   
             if (topic === "friends" && messageType === "requestCreated"){
-                const {receiverId, senderUsername, } = value;
+                const {receiverId, senderUsername, } = parseMessage.value;
+                console.log("receiverId: ", receiverId);
                 const receiver = await User.findOne({userId: receiverId});
+                console.log("friend request sent")
+                console.log(receiver);
+                console.log("-----", receiver?.receiveNotifications)
                 if (receiver && receiver.receiveNotifications){
+                  console.log("step 2")
                   if (!receiver.onlineStatus){
                     const notifi = new Notifications();
                     notifi.message = `You have a new friend request from ${senderUsername}`;
@@ -55,11 +61,12 @@ export async function handleNotifications() {
                     conversationName: senderUsername,
                     message: `You have a new friend request from ${senderUsername}`
                   }
+                  console.log(notifi);
                   await sendNotification(receiverId, notifi, "friendRequestReceived");
                 } 
             }
             if (topic === "groups" && messageType === "requestCreated"){
-                const {receiverId, senderUsername, groupName} = value;
+                const {receiverId, senderUsername, groupName} = parseMessage;
                 const receiver = await User.findOne({userId: receiverId});
                 if (receiver && receiver.receiveNotifications){
                   if (!receiver.onlineStatus){
@@ -82,7 +89,7 @@ export async function handleNotifications() {
                 } 
             }
             if (topic === "messages" && messageType === "send"){
-                const {message, conversationName, receiverIds, senderUsername} = value;
+                const {message, conversationName, receiverIds, senderUsername} = parseMessage;
                 const receivers = await User.find({ userId: { $in: receiverIds } });
                 receivers.forEach(async (receiver) => {
                   if (receiver && receiver.receiveNotifications){

@@ -6,7 +6,9 @@ import { INotification } from "../models/notifications";
 export async function sendNotification(receiverId: string, notification: INotification, type: string) {
     try {
       const socketId = await getSocketIdForUser(receiverId);
+      console.log(socketId);
       if (socketId) {
+        console.log('I LOVE SOCKETS');
         io.to(socketId).emit(type, notification);
       } else {
         console.log(`No socket found for receiver ID ${receiverId}`);
