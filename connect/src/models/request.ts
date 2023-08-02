@@ -8,6 +8,7 @@ interface IRequest{
     senderUsername: string;
     receiverUsername: string;
     groupId: mongoose.Types.ObjectId;
+    groupName: string;
 }
 
 const RequestSchema = new Schema<IRequest>({
@@ -37,6 +38,9 @@ const RequestSchema = new Schema<IRequest>({
     groupId:{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Group'
+    },
+    groupName:{
+        type: String
     }
 });
 

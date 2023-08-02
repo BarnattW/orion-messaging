@@ -20,11 +20,15 @@ export async function createUser() {
 			partition: number,
 			message: KafkaMessage
 		  }) => {
+			//@ts-ignore
+			const parseMessage = JSON.parse(message.value?.toString());
+			const {userId} = parseMessage;
+
 			if (message.value){
 				console.log(`Received message: ${message.value}`);
 				const newUser = new User();
 				//@ts-ignore
-				newUser.userId = message.value; //assuming message is a json with userId
+				newUser.userId = userId; //assuming message is a json with userId
 				newUser
 					.save()
 					.then((savedUser: IUser) => {
