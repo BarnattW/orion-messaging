@@ -1,5 +1,4 @@
 import { ForwardedRef, forwardRef } from "react";
-import { shallow } from "zustand/shallow";
 
 import ConfirmationDialogBox from "@/app/components/Dialog/ConfirmationDialogBox";
 import DialogWrapper from "@/app/components/Dialog/DialogWrapper";
@@ -14,13 +13,10 @@ const ConversationContextMenu = forwardRef(function (
 	}: ConversationContextMenuProps,
 	ref: ForwardedRef<HTMLDivElement>
 ) {
-	const { userId, enqueueSnackbar } = useUserStore(
-		(state) => ({
-			userId: state.userId,
-			enqueueSnackbar: state.enqueueSnackbar,
-		}),
-		shallow
-	);
+	const { userId, enqueueSnackbar } = useUserStore((state) => ({
+		userId: state.userId,
+		enqueueSnackbar: state.enqueueSnackbar,
+	}));
 
 	async function leaveGroup() {
 		try {
@@ -37,12 +33,19 @@ const ConversationContextMenu = forwardRef(function (
 			});
 
 			if (!response.ok) {
-				// update with common error handling
-				console.log(response);
+				newSnackbar = {
+					type: "error",
+					message: "Failed to Leave Group",
+					showSnackbar: true,
+				};
 			} else {
-				// update ui
-				console.log(response);
+				newSnackbar = {
+					type: "success",
+					message: "Successfully Left Group",
+					showSnackbar: true,
+				};
 			}
+			enqueueSnackbar(newSnackbar);
 			closeContextMenu();
 		} catch (error) {
 			console.log(error);

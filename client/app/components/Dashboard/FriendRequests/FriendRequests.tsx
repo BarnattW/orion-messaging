@@ -1,6 +1,5 @@
 "use client";
 import { useEffect } from "react";
-import { shallow } from "zustand/shallow";
 
 import { useUserStore } from "@/app/store/userStore";
 import { Request } from "@/app/types/FriendRequests";
@@ -18,8 +17,7 @@ function FriendRequestsList() {
 			friendRequests: state.friendRequests,
 			setFriendRequests: state.setFriendRequests,
 			setUsers: state.setUsers,
-		}),
-		shallow
+		})
 	);
 
 	// fetch all incoming and outgoing friend requests

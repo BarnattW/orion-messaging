@@ -1,17 +1,12 @@
-import { shallow } from "zustand/shallow";
-
 import { useUserStore } from "@/app/store/userStore";
 import { RequestListItemProps } from "@/app/types/FriendRequests";
 
 import Avatar from "../../Avatar/Avatar";
 
 function SentRequestListItem(friendRequestListItemProps: RequestListItemProps) {
-	const { enqueueSnackbar } = useUserStore(
-		(state) => ({
-			enqueueSnackbar: state.enqueueSnackbar,
-		}),
-		shallow
-	);
+	const { enqueueSnackbar } = useUserStore((state) => ({
+		enqueueSnackbar: state.enqueueSnackbar,
+	}));
 	async function deleteRequest() {
 		try {
 			let newSnackbar;
