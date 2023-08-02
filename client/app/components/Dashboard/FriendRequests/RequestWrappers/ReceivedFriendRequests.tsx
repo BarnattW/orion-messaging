@@ -1,5 +1,3 @@
-import { shallow } from "zustand/shallow";
-
 import { useUserStore } from "@/app/store/userStore";
 import { ReceviedRequestsProps } from "@/app/types/FriendRequests";
 
@@ -7,12 +5,9 @@ import ListHeading from "../../ListWrappers/ListHeading";
 import RecievedRequestListItem from "../RequestListItem/ReceivedRequestListItem";
 
 function ReceivedFriendRequests({ receivedRequests }: ReceviedRequestsProps) {
-	const { users } = useUserStore(
-		(state) => ({
-			users: state.users,
-		}),
-		shallow
-	);
+	const { users } = useUserStore((state) => ({
+		users: state.users,
+	}));
 	if (!receivedRequests) {
 		return (
 			<>

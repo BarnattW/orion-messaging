@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { shallow } from "zustand/shallow";
 
 import useComponentVisible from "@/app/custom-hooks/useComponentVisible";
 import notificationSocket from "@/app/sockets/notificationSocket";
@@ -19,13 +18,10 @@ function Notifications() {
 		x: number;
 		y: number;
 	}>({ x: 0, y: 0 });
-	const { notifications, setNotifications } = useUserStore(
-		(state) => ({
-			notifications: state.notifications,
-			setNotifications: state.setNotifications,
-		}),
-		shallow
-	);
+	const { notifications, setNotifications } = useUserStore((state) => ({
+		notifications: state.notifications,
+		setNotifications: state.setNotifications,
+	}));
 
 	function handleNotificationClick(event: React.MouseEvent<HTMLDivElement>) {
 		const bellIconRect = event.currentTarget.getBoundingClientRect();

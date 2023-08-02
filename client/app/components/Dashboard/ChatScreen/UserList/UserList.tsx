@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { shallow } from "zustand/shallow";
 
 import useComponentVisible from "@/app/custom-hooks/useComponentVisible";
 import { useUserStore } from "@/app/store/userStore";
@@ -17,8 +16,7 @@ function UserList() {
 			userId: state.userId,
 			users: state.users,
 			showUserList: state.showUserList,
-		}),
-		shallow
+		})
 	);
 	const [selectedFriend, setSelectedFriend] = useState<SelectedFriend | null>(
 		null
@@ -81,7 +79,6 @@ function UserList() {
 				)}
 		</UserListContainer>
 	);
-
 }
 
 export default UserList;

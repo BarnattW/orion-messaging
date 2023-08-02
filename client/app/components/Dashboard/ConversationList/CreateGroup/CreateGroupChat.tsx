@@ -1,6 +1,5 @@
 "use client";
 import { ChangeEvent, useRef, useState } from "react";
-import { shallow } from "zustand/shallow";
 
 import useComponentVisible from "@/app/custom-hooks/useComponentVisible";
 import { useUserStore } from "@/app/store/userStore";
@@ -21,7 +20,6 @@ function CreateGroupChat() {
 			users: state.users,
 			enqueueSnackbar: state.enqueueSnackbar,
 		}),
-		shallow
 	);
 	const title = useRef<HTMLInputElement>(null);
 	const [selectedOptions, setSelectedOptions] = useState<string[]>([]);

@@ -4,7 +4,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
-import { shallow } from "zustand/shallow";
 
 import { useUserStore } from "@/app/store/userStore";
 
@@ -21,13 +20,10 @@ const iconClassNames: string = "fill-neutral-500 hover:fill-gray-400 h-6 w-6 ";
 const activeIconClassNames: string = "fill-gray-100 h-6 w-6";
 
 function Sidebar() {
-	const { userId, username } = useUserStore(
-		(state) => ({
-			userId: state.userId,
-			username: state.username,
-		}),
-		shallow
-	);
+	const { userId, username } = useUserStore((state) => ({
+		userId: state.userId,
+		username: state.username,
+	}));
 	const pathname = usePathname();
 	const router = useRouter();
 	const [showTooltip, setShowTooltip] = useState(false);
