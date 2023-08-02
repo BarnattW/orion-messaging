@@ -22,13 +22,13 @@ export async function createUser() {
 		  }) => {
 			//@ts-ignore
 			const parseMessage = JSON.parse(message.value?.toString());
-			const {userId} = parseMessage;
+			const {value} = parseMessage;
 
 			if (message.value){
 				console.log(`Received message: ${message.value}`);
 				const newUser = new User();
 				//@ts-ignore
-				newUser.userId = userId; //assuming message is a json with userId
+				newUser.userId = value.userId; //assuming message is a json with userId
 				newUser
 					.save()
 					.then((savedUser: IUser) => {
