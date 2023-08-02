@@ -23,15 +23,18 @@ export async function handleNotifications() {
         console.log(message.value?.toString())
         //@ts-ignore
         const parseMessage = JSON.parse(message.value?.toString());
+        console.log(parseMessage);
         const { messageType, value } = parseMessage;
+        if (value){
+          if (topic === "user-created"){
+            const newUser = new User();
+            //@ts-ignore
+            newUser.userId = message.value.userId; //assuming message is a json with userId
+            newUser.save();
+            console.log("user created");
+        }
+        }
         if (messageType && value){   
-            if (topic === "user-created"){
-                const newUser = new User();
-                //@ts-ignore
-                newUser.userId = message.value.userId; //assuming message is a json with userId
-                newUser.save();
-                console.log("user created");
-            }
             if (topic === "friends" && messageType === "requestCreated"){
                 const {receiverId, senderUsername, } = value;
                 const receiver = await User.findOne({userId: receiverId});
