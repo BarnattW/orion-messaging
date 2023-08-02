@@ -2,8 +2,8 @@ import { redisClient } from "../redis/redis";
 
 export function addToMap(userId: string, socketId: string) {
     try {
-      redisClient.sadd("usersToSockets", userId, socketId);
-      redisClient.sadd("socketsToUsers", socketId, userId);
+      redisClient.sadd(userId,`notifications:${socketId}`);
+      redisClient.sadd("socketsToUsers", `${socketId}:${userId}`);
       console.log(`Bidirectional map for userId: ${userId} and socketId: ${socketId}`);
     } catch (error) {
       console.error('Error adding to bidirectional map:', error);
@@ -12,10 +12,10 @@ export function addToMap(userId: string, socketId: string) {
   
 export async function getSocketIdForUser(userId: string){
   try {
-    const members = await redisClient.smembers("usersToSockets");
+    const members = await redisClient.smembers(userId);
 
     for (const member of members) {
-      if (member.includes(userId)) {
+      if (member.includes("notifications")) {
         const socketId = member.split(":")[1];
         console.log(`Socket ID for userId ${userId}:`, socketId);
         return socketId;
@@ -30,32 +30,32 @@ export async function getSocketIdForUser(userId: string){
   }
 }
   
-  export async function getUserIdForSocket(socketId: string){
-    try {
-      const members = await redisClient.smembers("socketsToUsers");
-  
-      for (const member of members) {
-        if (member.includes(socketId)) {
-          const userId = member.split(":")[0];
-          console.log(`User ID for socketId ${socketId}:`, userId);
-          return userId;
-        }
+export async function getUserIdForSocket(socketId: string){
+  try {
+    const members = await redisClient.smembers("socketsToUsers");
+
+    for (const member of members) {
+      if (member.includes(socketId)) {
+        const userId = member.split(":")[1];
+        console.log(`User ID for socketId ${socketId}:`, userId);
+        return userId;
       }
-  
-      console.log(`No userId found for socketId ${socketId}`);
-      return null;
-    } catch (error) {
-      console.error('Error retrieving userId:', error);
-      return null;
     }
+
+    console.log(`No userId found for socketId ${socketId}`);
+    return null;
+  } catch (error) {
+    console.error('Error retrieving userId:', error);
+    return null;
   }
-  
-  export function removeFromMap(userId: string, socketId: string) {
-    try {
-      redisClient.srem("usersToSockets", userId, socketId);
-      redisClient.srem("socketsToUsers", socketId, userId);
-      console.log(`Bidirectional mapping removed for userId: ${userId} and socketId: ${socketId}`);
-    } catch (error) {
-      console.error('Error removing bidirectional mapping:', error);
-    }
+}
+
+export function removeFromMap(userId: string, socketId: string) {
+  try {
+    redisClient.srem(userId, `notifications:${socketId}`);
+    redisClient.srem("socketsToUsers", `${socketId}:${userId}`);
+    console.log(`Bidirectional mapping removed for userId: ${userId} and socketId: ${socketId}`);
+  } catch (error) {
+    console.error('Error removing bidirectional mapping:', error);
+  }
   }
