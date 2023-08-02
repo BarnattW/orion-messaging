@@ -20,23 +20,15 @@ export async function handleNotifications() {
   
     await consumer.run({
       eachMessage: async ({ topic, partition, message }) => {
-        let parseMessage;
-        try {
-          //@ts-ignore
-          parseMessage = JSON.parse(message.value?.toString());
-  
-          if (typeof parseMessage !== 'object' || parseMessage === null || Array.isArray(parseMessage)) {
-            parseMessage = message.value?.toString();
-          }
-        } catch (error) {
-          parseMessage = message.value?.toString();
-        }
+        console.log(message.value?.toString())
+        //@ts-ignore
+        const parseMessage = JSON.parse(message.value?.toString());
         const { messageType, value } = parseMessage;
         if (messageType && value){   
             if (topic === "user-created"){
                 const newUser = new User();
                 //@ts-ignore
-                newUser.userId = message.value; //assuming message is a json with userId
+                newUser.userId = message.value.userId; //assuming message is a json with userId
                 newUser.save();
                 console.log("user created");
             }
