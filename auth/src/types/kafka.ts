@@ -34,7 +34,7 @@ export class authProducer implements SimpleProducer {
 		try {
 			await this.producer.send({
 				topic: "user-created",
-				messages: [{ value: JSON.stringify({value: message}) }],
+				messages: [{ value: JSON.stringify(message) }],
 			});
 		} catch (e) {
 			console.log("Error sending message to Kafka", e);
