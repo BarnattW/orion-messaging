@@ -49,6 +49,11 @@ function Notifications() {
 			}
 		}
 		handleNotifications();
+
+		return () => {
+			notificationSocket.off("friendRequestReceived");
+			notificationSocket.off("messageReceived");
+		};
 	}, [setNotifications]);
 
 	return (
