@@ -45,16 +45,19 @@ io.on("connection", async (socket: Socket) => {
 
   socket.on("userId", async (userId) => {
     console.log("userId called", userId)
-    await redis.sadd(`${userId}:sockets:message`, socket.id);
-    await redis.sadd(socket.id, userId);
+    await redis.hset("message", userId, socket.id);
+    await redis.hset("sockets", socket.id, userId);
+    console.log(await redis.hget("message", userId))
   });
 
   socket.on("disconnect", async () => {
     console.log("Disconnected");
-    const userId = await redis.smembers(socket.id) as unknown as string;
-    console.log("Got userId on disconnect ", userId)
-    await redis.srem(`${userId}:sockets:message`, socket.id);
-    await redis.srem(socket.id, userId)
+    const userId = await redis.hget("sockets", socket.id);
+    console.log("disconnected userId: ", userId)
+    if (userId == null) return;
+    await redis.hdel("message", userId);
+    await redis.hdel("sockets", socket.id);
+
   });
 
   getMessages(socket);

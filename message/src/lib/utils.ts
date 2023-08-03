@@ -9,8 +9,7 @@ export async function socketsInConversation(
     const usersInConversation = conv.users;
     const pipeline = redis.pipeline();
     usersInConversation.forEach((userId) => {
-      console.log(`${userId}`)
-      pipeline.smembers(`${userId}:sockets:message`);
+      pipeline.hget("message", userId);
     })
     const results = await pipeline.exec();
 
@@ -18,6 +17,7 @@ export async function socketsInConversation(
       console.log("Pipeline execution failed or no commands queued.");
       return;
     }
+
     console.log(results)
     const socketIds = results.map((result) => result[1]) as (string | null)[];
     const validSockets = socketIds.filter((socketId: string | null) => socketId != null)
@@ -28,4 +28,3 @@ export async function socketsInConversation(
     console.log('Unable to get sockets')
   }
 }
- 
