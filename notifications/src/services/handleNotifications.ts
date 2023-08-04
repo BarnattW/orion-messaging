@@ -62,15 +62,15 @@ export async function handleNotifications() {
                 } 
             }
             if (topic === "messages" && messageType === "send"){
-                const {message, conversationName, receiverIds, senderUsername} = value;
-                const receivers = await User.find({ userId: { $in: receiverIds } });
+                const {message} = value;
+                const receivers = await User.find({ userId: { $in: message.receiverIds } });
                 receivers.forEach(async (receiver) => {
                   if (receiver && receiver.receiveNotifications){
                       const notifi = new Notifications();
-                      notifi.message = message;
+                      notifi.message = message.message;
                       notifi.type = "messages"
                       notifi.receiverId = receiver.userId;
-                      notifi.conversationName = conversationName;
+                      notifi.conversationName = message.conversationName;
                       notifi.save();
                       console.log(notifi);
                     if (receiver.onlineStatus){
