@@ -4,12 +4,6 @@ import { User } from '../models/user';
 import { sendNotification } from './sendNotification';
 import { Notifications } from '../models/notifications';
 
-enum NotificationType {
-  Friends = "friends",
-  Messages = "messages",
-  Groups = "groups",
-}
-
 export async function handleNotifications() {
 
     await consumer.connect();
@@ -44,48 +38,32 @@ export async function handleNotifications() {
                 console.log(receiver);
                 console.log("-----", receiver?.receiveNotifications)
                 if (receiver && receiver.receiveNotifications){
-                  console.log("step 2")
-                  if (!receiver.onlineStatus){
-                    const notifi = new Notifications();
+                  const notifi = new Notifications();
                     notifi.message = `You have a new friend request from ${senderUsername}`;
                     notifi.type = "friends"
                     notifi.receiverId = receiverId;
                     notifi.conversationName = senderUsername;
                     notifi.save();
                     console.log(notifi);
+                  if (receiver.onlineStatus){
+                    await sendNotification(receiverId, notifi, "friendRequestReceived");
                   }
-                  const notifi = {
-                    senderUsername: senderUsername,
-                    receiverId: receiverId,
-                    type: NotificationType.Friends,
-                    conversationName: senderUsername,
-                    message: `You have a new friend request from ${senderUsername}`
-                  }
-                  console.log(notifi);
-                  await sendNotification(receiverId, notifi, "friendRequestReceived");
                 } 
             }
             if (topic === "groups" && messageType === "requestCreated"){
                 const {receiverId, senderUsername, groupName} = parseMessage;
                 const receiver = await User.findOne({userId: receiverId});
                 if (receiver && receiver.receiveNotifications){
-                  if (!receiver.onlineStatus){
-                    const notifi = new Notifications();
+                  const notifi = new Notifications();
                     notifi.message = `${senderUsername} invited you to ${groupName}`;
                     notifi.type = "groups"
                     notifi.receiverId = receiverId;
                     notifi.conversationName = groupName;
                     notifi.save();
                     console.log(notifi);
+                  if (receiver.onlineStatus){
+                    await sendNotification(receiverId, notifi, "groupRequestReceived");
                   }
-                  const notifi = {
-                    senderUsername: senderUsername,
-                    receiverId: receiverId,
-                    type: NotificationType.Groups,
-                    conversationName: senderUsername,
-                    message: `${senderUsername} invited you to ${groupName}`
-                  }
-                  await sendNotification(receiverId, notifi, "groupRequestReceived");
                 } 
             }
             if (topic === "messages" && messageType === "send"){
@@ -93,7 +71,6 @@ export async function handleNotifications() {
                 const receivers = await User.find({ userId: { $in: receiverIds } });
                 receivers.forEach(async (receiver) => {
                   if (receiver && receiver.receiveNotifications){
-                    if (!receiver.onlineStatus){
                       const notifi = new Notifications();
                       notifi.message = message;
                       notifi.type = "messages"
@@ -101,15 +78,10 @@ export async function handleNotifications() {
                       notifi.conversationName = conversationName;
                       notifi.save();
                       console.log(notifi);
+                    if (receiver.onlineStatus){
+                      await sendNotification(receiver.userId, notifi, "messageReceived");
                     }
-                    const notifi = {
-                      senderUsername: senderUsername,
-                      receiverId: receiver.userId,
-                      type: NotificationType.Messages,
-                      conversationName: conversationName,
-                      message: message
-                    }
-                    await sendNotification(receiver.userId, notifi, "messageReceived");
+                    
                   } 
                 });
                 
