@@ -1,5 +1,4 @@
 import { memo, useState } from "react";
-import { shallow } from "zustand/shallow";
 
 import DeleteIcon from "@/app/components/Icons/DeleteIcon";
 import EditIcon from "@/app/components/Icons/EditIcon";
@@ -12,14 +11,11 @@ const iconClassNames: string =
 const maxCharacters: number = 2000;
 
 const SentMessage = memo(function SentMessage(message: SentMessage) {
-	const { activeConversation, userId, users } = useUserStore(
-		(state) => ({
-			activeConversation: state.activeConversation,
-			userId: state.userId,
-			users: state.users,
-		}),
-		shallow
-	);
+	const { activeConversation, userId, users } = useUserStore((state) => ({
+		activeConversation: state.activeConversation,
+		userId: state.userId,
+		users: state.users,
+	}));
 	const [showDetails, setDetails] = useState(false);
 	const [isEditing, setIsEditing] = useState(false);
 	const [messageValue, setMessageValue] = useState(message.message);

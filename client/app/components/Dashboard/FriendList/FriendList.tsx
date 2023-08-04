@@ -1,6 +1,5 @@
 "use client";
 import { ChangeEvent, useState } from "react";
-import { shallow } from "zustand/shallow";
 
 import useComponentVisible from "@/app/custom-hooks/useComponentVisible";
 import { useUserStore } from "@/app/store/userStore";
@@ -12,14 +11,11 @@ import FriendContextMenu from "./FriendListItem/FriendContextMenu";
 import FriendListItem from "./FriendListItem/FriendListItem";
 
 function FriendList() {
-	const { friends, users, enqueueSnackbar } = useUserStore(
-		(state) => ({
-			friends: state.friends,
-			users: state.users,
-			enqueueSnackbar: state.enqueueSnackbar,
-		}),
-		shallow
-	);
+	const { friends, users, enqueueSnackbar } = useUserStore((state) => ({
+		friends: state.friends,
+		users: state.users,
+		enqueueSnackbar: state.enqueueSnackbar,
+	}));
 	const [friendsQuery, setFriendsQuery] = useState<string>("");
 	const [selectedFriend, setSelectedFriend] = useState<SelectedFriend | null>(
 		null

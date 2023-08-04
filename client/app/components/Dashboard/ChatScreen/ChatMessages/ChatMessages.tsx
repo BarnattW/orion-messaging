@@ -2,7 +2,6 @@
 
 import { debounce } from "lodash";
 import { Fragment, useCallback, useEffect, useRef, useState } from "react";
-import { shallow } from "zustand/shallow";
 
 import useUserMessages from "@/app/custom-hooks/useUserMessages";
 import messageSocket from "@/app/sockets/messageSocket";
@@ -31,18 +30,15 @@ function ChatMessages() {
 		users,
 		conversations,
 		updateConversations,
-	} = useUserStore(
-		(state) => ({
-			activeConversation: state.activeConversation,
-			setActiveConversation: state.setActiveConversation,
-			setMessages: state.setMessages,
-			messages: state.messages,
-			users: state.users,
-			conversations: state.conversations,
-			updateConversations: state.updateConversations,
-		}),
-		shallow
-	);
+	} = useUserStore((state) => ({
+		activeConversation: state.activeConversation,
+		setActiveConversation: state.setActiveConversation,
+		setMessages: state.setMessages,
+		messages: state.messages,
+		users: state.users,
+		conversations: state.conversations,
+		updateConversations: state.updateConversations,
+	}));
 
 	console.log(conversations);
 	console.log("messages: ", messages, activeConversation);

@@ -1,5 +1,3 @@
-import { shallow } from "zustand/shallow";
-
 import ConfirmationDialogBox from "@/app/components/Dialog/ConfirmationDialogBox";
 import DialogWrapper from "@/app/components/Dialog/DialogWrapper";
 import LogoutIcon from "@/app/components/Icons/LogoutIcon";
@@ -9,13 +7,10 @@ const iconClassNames =
 	"fill-gray-100 h-6 w-6 hover:cursor-pointer hover:fill-gray-400 stroke-neutral-100 hover:stroke-gray-400";
 
 function LeaveGroup() {
-	const { userId, activeConversation } = useUserStore(
-		(state) => ({
-			userId: state.userId,
-			activeConversation: state.activeConversation,
-		}),
-		shallow
-	);
+	const { userId, activeConversation } = useUserStore((state) => ({
+		userId: state.userId,
+		activeConversation: state.activeConversation,
+	}));
 
 	async function leaveGroup() {
 		try {

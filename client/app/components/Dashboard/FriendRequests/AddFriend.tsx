@@ -1,6 +1,5 @@
 "use client";
 import { RefObject, useRef } from "react";
-import { shallow } from "zustand/shallow";
 
 import { useUserStore } from "@/app/store/userStore";
 
@@ -8,13 +7,10 @@ import ListHeading from "../ListWrappers/ListHeading";
 
 function AddFriend() {
 	const addUsername: RefObject<HTMLInputElement> = useRef(null);
-	const { username, enqueueSnackbar } = useUserStore(
-		(state) => ({
-			username: state.username,
-			enqueueSnackbar: state.enqueueSnackbar,
-		}),
-		shallow
-	);
+	const { username, enqueueSnackbar } = useUserStore((state) => ({
+		username: state.username,
+		enqueueSnackbar: state.enqueueSnackbar,
+	}));
 
 	// submitting friend requests
 	function keyDownHandler(event: React.KeyboardEvent<HTMLInputElement>) {

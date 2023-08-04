@@ -1,5 +1,4 @@
 import { ForwardedRef, forwardRef } from "react";
-import { shallow } from "zustand/shallow";
 
 import ConfirmationDialogBox from "@/app/components/Dialog/ConfirmationDialogBox";
 import DialogWrapper from "@/app/components/Dialog/DialogWrapper";
@@ -15,14 +14,11 @@ const FriendContextMenu = forwardRef(function (
 	}: FriendContextMenuProps,
 	ref: ForwardedRef<HTMLDivElement>
 ) {
-	const { friends, userId, username } = useUserStore(
-		(state) => ({
-			friends: state.friends,
-			userId: state.userId,
-			username: state.username,
-		}),
-		shallow
-	);
+	const { friends, userId, username } = useUserStore((state) => ({
+		friends: state.friends,
+		userId: state.userId,
+		username: state.username,
+	}));
 	const isFriends: boolean = friends.some(
 		(friend) => friend.userId === friendId
 	);
