@@ -1,4 +1,4 @@
-import { shallow } from "zustand/shallow";
+
 
 import { useUserStore } from "@/app/store/userStore";
 import { ConversationListItemProps } from "@/app/types/Conversations";
@@ -29,8 +29,7 @@ function ConversationListItem({
 			messages: state.messages,
 			setMessages: state.setMessages,
 			users: state.users,
-		}),
-		shallow
+		})
 	);
 
 	const foundUserId =

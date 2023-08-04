@@ -1,5 +1,3 @@
-import { shallow } from "zustand/shallow";
-
 import { useUserStore } from "@/app/store/userStore";
 import { SentFriendRequestsProps } from "@/app/types/FriendRequests";
 
@@ -7,7 +5,7 @@ import ListHeading from "../../ListWrappers/ListHeading";
 import SentRequestListItem from "../RequestListItem/SentRequestListItem";
 
 function SentFriendRequests({ sentRequests }: SentFriendRequestsProps) {
-	const { users } = useUserStore((state) => ({ users: state.users }), shallow);
+	const { users } = useUserStore((state) => ({ users: state.users }));
 	console.log("users", users);
 	if (!sentRequests) {
 		return (

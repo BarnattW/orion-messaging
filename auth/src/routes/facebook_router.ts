@@ -22,12 +22,10 @@ router.get(
         });
       }
 
-      if (!(req.session as jwtSession).jwt) {
-        const token = issueJWT(req.user);
-        (req.session as jwtSession).jwt = token.token;
-      }
-
-      res.redirect("/");
+      const token = issueJWT(req.user);
+      (req.session as jwtSession).jwt = token.token;
+      
+      res.redirect(`/dashboard/friends/`);
     } catch (e) {
       return res
         .status(500)

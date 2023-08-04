@@ -1,5 +1,3 @@
-import { shallow } from "zustand/shallow";
-
 import { useUserStore } from "@/app/store/userStore";
 import { OptionsPopoutProps } from "@/app/types/UserProfile";
 
@@ -11,13 +9,10 @@ function OptionsPopout({
 	currentUserId,
 	currentUsername,
 }: OptionsPopoutProps) {
-	const { friends, enqueueSnackbar } = useUserStore(
-		(state) => ({
-			friends: state.friends,
-			enqueueSnackbar: state.enqueueSnackbar,
-		}),
-		shallow
-	);
+	const { friends, enqueueSnackbar } = useUserStore((state) => ({
+		friends: state.friends,
+		enqueueSnackbar: state.enqueueSnackbar,
+	}));
 	const isFriends: boolean = friends.some((friend) => friend.userId === userId);
 
 	async function deleteFriend() {

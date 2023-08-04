@@ -3,7 +3,6 @@
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 import { useEffect, useRef, useState } from "react";
-import { shallow } from "zustand/shallow";
 
 import useComponentVisible from "@/app/custom-hooks/useComponentVisible";
 import messageSocket from "@/app/sockets/messageSocket";
@@ -24,13 +23,10 @@ const iconClassNames: string =
 const maxCharacters: number = 2000;
 
 function ChatInput({ scrollToBottom, showScrollButton }: ChatInputProps) {
-	const { activeConversation, userId } = useUserStore(
-		(state) => ({
-			activeConversation: state.activeConversation,
-			userId: state.userId,
-		}),
-		shallow
-	);
+	const { activeConversation, userId } = useUserStore((state) => ({
+		activeConversation: state.activeConversation,
+		userId: state.userId,
+	}));
 
 	const inputRef = useRef<HTMLTextAreaElement>(null);
 	const [inputValue, setInputValue] = useState("");

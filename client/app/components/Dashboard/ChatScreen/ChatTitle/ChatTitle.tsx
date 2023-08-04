@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { shallow } from "zustand/shallow";
 
 import useComponentVisible from "@/app/custom-hooks/useComponentVisible";
 import messageSocket from "@/app/sockets/messageSocket";
@@ -21,16 +20,13 @@ function ChatTitle() {
 		setShowUserList,
 		conversations,
 		updateConversations,
-	} = useUserStore(
-		(state) => ({
-			activeConversation: state.activeConversation,
-			setActiveConversation: state.setActiveConversation,
-			setShowUserList: state.setShowUserList,
-			conversations: state.conversations,
-			updateConversations: state.updateConversations,
-		}),
-		shallow
-	);
+	} = useUserStore((state) => ({
+		activeConversation: state.activeConversation,
+		setActiveConversation: state.setActiveConversation,
+		setShowUserList: state.setShowUserList,
+		conversations: state.conversations,
+		updateConversations: state.updateConversations,
+	}));
 	const title = activeConversation?.title;
 	const { ref, isComponentVisible, setIsComponentVisible } =
 		useComponentVisible(false);

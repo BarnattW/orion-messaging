@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import { shallow } from "zustand/shallow";
 
 import messageSocket from "../sockets/messageSocket";
 import { useUserStore } from "../store/userStore";
@@ -9,15 +8,12 @@ const useUserMessages = () => {
 	const [loading, setLoading] = useState(true);
 	const latestTimestampRef = useRef<Date | null>(null);
 	const { activeConversation, setActiveConversation, messages, setMessages } =
-		useUserStore(
-			(state) => ({
-				activeConversation: state.activeConversation,
-				setActiveConversation: state.setActiveConversation,
-				messages: state.messages,
-				setMessages: state.setMessages,
-			}),
-			shallow
-		);
+		useUserStore((state) => ({
+			activeConversation: state.activeConversation,
+			setActiveConversation: state.setActiveConversation,
+			messages: state.messages,
+			setMessages: state.setMessages,
+		}));
 
 	useEffect(() => {
 		async function getMessages() {

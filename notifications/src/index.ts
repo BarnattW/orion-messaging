@@ -41,8 +41,12 @@ export const io = new Server(server, {
 			return;
 		}
 		user.onlineStatus = true;
+		user.save();
 		const notifications = await pullNotificationsForUser(userId);
+		
 		if (notifications.length != 0){
+			console.log("notifications!!!!!!!!!!!!!!!!!");
+			console.log(notifications)
 			sendCachedNotifications(userId, notifications, "cached");
 		}
 
@@ -69,6 +73,8 @@ export const io = new Server(server, {
 		}
 		removeFromMap(userId,socket.id);
 		user.onlineStatus = false;
+		user.save();
+		console.log(user.onlineStatus);
   });
 });
 

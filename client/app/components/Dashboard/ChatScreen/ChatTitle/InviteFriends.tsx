@@ -1,6 +1,5 @@
 "use client";
 import { ChangeEvent, useState } from "react";
-import { shallow } from "zustand/shallow";
 
 import useComponentVisible from "@/app/custom-hooks/useComponentVisible";
 import { useUserStore } from "@/app/store/userStore";
@@ -18,8 +17,7 @@ function InviteFriends() {
 			username: state.username,
 			activeConversation: state.activeConversation,
 			users: state.users,
-		}),
-		shallow
+		})
 	);
 	const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
 	const [friendsQuery, setFriendsQuery] = useState<string>("");

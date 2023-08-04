@@ -1,6 +1,5 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
-import { shallow } from "zustand/shallow";
 
 import { useUserStore } from "@/app/store/userStore";
 
@@ -20,15 +19,12 @@ const successTimeBarClassName =
 function Snackbar() {
 	// snackbar methods: pause on tab and hover
 	const { snackbar, setSnackbar, currentSnackbar, setCurrentSnackbar } =
-		useUserStore(
-			(state) => ({
-				snackbar: state.snackbar,
-				setSnackbar: state.setSnackbar,
-				currentSnackbar: state.currentSnackbar,
-				setCurrentSnackbar: state.setCurrentSnackbar,
-			}),
-			shallow
-		);
+		useUserStore((state) => ({
+			snackbar: state.snackbar,
+			setSnackbar: state.setSnackbar,
+			currentSnackbar: state.currentSnackbar,
+			setCurrentSnackbar: state.setCurrentSnackbar,
+		}));
 	const [visible, setVisible] = useState(false);
 	const [progress, setProgress] = useState(100);
 
