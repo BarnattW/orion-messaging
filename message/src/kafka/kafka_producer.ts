@@ -31,7 +31,7 @@ export class messageProducer implements SimpleProducer {
 			await this.producer.send({
 				topic: "message",
 				messages: [{ value: JSON.stringify({
-					type: "send",
+					messageType: "send",
 					message: message 
 				})}],
 			});
