@@ -1,7 +1,6 @@
 "use client";
 import { useEffect } from "react";
 import { useState } from "react";
-import { shallow } from "zustand/shallow";
 
 import useComponentVisible from "@/app/custom-hooks/useComponentVisible";
 import { useUserStore } from "@/app/store/userStore";
@@ -25,17 +24,14 @@ function ConversationList() {
 		userId,
 		users,
 		setUsers,
-	} = useUserStore(
-		(state) => ({
-			conversations: state.conversations,
-			groupRequests: state.groupRequests,
-			setGroupRequests: state.setGroupRequests,
-			userId: state.userId,
-			users: state.users,
-			setUsers: state.setUsers,
-		}),
-		shallow
-	);
+	} = useUserStore((state) => ({
+		conversations: state.conversations,
+		groupRequests: state.groupRequests,
+		setGroupRequests: state.setGroupRequests,
+		userId: state.userId,
+		users: state.users,
+		setUsers: state.setUsers,
+	}));
 	console.log("users", users);
 	const [selectedConversation, setSelectedConversation] =
 		useState<SelectedConversation | null>(null);

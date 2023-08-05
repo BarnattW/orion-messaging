@@ -1,4 +1,5 @@
-import { create } from "zustand";
+import { shallow } from "zustand/shallow";
+import { createWithEqualityFn } from "zustand/traditional";
 
 import { FriendRequests, GroupRequests } from "../types/FriendRequests";
 import {
@@ -50,82 +51,85 @@ type UserState = {
 	setNotifications: (notifications: Notification[]) => void;
 };
 
-export const useUserStore = create<UserState>((set) => ({
-	userId: null,
-	setUserId: (id) => set(() => ({ userId: id })),
-	username: null,
-	setUsername: (username) => set(() => ({ username })),
-	users: {},
-	setUsers: (userId, username) =>
-		set((state) => ({
-			users: {
-				...state.users,
-				[userId]: { username: username },
-			},
-		})),
-	friends: [],
-	setFriends: (friends) => set(() => ({ friends })),
-	friendRequests: { receivedRequests: [], sentRequests: [] },
-	setFriendRequests: (friendRequests) =>
-		set((state) => ({ friendRequests: friendRequests })),
-	groupRequests: { receivedRequests: [], sentRequests: [] },
-	setGroupRequests: (groupRequests) =>
-		set((state) => ({ groupRequests: groupRequests })),
-	activeConversation: null,
-	setActiveConversation: (updatedActiveConversation) =>
-		set((state) => ({
-			activeConversation: {
-				...state.activeConversation,
-				...updatedActiveConversation,
-			},
-		})),
-	conversations: [],
-	setConversations: (newConversations) =>
-		set((state) => ({
-			conversations: [...state.conversations, ...newConversations],
-		})),
-	updateConversations: (updatedConversation, index) => {
-		set((state) => {
-			const updatedConversations = [...state.conversations];
-			updatedConversations[index] = updatedConversation;
-			return {
-				conversations: updatedConversations,
-			};
-		});
-	},
-	messages: {},
-	setMessages: (conversationId, updatedFields) =>
-		set((state) => ({
-			messages: {
-				...state.messages,
-				[conversationId]: {
-					...state.messages[conversationId],
-					...updatedFields,
+export const useUserStore = createWithEqualityFn<UserState>(
+	(set) => ({
+		userId: null,
+		setUserId: (id) => set(() => ({ userId: id })),
+		username: null,
+		setUsername: (username) => set(() => ({ username })),
+		users: {},
+		setUsers: (userId, username) =>
+			set((state) => ({
+				users: {
+					...state.users,
+					[userId]: { username: username },
 				},
-			},
-		})),
-	showUserList: true,
-	setShowUserList: () =>
-		set((state) => ({ showUserList: !state.showUserList })),
-	snackbar: new Queue<Snackbar>(),
-	enqueueSnackbar: (newSnackbar) =>
-		set((state) => {
-			const updatedSnackbar = new Queue<Snackbar>(state.snackbar);
-			updatedSnackbar.offer(newSnackbar);
-			return {
-				snackbar: updatedSnackbar,
-			};
-		}),
-	setSnackbar: (updatedSnackbar) =>
-		set(() => ({ snackbar: new Queue<Snackbar>(updatedSnackbar) })),
-	currentSnackbar: { showSnackbar: false, message: null, type: "success" },
-	setCurrentSnackbar: (currentSnackbar) =>
-		set((state) => ({
-			currentSnackbar: { ...state.currentSnackbar, ...currentSnackbar },
-		})),
-	notifications: [],
-	setNotifications: (newNotifications) =>
-		set((state) => ({
-			notifications: [...state.notifications, ...newNotifications],
-		})),
-}));
+			})),
+		friends: [],
+		setFriends: (friends) => set(() => ({ friends })),
+		friendRequests: { receivedRequests: [], sentRequests: [] },
+		setFriendRequests: (friendRequests) =>
+			set((state) => ({ friendRequests: friendRequests })),
+		groupRequests: { receivedRequests: [], sentRequests: [] },
+		setGroupRequests: (groupRequests) =>
+			set((state) => ({ groupRequests: groupRequests })),
+		activeConversation: null,
+		setActiveConversation: (updatedActiveConversation) =>
+			set((state) => ({
+				activeConversation: {
+					...state.activeConversation,
+					...updatedActiveConversation,
+				},
+			})),
+		conversations: [],
+		setConversations: (newConversations) =>
+			set((state) => ({
+				conversations: [...state.conversations, ...newConversations],
+			})),
+		updateConversations: (updatedConversation, index) => {
+			set((state) => {
+				const updatedConversations = [...state.conversations];
+				updatedConversations[index] = updatedConversation;
+				return {
+					conversations: updatedConversations,
+				};
+			});
+		},
+		messages: {},
+		setMessages: (conversationId, updatedFields) =>
+			set((state) => ({
+				messages: {
+					...state.messages,
+					[conversationId]: {
+						...state.messages[conversationId],
+						...updatedFields,
+					},
+				},
+			})),
+		showUserList: true,
+		setShowUserList: () =>
+			set((state) => ({ showUserList: !state.showUserList })),
+		snackbar: new Queue<Snackbar>(),
+		enqueueSnackbar: (newSnackbar) =>
+			set((state) => {
+				const updatedSnackbar = new Queue<Snackbar>(state.snackbar);
+				updatedSnackbar.offer(newSnackbar);
+				return {
+					snackbar: updatedSnackbar,
+				};
+			}),
+		setSnackbar: (updatedSnackbar) =>
+			set(() => ({ snackbar: new Queue<Snackbar>(updatedSnackbar) })),
+		currentSnackbar: { showSnackbar: false, message: null, type: "success" },
+		setCurrentSnackbar: (currentSnackbar) =>
+			set((state) => ({
+				currentSnackbar: { ...state.currentSnackbar, ...currentSnackbar },
+			})),
+		notifications: [],
+		setNotifications: (newNotifications) =>
+			set((state) => ({
+				notifications: [...state.notifications, ...newNotifications],
+			})),
+	}),
+	shallow
+);

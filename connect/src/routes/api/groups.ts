@@ -71,6 +71,7 @@ router.post(
 				senderId: sender.userId,
 				receiverId: receiver.userId,
 				groupId: groupId,
+				groupName: group.name,
 				requestType: "group",
 				status: "pending",
 			});
@@ -83,7 +84,7 @@ router.post(
 			sender.outgoingrequests.push(newRequest._id);
 			await sender.save();
 
-			//await publishMessage("group", newRequest, "create");
+			await publishMessage("group", newRequest, "requestCreated");
 
 			return res.status(201).json({
 				message: `group request created`,

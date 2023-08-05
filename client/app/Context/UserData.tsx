@@ -3,7 +3,6 @@
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import useSWR from "swr";
-import { shallow } from "zustand/shallow";
 
 import messageSocket from "../sockets/messageSocket";
 import notificationSocket from "../sockets/notificationSocket";
@@ -29,18 +28,15 @@ export function UserData({
 		users,
 		setUsers,
 		setNotifications,
-	} = useUserStore(
-		(state) => ({
-			setUserId: state.setUserId,
-			setUsername: state.setUsername,
-			setFriends: state.setFriends,
-			setConversations: state.setConversations,
-			users: state.users,
-			setUsers: state.setUsers,
-			setNotifications: state.setNotifications,
-		}),
-		shallow
-	);
+	} = useUserStore((state) => ({
+		setUserId: state.setUserId,
+		setUsername: state.setUsername,
+		setFriends: state.setFriends,
+		setConversations: state.setConversations,
+		users: state.users,
+		setUsers: state.setUsers,
+		setNotifications: state.setNotifications,
+	}));
 	console.log(users);
 
 	const { data: usernameSWR, error } = useSWR(

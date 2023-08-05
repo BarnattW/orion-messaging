@@ -71,7 +71,9 @@ async function authenticateUser(
 		}
 
 		console.log("User Created");
-		producer.send(user.userId);
+		
+		const userId = user.userId
+		producer.send({ userId });
 
 		return done(undefined, user);
 	} catch (err) {
