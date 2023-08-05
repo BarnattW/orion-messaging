@@ -31,7 +31,7 @@ export async function handleNotifications() {
         }
         if (messageType){   
             if (topic === "friends" && messageType === "requestCreated"){
-                const {receiverId, senderId} = parseMessage.value;
+                const {receiverId, senderId, requestId} = parseMessage.value;
                 console.log("receiverId: ", receiverId);
                 const receiver = await User.findOne({userId: receiverId});
                 console.log("friend request sent")
@@ -39,6 +39,7 @@ export async function handleNotifications() {
                 console.log("-----", receiver?.receiveNotifications)
                 if (receiver && receiver.receiveNotifications){
                     const notifi = new Notifications();
+                    notifi.requestId = requestId;
                     notifi.timestamp = new Date();
                     notifi.senderId = senderId;
                     notifi.type = "friends";
@@ -51,10 +52,11 @@ export async function handleNotifications() {
                 } 
             }
             if (topic === "groups" && messageType === "requestCreated"){
-                const {receiverId, senderId, groupName} = parseMessage;
+                const {receiverId, senderId, groupName, requestId} = parseMessage;
                 const receiver = await User.findOne({userId: receiverId});
                 if (receiver && receiver.receiveNotifications){
                     const notifi = new Notifications();
+                    notifi.requestId = requestId;
                     notifi.timestamp = new Date();
                     notifi.senderId = senderId;
                     notifi.type = "groups"
@@ -68,16 +70,17 @@ export async function handleNotifications() {
                 } 
             }
             if (topic === "messages" && messageType === "send"){
-                const {message} = parseMessage;
+                const {message, conversationName, conversationId} = parseMessage;
                 const receivers = await User.find({ userId: { $in: message.receiverIds } });
                 receivers.forEach(async (receiver) => {
                   if (receiver && receiver.receiveNotifications){
                       const notifi = new Notifications();
+                      notifi.conversationId = conversationId;
                       notifi.timestamp = new Date();
                       notifi.message = message.message;
                       notifi.type = "messages"
                       notifi.receiverId = receiver.userId;
-                      notifi.conversationName = message.conversationName;
+                      notifi.conversationName = conversationName;
                       notifi.senderId = message.senderId;
                       notifi.save();
                       console.log(notifi);
