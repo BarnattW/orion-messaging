@@ -31,7 +31,7 @@ export async function handleNotifications() {
         }
         if (messageType){   
             if (topic === "friends" && messageType === "requestCreated"){
-                const {receiverId, senderId, requestId} = parseMessage.value;
+                const {receiverId, senderId, _id} = parseMessage.value;
                 console.log("receiverId: ", receiverId);
                 const receiver = await User.findOne({userId: receiverId});
                 console.log("friend request sent")
@@ -39,7 +39,7 @@ export async function handleNotifications() {
                 console.log("-----", receiver?.receiveNotifications)
                 if (receiver && receiver.receiveNotifications){
                     const notifi = new Notifications();
-                    notifi.requestId = requestId;
+                    notifi.requestId = _id;
                     notifi.timestamp = new Date();
                     notifi.senderId = senderId;
                     notifi.type = "friends";
@@ -52,11 +52,11 @@ export async function handleNotifications() {
                 } 
             }
             if (topic === "groups" && messageType === "requestCreated"){
-                const {receiverId, senderId, groupName, requestId} = parseMessage;
+                const {receiverId, senderId, groupName, _id} = parseMessage;
                 const receiver = await User.findOne({userId: receiverId});
                 if (receiver && receiver.receiveNotifications){
                     const notifi = new Notifications();
-                    notifi.requestId = requestId;
+                    notifi.requestId = _id;
                     notifi.timestamp = new Date();
                     notifi.senderId = senderId;
                     notifi.type = "groups"
