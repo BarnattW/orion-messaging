@@ -22,7 +22,7 @@ function Notifications() {
 		notifications: state.notifications,
 		setNotifications: state.setNotifications,
 	}));
-
+	console.log(notifications);
 	function handleNotificationToggle(event: React.MouseEvent<HTMLDivElement>) {
 		const bellIconRect = event.currentTarget.getBoundingClientRect();
 		const x = bellIconRect.right + 12;

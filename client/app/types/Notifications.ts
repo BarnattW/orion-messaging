@@ -18,6 +18,7 @@ interface NotificationCardBodyProps {
 	message: string;
 	timestamp: Date;
 	_id: string;
+	senderId: string;
 }
 
 export interface MessageNotificationProps extends NotificationCardBodyProps {

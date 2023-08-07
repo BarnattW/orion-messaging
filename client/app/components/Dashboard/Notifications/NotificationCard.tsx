@@ -21,6 +21,7 @@ function NotificationCard({
 	_id,
 	requestId,
 	conversationId,
+	senderId,
 }: NotificationCardProps) {
 	const { deleteNotifications } = useUserStore((state) => ({
 		deleteNotifications: state.deleteNotifications,
@@ -62,7 +63,7 @@ function NotificationCard({
 						_id={_id}
 					/>
 				) : null}
-				{type == "friend" ? (
+				{type == "friends" ? (
 					<FriendRequestNotification
 						receiverId={receiverId}
 						message={message}
@@ -70,9 +71,10 @@ function NotificationCard({
 						conversationName={conversationName}
 						requestId={requestId}
 						_id={_id}
+						senderId={senderId}
 					/>
 				) : null}
-				{type == "group" ? (
+				{type == "groups" ? (
 					<GroupRequestNotification
 						receiverId={receiverId}
 						message={message}
@@ -80,6 +82,7 @@ function NotificationCard({
 						conversationName={conversationName}
 						requestId={requestId}
 						_id={_id}
+						senderId={senderId}
 					/>
 				) : null}
 				{showExit && (

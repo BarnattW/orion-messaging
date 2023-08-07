@@ -70,7 +70,6 @@ export function UserData({
 
 	useEffect(() => {
 		notificationSocket.on("cached", (socketEvent) => {
-			console.log(socketEvent); // array of notifications
 			setNotifications(socketEvent);
 		});
 

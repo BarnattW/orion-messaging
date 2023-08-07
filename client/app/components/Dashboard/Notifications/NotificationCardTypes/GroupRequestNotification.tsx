@@ -9,11 +9,15 @@ function GroupRequestNotification({
 	conversationName,
 	requestId,
 	_id,
+	senderId,
 }: RequestNotificationsProps) {
-	const { enqueueSnackbar, deleteNotifications } = useUserStore((state) => ({
-		enqueueSnackbar: state.enqueueSnackbar,
-		deleteNotifications: state.deleteNotifications,
-	}));
+	const { enqueueSnackbar, deleteNotifications, users } = useUserStore(
+		(state) => ({
+			enqueueSnackbar: state.enqueueSnackbar,
+			deleteNotifications: state.deleteNotifications,
+			users: state.users,
+		})
+	);
 
 	async function acceptRequest() {
 		try {
@@ -87,7 +91,7 @@ function GroupRequestNotification({
 
 	return (
 		<div className="text-sm flex flex-col w-2/3">
-			<span>{`username sent you a friend request`}</span>
+			<span>{`${users[senderId]} invited you to group ${conversationName}`}</span>
 			<span className="text-xs text-neutral-200">
 				{timestamp.toLocaleDateString(undefined, {
 					year: "numeric",
