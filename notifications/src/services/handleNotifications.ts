@@ -31,56 +31,62 @@ export async function handleNotifications() {
         }
         if (messageType){   
             if (topic === "friends" && messageType === "requestCreated"){
-                const {receiverId, senderUsername, } = parseMessage.value;
+                const {receiverId, senderId, _id} = parseMessage.value;
                 console.log("receiverId: ", receiverId);
                 const receiver = await User.findOne({userId: receiverId});
                 console.log("friend request sent")
                 console.log(receiver);
                 console.log("-----", receiver?.receiveNotifications)
                 if (receiver && receiver.receiveNotifications){
-                  const notifi = new Notifications();
-                    notifi.message = `You have a new friend request from ${senderUsername}`;
-                    notifi.type = "friends"
+                    const notifi = new Notifications();
+                    notifi.requestId = _id;
+                    notifi.timestamp = new Date();
+                    notifi.senderId = senderId;
+                    notifi.type = "friends";
                     notifi.receiverId = receiverId;
-                    notifi.conversationName = senderUsername;
                     notifi.save();
                     console.log(notifi);
-                  if (receiver.onlineStatus){
-                    await sendNotification(receiverId, notifi, "friendRequestReceived");
-                  }
+                if (receiver.onlineStatus){
+                  await sendNotification(receiverId, notifi, "friendRequestReceived");
+                }
                 } 
             }
             if (topic === "groups" && messageType === "requestCreated"){
-                const {receiverId, senderUsername, groupName} = parseMessage;
+                const {receiverId, senderId, groupName, _id} = parseMessage;
                 const receiver = await User.findOne({userId: receiverId});
                 if (receiver && receiver.receiveNotifications){
-                  const notifi = new Notifications();
-                    notifi.message = `${senderUsername} invited you to ${groupName}`;
+                    const notifi = new Notifications();
+                    notifi.requestId = _id;
+                    notifi.timestamp = new Date();
+                    notifi.senderId = senderId;
                     notifi.type = "groups"
                     notifi.receiverId = receiverId;
                     notifi.conversationName = groupName;
                     notifi.save();
                     console.log(notifi);
-                  if (receiver.onlineStatus){
-                    await sendNotification(receiverId, notifi, "groupRequestReceived");
-                  }
+                if (receiver.onlineStatus){
+                  await sendNotification(receiverId, notifi, "groupRequestReceived");
+                }
                 } 
             }
             if (topic === "messages" && messageType === "send"){
-                const {message, conversationName, receiverIds, senderUsername} = parseMessage;
-                const receivers = await User.find({ userId: { $in: receiverIds } });
+                const {message, conversationName, conversationId} = parseMessage;
+                const receivers = await User.find({ userId: { $in: message.receiverIds } });
                 receivers.forEach(async (receiver) => {
                   if (receiver && receiver.receiveNotifications){
                       const notifi = new Notifications();
-                      notifi.message = message;
+                      notifi.conversationId = conversationId;
+                      notifi.timestamp = new Date();
+                      notifi.message = message.message;
                       notifi.type = "messages"
                       notifi.receiverId = receiver.userId;
                       notifi.conversationName = conversationName;
+                      notifi.senderId = message.senderId;
                       notifi.save();
                       console.log(notifi);
-                    if (receiver.onlineStatus){
-                      await sendNotification(receiver.userId, notifi, "messageReceived");
-                    }
+                  if (receiver.onlineStatus){
+                    await sendNotification(receiver.userId, notifi, "messageReceived");
+                  }
                     
                   } 
                 });

@@ -1,6 +1,7 @@
 import { Notifications } from "../models/notifications";
+import { ObjectId } from 'mongoose';
 
-export async function deleteNotification(notificationId: string){
+export async function deleteNotification(notificationId: ObjectId){
     try{
         const notif = Notifications.findByIdAndDelete(notificationId);
         if (!notif){
