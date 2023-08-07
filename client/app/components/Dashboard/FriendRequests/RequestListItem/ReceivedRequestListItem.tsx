@@ -3,19 +3,21 @@ import { RequestListItemProps } from "@/app/types/FriendRequests";
 
 import Avatar from "../../Avatar/Avatar";
 
-function ReceivedRequestListItem(
-	friendRequestListItemProps: RequestListItemProps
-) {
+function ReceivedRequestListItem({
+	requestType,
+	requestId,
+	username,
+}: RequestListItemProps) {
 	const { enqueueSnackbar } = useUserStore((state) => ({
 		enqueueSnackbar: state.enqueueSnackbar,
 	}));
-	console.log(friendRequestListItemProps);
+
 	async function acceptRequest() {
 		try {
 			let newSnackbar;
-			if (friendRequestListItemProps.requestType === "friend") {
+			if (requestType === "friend") {
 				const response = await fetch(
-					`/api/connect/acceptFriendRequest/${friendRequestListItemProps.requestId}`,
+					`/api/connect/acceptFriendRequest/${requestId}`,
 					{
 						method: "PUT",
 						headers: {
@@ -36,11 +38,12 @@ function ReceivedRequestListItem(
 						showSnackbar: true,
 					};
 				}
+				enqueueSnackbar(newSnackbar);
 			}
 
-			if (friendRequestListItemProps.requestType === "group") {
+			if (requestType === "group") {
 				const response = await fetch(
-					`/api/connect/acceptGroupRequest/${friendRequestListItemProps.requestId}`,
+					`/api/connect/acceptGroupRequest/${requestId}`,
 					{
 						method: "PUT",
 						headers: {
@@ -71,30 +74,58 @@ function ReceivedRequestListItem(
 	async function deleteRequest() {
 		try {
 			let newSnackbar;
-			const response = await fetch(
-				`/api/connect/rejectFriendRequest/${friendRequestListItemProps.requestId}`,
-				{
-					method: "PUT",
-					headers: {
-						"Content-Type": "application/json",
-					},
-				}
-			);
+			if (requestType === "friend") {
+				const response = await fetch(
+					`/api/connect/rejectFriendRequest/${requestId}`,
+					{
+						method: "PUT",
+						headers: {
+							"Content-Type": "application/json",
+						},
+					}
+				);
 
-			if (!response.ok) {
-				newSnackbar = {
-					type: "error",
-					message: "Successfully Deleted Friend Request",
-					showSnackbar: true,
-				};
-			} else {
-				newSnackbar = {
-					type: "success",
-					message: "Failed to Delete Friend Request",
-					showSnackbar: true,
-				};
+				if (!response.ok) {
+					newSnackbar = {
+						type: "error",
+						message: "Failed to Delete Friend Request",
+						showSnackbar: true,
+					};
+				} else {
+					newSnackbar = {
+						type: "success",
+						message: "Successfully Deleted Friend Request",
+						showSnackbar: true,
+					};
+				}
+				enqueueSnackbar(newSnackbar);
 			}
-			enqueueSnackbar(newSnackbar);
+			if (requestType === "group") {
+				const response = await fetch(
+					`/api/connect/rejectGroupRequest/${requestId}`,
+					{
+						method: "PUT",
+						headers: {
+							"Content-Type": "application/json",
+						},
+					}
+				);
+
+				if (!response.ok) {
+					newSnackbar = {
+						type: "error",
+						message: "Failed to Delete Group Request",
+						showSnackbar: true,
+					};
+				} else {
+					newSnackbar = {
+						type: "success",
+						message: "Successfully Deleted Group Request",
+						showSnackbar: true,
+					};
+				}
+				enqueueSnackbar(newSnackbar);
+			}
 		} catch (error) {
 			console.log(error);
 		}
@@ -106,13 +137,13 @@ function ReceivedRequestListItem(
 				<div className="relative z-0">
 					<Avatar
 						imageUrl="/friend-icon.svg"
-						altText={friendRequestListItemProps.username}
-						username={friendRequestListItemProps.username}
+						altText={username}
+						username={username}
 						type="default"
 					/>
 				</div>
 				<span className="flex-1 overflow-hidden">
-					<div className="truncate">{friendRequestListItemProps.username}</div>
+					<div className="truncate">{username}</div>
 				</span>
 				<div className="flex flex-shrink-0 justify-end gap-2">
 					<button

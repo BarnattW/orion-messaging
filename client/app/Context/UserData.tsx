@@ -69,6 +69,17 @@ export function UserData({
 	}, [userId]);
 
 	useEffect(() => {
+		notificationSocket.on("cached", (socketEvent) => {
+			console.log(socketEvent); // array of notifications
+			setNotifications(socketEvent);
+		});
+
+		return () => {
+			notificationSocket.off("cached");
+		};
+	});
+
+	useEffect(() => {
 		async function getUserData() {
 			if (usernameSWR && userId) {
 				setUsername(usernameSWR);

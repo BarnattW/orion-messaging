@@ -49,6 +49,7 @@ type UserState = {
 	setCurrentSnackbar: (snackbar?: Snackbar) => void;
 	notifications: Notification[];
 	setNotifications: (notifications: Notification[]) => void;
+	deleteNotifications: (notificationId: string) => void;
 };
 
 export const useUserStore = createWithEqualityFn<UserState>(
@@ -130,6 +131,13 @@ export const useUserStore = createWithEqualityFn<UserState>(
 			set((state) => ({
 				notifications: [...state.notifications, ...newNotifications],
 			})),
+		deleteNotifications: (notificationId) =>
+			set((state) => {
+				const updatedNotifications = state.notifications.filter(
+					(notification) => notification._id === notificationId
+				);
+				return { notifications: [...updatedNotifications] };
+			}),
 	}),
 	shallow
 );

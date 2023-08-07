@@ -23,7 +23,7 @@ function Notifications() {
 		setNotifications: state.setNotifications,
 	}));
 
-	function handleNotificationClick(event: React.MouseEvent<HTMLDivElement>) {
+	function handleNotificationToggle(event: React.MouseEvent<HTMLDivElement>) {
 		const bellIconRect = event.currentTarget.getBoundingClientRect();
 		const x = bellIconRect.right + 12;
 		const y = bellIconRect.top;
@@ -44,6 +44,11 @@ function Notifications() {
 					console.log(socketEvent);
 					setNotifications([socketEvent]);
 				});
+				await notificationSocket.on("groupRequestReceived", (socketEvent) => {
+					if (!socketEvent) return;
+					console.log(socketEvent);
+					setNotifications([socketEvent]);
+				});
 			} catch (error) {
 				console.log(error);
 			}
@@ -58,46 +63,75 @@ function Notifications() {
 
 	return (
 		<NotificationWrapper>
-			<div onClick={handleNotificationClick} ref={ref}>
-				<NotificationBellIcon className={iconClassNames} />
+			<div ref={ref}>
+				<div
+					onClick={handleNotificationToggle}
+					className="hover:cursor-pointer"
+				>
+					<NotificationBellIcon className={iconClassNames} />
+					<span
+						className={`absolute -bottom-1 right-0 inline-flex h-3 w-3 rounded-full border-2 border-zinc-800 ${
+							notifications.length > 0 ? "bg-red-500" : "hidden"
+						}
+						`}
+					></span>
+				</div>
 				{isComponentVisible && (
 					<div
-						className="fixed z-30 max-h-72 w-52 overflow-auto rounded bg-zinc-700 text-sm text-white scrollbar-thin scrollbar-thumb-neutral-800"
+						className="fixed z-30 max-h-72 w-80 rounded bg-zinc-700 text-sm text-white scrollbar-thin scrollbar-thumb-neutral-800 pb-4"
 						style={{
 							top: notificationMenuPosition.y,
 							left: notificationMenuPosition.x,
 						}}
 					>
 						<NotificationHeading>Notifications</NotificationHeading>
-						{notifications.map((notification) => {
-							return (
-								<NotificationCard
-									key={notification.message}
-									altText={notification.message}
-									users={["a"]}
-									type="default"
-									conversationName="vanyDOG"
-								/>
-							);
-						})}
-						<NotificationCard
-							altText="dummy"
-							users={["a", "b"]}
-							type="default"
-							conversationName="a"
-						/>
-						<NotificationCard
-							altText="dummy"
-							users={["a", "b"]}
-							type="default"
-							conversationName="a"
-						/>
-						<NotificationCard
-							altText="dummy"
-							users={["a", "b"]}
-							type="default"
-							conversationName="admaodmaodamdaomdaomdoadamdoad"
-						/>
+						<div className="flex flex-col-reverse">
+							{notifications.length > 0 ? (
+								notifications.map((notification) => {
+									return (
+										<NotificationCard
+											key={notification.message}
+											altText={notification.message}
+											receiverId={notification.receiverId}
+											type={notification.type}
+											conversationName={notification.conversationName}
+											message={notification.message}
+											timestamp={notification.timestamp}
+											senderId={notification.senderId}
+											_id={notification._id}
+											requestId={notification.requestId}
+											conversationId={notification.conversationId}
+										/>
+									);
+								})
+							) : (
+								<p className="px-5">No notifications found.</p>
+							)}
+							<NotificationCard
+								altText="dummy"
+								receiverId="cat"
+								type="message"
+								conversationName="a"
+								message="oh no, stinky"
+								timestamp={new Date()}
+								requestId="c"
+								conversationId="b"
+								senderId="bobby"
+								_id="ddada"
+							/>
+							<NotificationCard
+								altText="dummy"
+								receiverId="cat"
+								type="friend"
+								conversationName="a"
+								message="ohday"
+								timestamp={new Date()}
+								requestId="c"
+								conversationId="b"
+								senderId="bob"
+								_id="ddada"
+							/>
+						</div>
 					</div>
 				)}
 			</div>
