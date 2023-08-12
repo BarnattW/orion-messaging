@@ -47,13 +47,6 @@ export const sendMessage = (
         });
       }
 
-      const sentMessage = {
-        senderId: userId,
-        senderUsername: user?.username,
-        message: message,
-        timestamp: new Date(),
-      };
-
       // Creates a message with given information
       const createdMessage = await Message.create(sentMessage);
       if (!createdMessage) {
@@ -81,12 +74,14 @@ export const sendMessage = (
       }
 
       producer.send({
-        message: sentMessage,
+        message: createdMessage.message,
+        senderId: userId,
+        senderUsername: createdMessage.username,
+        timestamp: createdMessage.timestamp,
         conversationName: conv.title,
-	conversationId: conv._id,
         receiverIds: receiverIds
       })
-
+	    
     } catch (e) {
       socket.emit("requestError", {
         message: "Server Error (Send Message)",
