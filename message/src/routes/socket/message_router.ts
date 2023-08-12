@@ -81,7 +81,7 @@ export const sendMessage = (
       }
 
       producer.send({
-        message: message,
+        message: sentMessage,
         conversationName: conv.title,
 	conversationId: conv._id,
         receiverIds: receiverIds
