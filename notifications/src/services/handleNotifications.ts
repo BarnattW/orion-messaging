@@ -70,18 +70,18 @@ export async function handleNotifications() {
                 } 
             }
             if (topic === "messages" && messageType === "send"){
-                const {message, conversationName, conversationId} = parseMessage;
+                const {timestamp, senderId, message, conversationName, conversationId} = parseMessage;
                 const receivers = await User.find({ userId: { $in: message.receiverIds } });
                 receivers.forEach(async (receiver) => {
                   if (receiver && receiver.receiveNotifications){
                       const notifi = new Notifications();
                       notifi.conversationId = conversationId;
-                      notifi.timestamp = new Date();
-                      notifi.message = message.message;
+                      notifi.timestamp = timestamp;
+                      notifi.message = message;
                       notifi.type = "messages"
                       notifi.receiverId = receiver.userId;
                       notifi.conversationName = conversationName;
-                      notifi.senderId = message.senderId;
+                      notifi.senderId = senderId;
                       notifi.save();
                       console.log(notifi);
                   if (receiver.onlineStatus){
