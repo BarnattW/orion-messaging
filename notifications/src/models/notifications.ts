@@ -26,8 +26,7 @@ const NotificationSchema = new Schema<INotification>({
 		type: String
 	},
     timestamp: {
-        type: Date,
-        required: true
+        type: Date
       },
     requestId:{
         type: mongoose.Schema.Types.ObjectId,
