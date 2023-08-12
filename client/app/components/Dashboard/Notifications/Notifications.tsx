@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import useComponentVisible from "@/app/custom-hooks/useComponentVisible";
 import notificationSocket from "@/app/sockets/notificationSocket";
 import { useUserStore } from "@/app/store/userStore";
+import { Notification } from "@/app/types/UserContextTypes";
+import getUsername from "@/app/utils/getUsername";
 
 import NotificationBellIcon from "../../Icons/NotificationBellIcon";
 import NotificationCard from "./NotificationCard";
@@ -18,10 +20,13 @@ function Notifications() {
 		x: number;
 		y: number;
 	}>({ x: 0, y: 0 });
-	const { notifications, setNotifications } = useUserStore((state) => ({
-		notifications: state.notifications,
-		setNotifications: state.setNotifications,
-	}));
+	const { notifications, setNotifications, setUsers } = useUserStore(
+		(state) => ({
+			notifications: state.notifications,
+			setNotifications: state.setNotifications,
+			setUsers: state.setUsers,
+		})
+	);
 	console.log(notifications);
 	function handleNotificationToggle(event: React.MouseEvent<HTMLDivElement>) {
 		const bellIconRect = event.currentTarget.getBoundingClientRect();
@@ -34,21 +39,33 @@ function Notifications() {
 	useEffect(() => {
 		async function handleNotifications() {
 			try {
-				await notificationSocket.on("friendRequestReceived", (socketEvent) => {
+				await notificationSocket.on(
+					"friendRequestReceived",
+					async (socketEvent) => {
+						if (!socketEvent) return;
+						console.log(socketEvent);
+						setNotifications([socketEvent]);
+						const username = await getUsername(socketEvent.senderId);
+						setUsers(socketEvent.senderId, username);
+					}
+				);
+				await notificationSocket.on("messageReceived", async (socketEvent) => {
 					if (!socketEvent) return;
 					console.log(socketEvent);
 					setNotifications([socketEvent]);
+					const username = await getUsername(socketEvent.senderId);
+					setUsers(socketEvent.senderId, username);
 				});
-				await notificationSocket.on("messageReceived", (socketEvent) => {
-					if (!socketEvent) return;
-					console.log(socketEvent);
-					setNotifications([socketEvent]);
-				});
-				await notificationSocket.on("groupRequestReceived", (socketEvent) => {
-					if (!socketEvent) return;
-					console.log(socketEvent);
-					setNotifications([socketEvent]);
-				});
+				await notificationSocket.on(
+					"groupRequestReceived",
+					async (socketEvent) => {
+						if (!socketEvent) return;
+						console.log(socketEvent);
+						setNotifications([socketEvent]);
+						const username = await getUsername(socketEvent.senderId);
+						setUsers(socketEvent.senderId, username);
+					}
+				);
 			} catch (error) {
 				console.log(error);
 			}
@@ -58,8 +75,9 @@ function Notifications() {
 		return () => {
 			notificationSocket.off("friendRequestReceived");
 			notificationSocket.off("messageReceived");
+			notificationSocket.off("groupRequestReceived");
 		};
-	}, [setNotifications]);
+	}, [setNotifications, setUsers]);
 
 	return (
 		<NotificationWrapper>
@@ -88,9 +106,10 @@ function Notifications() {
 						<div className="flex flex-col-reverse">
 							{notifications.length > 0 ? (
 								notifications.map((notification) => {
+									console.log(notification);
 									return (
 										<NotificationCard
-											key={notification.message}
+											key={notification._id}
 											altText={notification.message}
 											receiverId={notification.receiverId}
 											type={notification.type}
@@ -107,30 +126,6 @@ function Notifications() {
 							) : (
 								<p className="px-5">No notifications found.</p>
 							)}
-							<NotificationCard
-								altText="dummy"
-								receiverId="cat"
-								type="message"
-								conversationName="a"
-								message="oh no, stinky"
-								timestamp={new Date()}
-								requestId="c"
-								conversationId="b"
-								senderId="bobby"
-								_id="ddada"
-							/>
-							<NotificationCard
-								altText="dummy"
-								receiverId="cat"
-								type="friend"
-								conversationName="a"
-								message="ohday"
-								timestamp={new Date()}
-								requestId="c"
-								conversationId="b"
-								senderId="bob"
-								_id="ddada"
-							/>
 						</div>
 					</div>
 				)}

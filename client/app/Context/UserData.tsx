@@ -7,7 +7,7 @@ import useSWR from "swr";
 import messageSocket from "../sockets/messageSocket";
 import notificationSocket from "../sockets/notificationSocket";
 import { useUserStore } from "../store/userStore";
-import { Conversation, Friend } from "../types/UserContextTypes";
+import { Conversation, Friend, Notification } from "../types/UserContextTypes";
 import getUsername from "../utils/getUsername";
 
 const fetcher = (url: string) => fetch(url).then((response) => response.json());
@@ -71,12 +71,16 @@ export function UserData({
 	useEffect(() => {
 		notificationSocket.on("cached", (socketEvent) => {
 			setNotifications(socketEvent);
+			socketEvent.forEach(async (notification: Notification) => {
+				const username = await getUsername(notification.senderId);
+				setUsers(notification.senderId, username);
+			});
 		});
 
 		return () => {
 			notificationSocket.off("cached");
 		};
-	});
+	}, [setNotifications, setUsers]);
 
 	useEffect(() => {
 		async function getUserData() {
@@ -140,40 +144,6 @@ export function UserData({
 		}
 		getUserConversations();
 	}, [setConversations, userId, setUsers]);
-
-	useEffect(() => {
-		function receiveUserConversationsUpdates() {
-			try {
-				// when adding a group
-				messageSocket.on(
-					"createdConversation",
-					(conversation: { data: Conversation }) => {
-						console.log(conversation);
-						if (conversation.data) {
-							setConversations([conversation.data]);
-							conversation.data.userData.forEach(async (userData) => {
-								const { userId } = userData;
-								if (userId in users) return;
-								try {
-									const username = await getUsername(userId);
-									setUsers(userId, username);
-								} catch (error) {
-									console.log(
-										`Error retrieving username for userId: ${userId}`,
-										error
-									);
-									// Handle the error, e.g., show an error message to the user
-								}
-							});
-						}
-					}
-				);
-			} catch (error) {
-				console.log(error);
-			}
-		}
-		receiveUserConversationsUpdates();
-	}, [setConversations, setUsers]);
 
 	useEffect(() => {
 		function receiveUserConversationsUpdates() {

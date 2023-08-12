@@ -91,7 +91,7 @@ function GroupRequestNotification({
 
 	return (
 		<div className="text-sm flex flex-col w-2/3">
-			<span>{`${users[senderId]} invited you to group ${conversationName}`}</span>
+			<span>{`${users[senderId].username} invited you to group ${conversationName}`}</span>
 			<span className="text-xs text-neutral-200">
 				{timestamp.toLocaleDateString(undefined, {
 					year: "numeric",

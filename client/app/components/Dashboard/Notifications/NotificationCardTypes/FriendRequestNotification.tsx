@@ -89,7 +89,7 @@ function FriendRequestNotification({
 
 	return (
 		<div className="text-sm flex flex-col w-2/3">
-			<span>{`${users[senderId]} sent you a friend request`}</span>
+			<span>{`${users[senderId].username} sent you a friend request`}</span>
 			<span className="text-xs text-neutral-200">
 				{timestamp.toLocaleDateString(undefined, {
 					year: "numeric",

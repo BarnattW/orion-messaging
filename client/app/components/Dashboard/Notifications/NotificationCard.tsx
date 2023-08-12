@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import messageSocket from "@/app/sockets/messageSocket";
+import notificationSocket from "@/app/sockets/notificationSocket";
 import { useUserStore } from "@/app/store/userStore";
 import { NotificationCardProps } from "@/app/types/Notifications";
 
@@ -27,10 +27,9 @@ function NotificationCard({
 		deleteNotifications: state.deleteNotifications,
 	}));
 	const [showExit, setShowExit] = useState(false);
-
 	function deleteNotification() {
 		console.log("deleting notif");
-		messageSocket.emit("deleteNotification", _id);
+		notificationSocket.emit("deleteNotification", _id);
 		deleteNotifications(_id);
 	}
 
