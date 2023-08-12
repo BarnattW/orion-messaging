@@ -3,7 +3,7 @@ import { ObjectId } from 'mongoose';
 
 export async function deleteNotification(notificationId: ObjectId){
     try{
-        const notif = Notifications.findByIdAndDelete(notificationId);
+        const notif = await Notifications.findByIdAndDelete(notificationId);
         if (!notif){
             console.log("notification not found");
             return "";
