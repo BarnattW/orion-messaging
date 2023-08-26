@@ -1,7 +1,7 @@
 import { redisClient } from '../redis/redis';
 import { consumer } from '../kafka/kafka_consumer';
 import { User } from '../models/user';
-import { sendNotification } from './sendNotification';
+import { sendNotification, sendSocketEvent } from './sendNotification';
 import { Notifications } from '../models/notifications';
 
 export async function handleNotifications() {
@@ -92,6 +92,27 @@ export async function handleNotifications() {
                 });
                 
             }
+            if (topic === "friends" && messageType === "request-accepted"){
+              const{receiverId} = parseMessage;
+              const receiver = await User.findOne({userId: receiverId});
+              if (receiver){
+                const data = {
+                  receiverId: receiverId
+                }
+                await sendSocketEvent(receiverId, data, "friendrequest-accepted");
+              }
+            }
+            if (topic === "friends" && messageType === "request-deleted"){
+              const{receiverId} = parseMessage;
+              const receiver = await User.findOne({userId: receiverId});
+              if (receiver){
+                const data = {
+                  receiverId: receiverId
+                }
+                await sendSocketEvent(receiverId, data, "friendrequest-deleted");
+              }
+            }
+
         }
       },
     });
