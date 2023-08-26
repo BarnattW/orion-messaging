@@ -11,12 +11,6 @@ export async function handleNotifications() {
 	await consumer.subscribe({ topic: "messages", fromBeginning: true });
 	await consumer.subscribe({ topic: "groups", fromBeginning: true });
 	await consumer.subscribe({ topic: "user-created", fromBeginning: true });
-
-    await consumer.connect();
-    await consumer.subscribe({ topic: 'friends', fromBeginning: true });
-    await consumer.subscribe({ topic: 'messages', fromBeginning: true });
-    await consumer.subscribe({ topic: 'groups', fromBeginning: true });
-    await consumer.subscribe({ topic: 'user-created', fromBeginning: true });
   
     await consumer.run({
       eachMessage: async ({ topic, partition, message }) => {
