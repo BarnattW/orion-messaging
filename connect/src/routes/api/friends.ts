@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import { User } from "../../models/user";
 import { request } from "../../models/request";
 import express, { Request, Response } from "express";
+import { publishMessage } from "./kafka-ops/kafkaproducer";
 
 const router = express.Router();
 
@@ -45,7 +46,12 @@ router.delete(
 
 			friend.friends.splice(friendIndexOfUser, 1);
 			await friend.save();
+			
+			const users = {
+				receiverId: friendId
+			}
 
+			await publishMessage("friends", users, "request-deleted");
 
 			return res.status(200).json({ message: "Friend removed successfully" });
 		} catch (error) {
