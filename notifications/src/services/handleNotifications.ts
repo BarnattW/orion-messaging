@@ -1,3 +1,4 @@
+
 import { redisClient } from '../redis/redis';
 import { consumer } from '../kafka/kafka_consumer';
 import { User } from '../models/user';
@@ -5,6 +6,11 @@ import { sendNotification, sendSocketEvent } from './sendNotification';
 import { Notifications } from '../models/notifications';
 
 export async function handleNotifications() {
+	await consumer.connect();
+	await consumer.subscribe({ topic: "friends", fromBeginning: true });
+	await consumer.subscribe({ topic: "messages", fromBeginning: true });
+	await consumer.subscribe({ topic: "groups", fromBeginning: true });
+	await consumer.subscribe({ topic: "user-created", fromBeginning: true });
 
     await consumer.connect();
     await consumer.subscribe({ topic: 'friends', fromBeginning: true });
@@ -119,4 +125,3 @@ export async function handleNotifications() {
   }
 
 
-  

@@ -8,9 +8,14 @@ function ReceivedRequestListItem({
 	requestId,
 	username,
 }: RequestListItemProps) {
-	const { enqueueSnackbar } = useUserStore((state) => ({
-		enqueueSnackbar: state.enqueueSnackbar,
-	}));
+	const { enqueueSnackbar, addFriends, deleteFriends, users } = useUserStore(
+		(state) => ({
+			enqueueSnackbar: state.enqueueSnackbar,
+			addFriends: state.addFriends,
+			deleteFriends: state.deleteFriends,
+			users: state.users,
+		})
+	);
 
 	async function acceptRequest() {
 		try {
@@ -39,6 +44,7 @@ function ReceivedRequestListItem({
 					};
 				}
 				enqueueSnackbar(newSnackbar);
+				addFriends(requestId);
 			}
 
 			if (requestType === "group") {

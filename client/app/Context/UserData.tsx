@@ -28,6 +28,8 @@ export function UserData({
 		users,
 		setUsers,
 		setNotifications,
+		addFriends,
+		deleteFriends,
 	} = useUserStore((state) => ({
 		setUserId: state.setUserId,
 		setUsername: state.setUsername,
@@ -36,6 +38,8 @@ export function UserData({
 		users: state.users,
 		setUsers: state.setUsers,
 		setNotifications: state.setNotifications,
+		addFriends: state.addFriends,
+		deleteFriends: state.deleteFriends,
 	}));
 	console.log(users);
 
@@ -70,11 +74,11 @@ export function UserData({
 
 	useEffect(() => {
 		notificationSocket.on("cached", (socketEvent) => {
-			setNotifications(socketEvent);
 			socketEvent.forEach(async (notification: Notification) => {
 				const username = await getUsername(notification.senderId);
 				setUsers(notification.senderId, username);
 			});
+			setNotifications(socketEvent);
 		});
 
 		return () => {
@@ -178,6 +182,56 @@ export function UserData({
 		}
 		receiveUserConversationsUpdates();
 	}, [setConversations, setUsers]);
+
+	useEffect(() => {
+		function receiveFriendRequestUpdates() {
+			try {
+				// when adding and deleting friends
+				notificationSocket.on(
+					"friendrequest-deleted",
+					async (friend: { receiverId: string }) => {
+						const receiverId = friend.receiverId;
+						if (receiverId) {
+							if (receiverId in users) return;
+							try {
+								const username = await getUsername(receiverId);
+								setUsers(receiverId, username);
+							} catch (error) {
+								console.log(
+									`Error retrieving username for userId: ${receiverId}`,
+									error
+								);
+							}
+							deleteFriends(receiverId);
+						}
+					}
+				);
+				notificationSocket.on(
+					"friendrequest-accepted",
+					async (friend: { receiverId: string }) => {
+						const receiverId = friend.receiverId;
+						if (receiverId) {
+							if (receiverId in users) return;
+							try {
+								const username = await getUsername(receiverId);
+								setUsers(receiverId, username);
+							} catch (error) {
+								console.log(
+									`Error retrieving username for userId: ${receiverId}`,
+									error
+								);
+							}
+						}
+						addFriends(receiverId);
+					}
+				);
+			} catch (error) {
+				console.log(error);
+			}
+		}
+
+		receiveFriendRequestUpdates();
+	}, [setUsers, addFriends, deleteFriends]);
 
 	return <>{children}</>;
 }
