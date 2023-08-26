@@ -30,3 +30,18 @@ export async function sendCachedNotifications(receiverId: string, notifications:
     console.error('Error emitting event:', error);
   }
 }
+
+export async function sendSocketEvent(receiverId: string, data: object , type: string) {
+  try {
+    const socketId = await getSocketIdForUser(receiverId);
+    console.log(socketId);
+    if (socketId) {
+      console.log('socket event sent');
+      io.to(socketId).emit(type, data);
+    } else {
+      console.log(`No socket found for receiver ID ${receiverId}`);
+    }
+  } catch (error) {
+    console.error('Error emitting event:', error);
+  }
+}
