@@ -1,16 +1,23 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { redisClient } from "../redis/redis";
 import { consumer } from "../kafka/kafka_consumer";
 import { User } from "../models/user";
 import { sendNotification } from "./sendNotification";
 import { Notifications } from "../models/notifications";
 =======
+=======
+
+>>>>>>> 62aaf5e9886bba50f82caa5d1dd20bce98167fce
 import { redisClient } from '../redis/redis';
 import { consumer } from '../kafka/kafka_consumer';
 import { User } from '../models/user';
 import { sendNotification, sendSocketEvent } from './sendNotification';
 import { Notifications } from '../models/notifications';
+<<<<<<< HEAD
 >>>>>>> 3c084dc01a3b79a273a8f5c680f187dae32b8cd6
+=======
+>>>>>>> 62aaf5e9886bba50f82caa5d1dd20bce98167fce
 
 export async function handleNotifications() {
 	await consumer.connect();
@@ -19,6 +26,7 @@ export async function handleNotifications() {
 	await consumer.subscribe({ topic: "groups", fromBeginning: true });
 	await consumer.subscribe({ topic: "user-created", fromBeginning: true });
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 	await consumer.run({
 		eachMessage: async ({ topic, partition, message }) => {
@@ -127,6 +135,8 @@ export async function handleNotifications() {
 	});
 }
 =======
+=======
+>>>>>>> 62aaf5e9886bba50f82caa5d1dd20bce98167fce
     await consumer.connect();
     await consumer.subscribe({ topic: 'friends', fromBeginning: true });
     await consumer.subscribe({ topic: 'messages', fromBeginning: true });
@@ -240,5 +250,8 @@ export async function handleNotifications() {
   }
 
 
+<<<<<<< HEAD
   
 >>>>>>> 3c084dc01a3b79a273a8f5c680f187dae32b8cd6
+=======
+>>>>>>> 62aaf5e9886bba50f82caa5d1dd20bce98167fce
