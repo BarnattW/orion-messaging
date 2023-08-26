@@ -20,13 +20,21 @@ function Notifications() {
 		x: number;
 		y: number;
 	}>({ x: 0, y: 0 });
-	const { notifications, setNotifications, setUsers } = useUserStore(
-		(state) => ({
-			notifications: state.notifications,
-			setNotifications: state.setNotifications,
-			setUsers: state.setUsers,
-		})
-	);
+	const {
+		notifications,
+		setNotifications,
+		setUsers,
+		users,
+		addFriends,
+		deleteFriends,
+	} = useUserStore((state) => ({
+		notifications: state.notifications,
+		setNotifications: state.setNotifications,
+		setUsers: state.setUsers,
+		users: state.users,
+		addFriends: state.addFriends,
+		deleteFriends: state.deleteFriends,
+	}));
 	console.log(notifications);
 	function handleNotificationToggle(event: React.MouseEvent<HTMLDivElement>) {
 		const bellIconRect = event.currentTarget.getBoundingClientRect();
@@ -37,6 +45,54 @@ function Notifications() {
 	}
 
 	useEffect(() => {
+		function receiveFriendRequestUpdates() {
+			try {
+				// when adding and deleting friends
+				notificationSocket.on(
+					"friendrequest-deleted",
+					async (friend: { receiverId: string }) => {
+						const receiverId = friend.receiverId;
+						if (receiverId) {
+							if (receiverId in users) return;
+							try {
+								const username = await getUsername(receiverId);
+								setUsers(receiverId, username);
+							} catch (error) {
+								console.log(
+									`Error retrieving username for userId: ${receiverId}`,
+									error
+								);
+							}
+							deleteFriends(receiverId);
+						}
+					}
+				);
+				console.log("adnaidaidaindai");
+				notificationSocket.on("friendrequest-accepted", async (friend) => {
+					console.log("socjejrqa");
+					const receiverId = friend.receiverId;
+					console.log(friend);
+					if (receiverId) {
+						if (receiverId in users) return;
+						try {
+							const username = await getUsername(receiverId);
+							setUsers(receiverId, username);
+						} catch (error) {
+							console.log(
+								`Error retrieving username for userId: ${receiverId}`,
+								error
+							);
+						}
+					}
+					addFriends(receiverId);
+				});
+			} catch (error) {
+				console.log(error);
+			}
+		}
+
+		receiveFriendRequestUpdates();
+
 		async function handleNotifications() {
 			try {
 				await notificationSocket.on(
@@ -78,6 +134,8 @@ function Notifications() {
 			notificationSocket.off("friendRequestReceived");
 			notificationSocket.off("messageReceived");
 			notificationSocket.off("groupRequestReceived");
+			notificationSocket.off("friendrequest-deleted");
+			notificationSocket.off("friendrequest-accepted");
 		};
 	}, [setNotifications, setUsers]);
 
