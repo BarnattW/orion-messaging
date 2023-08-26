@@ -93,19 +93,26 @@ export async function handleNotifications() {
                 
             }
             if (topic === "friends" && messageType === "request-accepted"){
-              const{receiverId, senderId} = parseMessage;
+              const{receiverId} = parseMessage;
               const receiver = await User.findOne({userId: receiverId});
-              const sender = await User.findOne({userId: senderId});
-              if (receiver && sender){
+              if (receiver){
                 const data = {
-                  receiverId: receiverId,
-                  senderId: senderId
+                  receiverId: receiverId
                 }
                 await sendSocketEvent(receiverId, data, "friendrequest-accepted");
-                await sendSocketEvent(senderId, data, "friendrequest-accepted");
               }
-              
             }
+            if (topic === "friends" && messageType === "request-deleted"){
+              const{receiverId} = parseMessage;
+              const receiver = await User.findOne({userId: receiverId});
+              if (receiver){
+                const data = {
+                  receiverId: receiverId
+                }
+                await sendSocketEvent(receiverId, data, "friendrequest-deleted");
+              }
+            }
+
         }
       },
     });
