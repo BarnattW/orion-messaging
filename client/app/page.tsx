@@ -59,7 +59,7 @@ export default function Home() {
 					</div>
 					<div>
 						<Link
-							href=""
+							href="https://www.linkedin.com/in/geoffrey-lin-32b12825b/"
 							target="_blank"
 							className="hover:text-indigo-700 text-indigo-500"
 						>
