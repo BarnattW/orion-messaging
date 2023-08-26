@@ -52,7 +52,7 @@ function NotificationCard({
 						type="message"
 					/>
 				</div>
-				{type == "message" ? (
+				{type == "messages" ? (
 					<MessageNotification
 						receiverId={receiverId}
 						message={message}
@@ -60,6 +60,7 @@ function NotificationCard({
 						conversationName={conversationName}
 						conversationId={conversationId}
 						_id={_id}
+						senderId={senderId}
 					/>
 				) : null}
 				{type == "friends" ? (

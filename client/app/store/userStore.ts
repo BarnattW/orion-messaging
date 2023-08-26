@@ -24,6 +24,8 @@ type UserState = {
 	setUsers: (userId: string, username: string) => void;
 	friends: Friend[];
 	setFriends: (friends: Friend[]) => void;
+	addFriends: (receiverId: string) => void;
+	deleteFriends: (receiverId: string) => void;
 	friendRequests: FriendRequests;
 	setFriendRequests: (friendRequests: FriendRequests) => void;
 	groupRequests: GroupRequests;
@@ -68,6 +70,21 @@ export const useUserStore = createWithEqualityFn<UserState>(
 			})),
 		friends: [],
 		setFriends: (friends) => set(() => ({ friends })),
+		addFriends: (receiverId) =>
+			set((state) => {
+				const newFriend: Friend = {
+					userId: receiverId,
+					username: "a",
+				};
+				return { friends: [...state.friends, newFriend] };
+			}),
+		deleteFriends: (receiverId) =>
+			set((state) => {
+				const updatedFriends = state.friends.filter(
+					(friend) => friend.userId !== receiverId
+				);
+				return { friends: [...updatedFriends] };
+			}),
 		friendRequests: { receivedRequests: [], sentRequests: [] },
 		setFriendRequests: (friendRequests) =>
 			set((state) => ({ friendRequests: friendRequests })),
