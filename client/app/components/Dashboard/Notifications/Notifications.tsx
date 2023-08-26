@@ -44,26 +44,28 @@ function Notifications() {
 					async (socketEvent) => {
 						if (!socketEvent) return;
 						console.log(socketEvent);
-						setNotifications([socketEvent]);
 						const username = await getUsername(socketEvent.senderId);
 						setUsers(socketEvent.senderId, username);
+						setNotifications([socketEvent]);
 					}
 				);
 				await notificationSocket.on("messageReceived", async (socketEvent) => {
 					if (!socketEvent) return;
 					console.log(socketEvent);
-					setNotifications([socketEvent]);
+
 					const username = await getUsername(socketEvent.senderId);
 					setUsers(socketEvent.senderId, username);
+					setNotifications([socketEvent]);
 				});
 				await notificationSocket.on(
 					"groupRequestReceived",
 					async (socketEvent) => {
 						if (!socketEvent) return;
 						console.log(socketEvent);
-						setNotifications([socketEvent]);
+
 						const username = await getUsername(socketEvent.senderId);
 						setUsers(socketEvent.senderId, username);
+						setNotifications([socketEvent]);
 					}
 				);
 			} catch (error) {
@@ -96,7 +98,7 @@ function Notifications() {
 				</div>
 				{isComponentVisible && (
 					<div
-						className="fixed z-30 max-h-72 w-80 rounded bg-zinc-700 text-sm text-white scrollbar-thin scrollbar-thumb-neutral-800 pb-4"
+						className="fixed z-30 max-h-72 overflow-y-scroll overflow-x-hidden w-80 rounded bg-zinc-700 text-sm text-white scrollbar-thin scrollbar-thumb-neutral-800 pb-4"
 						style={{
 							top: notificationMenuPosition.y,
 							left: notificationMenuPosition.x,

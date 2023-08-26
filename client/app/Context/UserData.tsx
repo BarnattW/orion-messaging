@@ -70,11 +70,11 @@ export function UserData({
 
 	useEffect(() => {
 		notificationSocket.on("cached", (socketEvent) => {
-			setNotifications(socketEvent);
 			socketEvent.forEach(async (notification: Notification) => {
 				const username = await getUsername(notification.senderId);
 				setUsers(notification.senderId, username);
 			});
+			setNotifications(socketEvent);
 		});
 
 		return () => {
