@@ -8,6 +8,7 @@ import { sendCachedNotifications } from "./services/sendNotification";
 import { addToMap, getSocketIdForUser, getUserIdForSocket, removeFromMap  } from "./utils/biDirectionalMap";
 import { deleteNotification } from "./services/deleteNotifications";
 import { pullNotificationsForUser } from "./utils/sockets";
+import { toggleNotifications, getPreference } from "./services/toggleNotifications";
 
 
 const app = express();
@@ -55,6 +56,23 @@ export const io = new Server(server, {
 		}
 		
 	});
+
+	socket.on("toggleNotifications", async(userId, bool) =>{
+		const user = await User.findOne({userId: userId});
+		if (!user){
+			return;
+		}
+		await toggleNotifications(userId, bool);
+	});
+
+	socket.on("getPreferences", async(userId) =>{
+		const user = await User.findOne({userId: userId});
+		if (!user){
+			return;
+		}
+		const preference = await getPreference(userId);
+		socket.emit("preferences", preference);
+	})
 
 	socket.on("deleteNotification", async (notifId) =>{
 		const deleted = await deleteNotification(notifId);
