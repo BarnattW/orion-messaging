@@ -36,7 +36,11 @@ export async function handleNotifications() {
                 const receiver = await User.findOne({userId: receiverId});
                 console.log("friend request sent")
                 console.log(receiver);
-                console.log("-----", receiver?.receiveNotifications)
+                console.log("-----", receiver?.receiveNotifications);
+                const data = {
+                  receiverId: receiverId
+                }
+                await sendSocketEvent(receiverId, data, "freq-received");
                 if (receiver && receiver.receiveNotifications){
                     const notifi = new Notifications();
                     notifi.requestId = _id;
@@ -64,6 +68,10 @@ export async function handleNotifications() {
                     notifi.conversationName = groupName;
                     notifi.save();
                     console.log(notifi);
+                    const data = {
+                      receiverId: receiverId
+                    }
+                    await sendSocketEvent(receiverId, data, "greq-received");
                 if (receiver.onlineStatus){
                   await sendNotification(receiverId, notifi, "groupRequestReceived");
                 }
