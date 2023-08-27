@@ -24,6 +24,8 @@ type UserState = {
 	setUsers: (userId: string, username: string) => void;
 	friends: Friend[];
 	setFriends: (friends: Friend[]) => void;
+	addFriends: (receiverId: string) => void;
+	deleteFriends: (receiverId: string) => void;
 	friendRequests: FriendRequests;
 	setFriendRequests: (friendRequests: FriendRequests) => void;
 	groupRequests: GroupRequests;
@@ -49,6 +51,7 @@ type UserState = {
 	setCurrentSnackbar: (snackbar?: Snackbar) => void;
 	notifications: Notification[];
 	setNotifications: (notifications: Notification[]) => void;
+	deleteNotifications: (notificationId: string) => void;
 };
 
 export const useUserStore = createWithEqualityFn<UserState>(
@@ -67,6 +70,21 @@ export const useUserStore = createWithEqualityFn<UserState>(
 			})),
 		friends: [],
 		setFriends: (friends) => set(() => ({ friends })),
+		addFriends: (receiverId) =>
+			set((state) => {
+				const newFriend: Friend = {
+					userId: receiverId,
+					username: "a",
+				};
+				return { friends: [...state.friends, newFriend] };
+			}),
+		deleteFriends: (receiverId) =>
+			set((state) => {
+				const updatedFriends = state.friends.filter(
+					(friend) => friend.userId !== receiverId
+				);
+				return { friends: [...updatedFriends] };
+			}),
 		friendRequests: { receivedRequests: [], sentRequests: [] },
 		setFriendRequests: (friendRequests) =>
 			set((state) => ({ friendRequests: friendRequests })),
@@ -127,9 +145,25 @@ export const useUserStore = createWithEqualityFn<UserState>(
 			})),
 		notifications: [],
 		setNotifications: (newNotifications) =>
-			set((state) => ({
-				notifications: [...state.notifications, ...newNotifications],
-			})),
+			set((state) => {
+				const notificationsWithDate = newNotifications.map(
+					(newNotification) => ({
+						...newNotification,
+						timestamp: new Date(newNotification.timestamp),
+					})
+				);
+
+				return {
+					notifications: [...state.notifications, ...notificationsWithDate],
+				};
+			}),
+		deleteNotifications: (notificationId) =>
+			set((state) => {
+				const updatedNotifications = state.notifications.filter(
+					(notification) => notification._id !== notificationId
+				);
+				return { notifications: [...updatedNotifications] };
+			}),
 	}),
 	shallow
 );

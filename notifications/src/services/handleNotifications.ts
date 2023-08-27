@@ -125,6 +125,3 @@ export async function handleNotifications() {
       },
     });
   }
-
-
-  

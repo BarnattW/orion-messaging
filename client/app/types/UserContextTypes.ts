@@ -96,4 +96,9 @@ export interface Notification {
 	receiverId: string;
 	message: string;
 	type: string;
+	conversationName: string;
+	timestamp: Date;
+	_id: string;
+	requestId?: string;
+	conversationId?: string;
 }
