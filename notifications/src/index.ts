@@ -57,12 +57,15 @@ export const io = new Server(server, {
 		
 	});
 
-	socket.on("toggleNotifications", async(userId, bool) =>{
+	socket.on("toggleNotifications", async(data) =>{
+		const {userId, bool} = data;
 		const user = await User.findOne({userId: userId});
 		if (!user){
 			return;
 		}
 		await toggleNotifications(userId, bool);
+		const preference = await getPreference(userId);
+		socket.emit("preferences", preference);
 	});
 
 	socket.on("getPreferences", async(userId) =>{
