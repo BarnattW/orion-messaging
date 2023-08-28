@@ -2,10 +2,11 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-import ProfileForm from "../SettingsTabs/ProfileForm";
-import TabHeading from "../SettingsTabs/TabHeading";
-import SettingsContainer from "../SettingsWrappers/SettingsContainer";
-import SettingsHeading from "../SettingsWrappers/SettingsHeading";
+import NotificationSettings from "./SettingsTabsContent/NotificationSettings";
+import ProfileForm from "./SettingsTabsContent/ProfileForm";
+import TabHeading from "./SettingsTabsContent/TabHeading";
+import SettingsContainer from "./SettingsWrappers/SettingsContainer";
+import SettingsHeading from "./SettingsWrappers/SettingsHeading";
 
 const listItemClassNames =
 	"rounded-lg mt-1 p-2 hover:bg-zinc-600 cursor-pointer";
@@ -60,14 +61,14 @@ function SettingsTab() {
 					>
 						Notifications
 					</li>
-					<li
+					{/* <li
 						className={
 							toggleState === 3 ? activeListItemClassNames : listItemClassNames
 						}
 						onClick={() => toggleTab(3)}
 					>
 						Account
-					</li>
+					</li> */}
 					<li
 						className={
 							toggleState === 4 ? activeListItemClassNames : listItemClassNames
@@ -81,15 +82,24 @@ function SettingsTab() {
 					</li>
 				</ul>
 			</SettingsContainer>
-			<div className="ml-2 flex h-full grow flex-col items-center overflow-auto scrollbar-thin scrollbar-thumb-zinc-700 sm:ml-10 sm:items-baseline">
+			<div className="ml-2 flex h-full grow flex-col items-center overflow-y-auto scrollbar-thin scrollbar-thumb-zinc-700 sm:ml-10 sm:items-baseline">
 				{toggleState === 1 && (
 					<>
 						<TabHeading content="Profile" />
 						<ProfileForm />
 					</>
 				)}
-				{toggleState === 2 && <TabHeading content="Notifications" />}
-				{toggleState === 3 && <TabHeading content="Account" />}
+				{toggleState === 2 && (
+					<>
+						<TabHeading content="Notifications" />
+						<NotificationSettings />
+					</>
+				)}
+				{/* {toggleState === 3 && (
+					<>
+						<TabHeading content="Account" />
+					</>
+				)} */}
 			</div>
 		</>
 	);

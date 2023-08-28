@@ -5,7 +5,8 @@ import RecievedRequestListItem from "../FriendRequests/RequestListItem/ReceivedR
 import ListHeading from "../ListWrappers/ListHeading";
 
 function ReceivedGroupRequests({ receivedRequests }: ReceviedRequestsProps) {
-	const { users } = useUserStore((state) => state.users);
+	const users = useUserStore((state) => state.users);
+	console.log(users);
 
 	if (!receivedRequests) {
 		return (
@@ -19,18 +20,20 @@ function ReceivedGroupRequests({ receivedRequests }: ReceviedRequestsProps) {
 	return (
 		<>
 			<ListHeading>Group Invites</ListHeading>
-			{receivedRequests?.map((receivedRequest) => {
-				if (!users[receivedRequest.senderId]) return;
-				return (
-					<RecievedRequestListItem
-						userId={receivedRequest.senderId}
-						username={users[receivedRequest.senderId].username}
-						requestId={receivedRequest._id}
-						key={receivedRequest._id}
-						requestType={receivedRequest.requestType}
-					/>
-				);
-			})}
+			<ul>
+				{receivedRequests?.map((receivedRequest) => {
+					if (!users[receivedRequest.senderId]) return;
+					return (
+						<RecievedRequestListItem
+							userId={receivedRequest.senderId}
+							username={users[receivedRequest.senderId].username}
+							requestId={receivedRequest._id}
+							key={receivedRequest._id}
+							requestType={receivedRequest.requestType}
+						/>
+					);
+				})}
+			</ul>
 		</>
 	);
 }

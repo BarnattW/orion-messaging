@@ -29,9 +29,9 @@ export class messageProducer implements SimpleProducer {
 	public async send(message: any): Promise<void> {
 		try {
 			await this.producer.send({
-				topic: "message",
+				topic: "messages",
 				messages: [{ value: JSON.stringify({
-					type: "send",
+					messageType: "send",
 					message: message 
 				})}],
 			});

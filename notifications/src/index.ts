@@ -84,6 +84,7 @@ export const io = new Server(server, {
 		}
 	})
 
+
 	socket.on('disconnect', async() => {
 		console.log('socket connection closed');
 		const userId = await getUserIdForSocket(socket.id);
