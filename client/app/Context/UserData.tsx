@@ -194,7 +194,7 @@ export function UserData({
 			}
 		}
 		receiveUserNotificationSettings();
-	});
+	}, [setToggleNotifications, userId]);
 
 	return <>{children}</>;
 }

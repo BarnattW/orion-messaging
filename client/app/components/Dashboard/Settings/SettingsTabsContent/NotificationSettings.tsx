@@ -13,10 +13,12 @@ export default function NotificationSettings() {
 
 	function updateSettings() {
 		try {
-			console.log("updating notification settings");
+			console.log("updating notification settings", !toggleNotifications);
+			const bool = !toggleNotifications;
+			console.log(bool);
 			notificationSocket.emit("toggleNotifications", {
 				userId,
-				bool: toggleNotifications,
+				bool,
 			});
 			notificationSocket.on("preferences", (toggleNotifications: boolean) => {
 				console.log("toggle notifications:", toggleNotifications);

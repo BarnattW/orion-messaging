@@ -14,14 +14,14 @@ const FriendContextMenu = forwardRef(function (
 	}: FriendContextMenuProps,
 	ref: ForwardedRef<HTMLDivElement>
 ) {
-	const { friends, userId, username, enqueueSnackbar } = useUserStore(
-		(state) => ({
+	const { friends, userId, username, enqueueSnackbar, deleteFriends } =
+		useUserStore((state) => ({
 			friends: state.friends,
 			userId: state.userId,
 			username: state.username,
 			enqueueSnackbar: state.enqueueSnackbar,
-		})
-	);
+			deleteFriends: state.deleteFriends,
+		}));
 	const isFriends: boolean = friends.some(
 		(friend) => friend.userId === friendId
 	);
@@ -90,6 +90,8 @@ const FriendContextMenu = forwardRef(function (
 				};
 			}
 			enqueueSnackbar(newSnackbar);
+			deleteFriends(friendId);
+			console.log(friends);
 			closeContextMenu();
 		} catch (error) {
 			console.log(error);

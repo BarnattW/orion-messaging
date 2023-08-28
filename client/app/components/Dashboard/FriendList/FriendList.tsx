@@ -11,10 +11,9 @@ import FriendContextMenu from "./FriendListItem/FriendContextMenu";
 import FriendListItem from "./FriendListItem/FriendListItem";
 
 function FriendList() {
-	const { friends, users, enqueueSnackbar } = useUserStore((state) => ({
+	const { friends, users } = useUserStore((state) => ({
 		friends: state.friends,
 		users: state.users,
-		enqueueSnackbar: state.enqueueSnackbar,
 	}));
 	const [friendsQuery, setFriendsQuery] = useState<string>("");
 	const [selectedFriend, setSelectedFriend] = useState<SelectedFriend | null>(
@@ -45,7 +44,7 @@ function FriendList() {
 	const closeContextMenu = () => {
 		setSelectedFriend(null);
 	};
-
+	console.log(friends, users);
 	return (
 		<ListContainer>
 			<ListHeading>Friends</ListHeading>

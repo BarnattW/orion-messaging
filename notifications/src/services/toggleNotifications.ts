@@ -2,13 +2,11 @@ import { User } from "../models/user";
 
 export async function toggleNotifications(userId: String, bool: boolean) {
 	try {
-		const updatedUser = await User.findOneAndUpdate(
-			{ userId: userId },
-			{ $set: { receiveNotification: bool } },
-			{ new: true }
-		);
+		const updatedUser = await User.findOne({ userId: userId });
 
 		if (updatedUser) {
+			updatedUser.receiveNotifications = bool;
+			await updatedUser.save();
 			console.log("Updated user:", updatedUser);
 		} else {
 			console.log("User not found");
@@ -28,6 +26,7 @@ export async function getPreference(userId: String) {
 		console.log(
 			`${userId} has notifications set to ${user.receiveNotifications}`
 		);
+		return user.receiveNotifications;
 	} catch (error) {
 		console.log("error getting preference");
 	}
