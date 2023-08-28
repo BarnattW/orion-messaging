@@ -15,7 +15,7 @@ export default function Switch({ checked, updateSettings }: SwitchProps) {
 				type="checkbox"
 				checked={checked}
 				id="flexSwitchCheckDefault"
-				onClick={updateSetting}
+				onChange={updateSetting}
 			/>
 		</>
 	);

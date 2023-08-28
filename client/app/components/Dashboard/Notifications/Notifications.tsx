@@ -46,10 +46,10 @@ function Notifications() {
 	}
 
 	useEffect(() => {
-		function receiveFriendRequestUpdates() {
+		async function receiveFriendRequestUpdates() {
 			try {
 				// when adding and deleting friends
-				notificationSocket.on(
+				await notificationSocket.on(
 					"friendrequest-deleted",
 					async (friend: { receiverId: string }) => {
 						const receiverId = friend.receiverId;
@@ -69,24 +69,27 @@ function Notifications() {
 					}
 				);
 
-				notificationSocket.on("friendrequest-accepted", async (friend) => {
-					console.log("socjejrqa");
-					const receiverId = friend.receiverId;
-					console.log(friend);
-					if (receiverId) {
-						if (receiverId in users) return;
-						try {
-							const username = await getUsername(receiverId);
-							setUsers(receiverId, username);
-						} catch (error) {
-							console.log(
-								`Error retrieving username for userId: ${receiverId}`,
-								error
-							);
+				await notificationSocket.on(
+					"friendrequest-accepted",
+					async (friend) => {
+						console.log("socjejrqa");
+						const receiverId = friend.receiverId;
+						console.log(friend);
+						if (receiverId) {
+							if (receiverId in users) return;
+							try {
+								const username = await getUsername(receiverId);
+								setUsers(receiverId, username);
+							} catch (error) {
+								console.log(
+									`Error retrieving username for userId: ${receiverId}`,
+									error
+								);
+							}
 						}
+						addFriends(receiverId);
 					}
-					addFriends(receiverId);
-				});
+				);
 			} catch (error) {
 				console.log(error);
 			}
@@ -130,15 +133,7 @@ function Notifications() {
 			}
 		}
 		handleNotifications();
-
-		return () => {
-			notificationSocket.off("friendRequestReceived");
-			notificationSocket.off("messageReceived");
-			notificationSocket.off("groupRequestReceived");
-			notificationSocket.off("friendrequest-deleted");
-			notificationSocket.off("friendrequest-accepted");
-		};
-	}, [setNotifications, setUsers]);
+	}, [setNotifications, setUsers, addFriends, deleteFriends]);
 
 	return (
 		<NotificationWrapper>

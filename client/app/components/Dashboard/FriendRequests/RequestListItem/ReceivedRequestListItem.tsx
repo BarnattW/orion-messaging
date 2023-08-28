@@ -5,6 +5,7 @@ import getUsername from "@/app/utils/getUsername";
 import Avatar from "../../Avatar/Avatar";
 
 function ReceivedRequestListItem({
+	userId,
 	requestType,
 	requestId,
 	username,
@@ -45,9 +46,9 @@ function ReceivedRequestListItem({
 					};
 				}
 				enqueueSnackbar(newSnackbar);
-				const username = await getUsername(requestId);
-				setUsers(requestId, username);
-				addFriends(requestId);
+				const username = await getUsername(userId);
+				setUsers(userId, username);
+				addFriends(userId);
 			}
 
 			if (requestType === "group") {
