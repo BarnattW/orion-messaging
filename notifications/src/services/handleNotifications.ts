@@ -93,7 +93,8 @@ export async function handleNotifications() {
             }
             if (topic === "friends" && messageType === "request-accepted"){
               const{receiverId} = parseMessage;
-              const receiver = await User.findOne({userId: receiverId});
+              const receiver = await User.findOne({ userId: receiverId });
+							console.log(receiver);
               if (receiver){
                 const data = {
                   receiverId: receiverId

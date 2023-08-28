@@ -8,12 +8,14 @@ const usernameCharacterLimit = 25;
 const userStatusCharacterLimit = 100;
 
 function ProfileForm() {
-	const { username, setUsername, userId, setUsers } = useUserStore((state) => ({
-		username: state.username,
-		setUsername: state.setUsername,
-		userId: state.userId,
-		setUsers: state.setUsers,
-	}));
+	const { username, setUsername, userId, setUsers, enqueueSnackbar } =
+		useUserStore((state) => ({
+			username: state.username,
+			setUsername: state.setUsername,
+			userId: state.userId,
+			setUsers: state.setUsers,
+			enqueueSnackbar: state.enqueueSnackbar,
+		}));
 	const [usernameValue, setUsernameValue] = useState(username);
 	const [statusValue, setStatusValue] = useState<string | null>(null);
 	const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -38,6 +40,7 @@ function ProfileForm() {
 		event?.preventDefault();
 		// to-do: status and profile picture, also banner
 		try {
+			let newSnackbar;
 			const response = await fetch("/api/connect/changeUsername", {
 				method: "PUT",
 				headers: { "Content-Type": "application/json" },
@@ -46,9 +49,19 @@ function ProfileForm() {
 
 			// error handling
 			if (!response.ok) {
-				// update with common error handling
-				console.log(response);
+				newSnackbar = {
+					type: "error",
+					message: "Failed to Change Username",
+					showSnackbar: true,
+				};
+			} else {
+				newSnackbar = {
+					type: "success",
+					message: "Successfully Changed Username",
+					showSnackbar: true,
+				};
 			}
+			enqueueSnackbar(newSnackbar);
 			setUsername(usernameValue);
 			//@ts-ignore
 			setUsers(userId, usernameValue);

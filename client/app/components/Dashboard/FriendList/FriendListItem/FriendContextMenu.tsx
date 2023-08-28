@@ -14,11 +14,14 @@ const FriendContextMenu = forwardRef(function (
 	}: FriendContextMenuProps,
 	ref: ForwardedRef<HTMLDivElement>
 ) {
-	const { friends, userId, username } = useUserStore((state) => ({
-		friends: state.friends,
-		userId: state.userId,
-		username: state.username,
-	}));
+	const { friends, userId, username, enqueueSnackbar } = useUserStore(
+		(state) => ({
+			friends: state.friends,
+			userId: state.userId,
+			username: state.username,
+			enqueueSnackbar: state.enqueueSnackbar,
+		})
+	);
 	const isFriends: boolean = friends.some(
 		(friend) => friend.userId === friendId
 	);
@@ -30,6 +33,7 @@ const FriendContextMenu = forwardRef(function (
 
 	async function addFriend() {
 		try {
+			let newSnackbar;
 			const response = await fetch("/api/connect/sendFriendRequest", {
 				method: "POST",
 				body: JSON.stringify({
@@ -42,12 +46,19 @@ const FriendContextMenu = forwardRef(function (
 			});
 
 			if (!response.ok) {
-				// update with common error handling
-				console.log(response);
+				newSnackbar = {
+					type: "error",
+					message: "Failed to Send Friend Request",
+					showSnackbar: true,
+				};
 			} else {
-				// update ui
-				console.log(response);
+				newSnackbar = {
+					type: "success",
+					message: "Friend Request Successfully Sent",
+					showSnackbar: true,
+				};
 			}
+			enqueueSnackbar(newSnackbar);
 			closeContextMenu();
 		} catch (error) {
 			console.log(error);
@@ -56,6 +67,7 @@ const FriendContextMenu = forwardRef(function (
 
 	async function deleteFriend() {
 		try {
+			let newSnackbar;
 			const response = await fetch(`/api/connect/removeFriend`, {
 				method: "DELETE",
 				body: JSON.stringify({ friendId, userId }),
@@ -65,12 +77,19 @@ const FriendContextMenu = forwardRef(function (
 			});
 
 			if (!response.ok) {
-				// update with common error handling
-				console.log(response);
+				newSnackbar = {
+					type: "error",
+					message: "Failed to Delete Friend",
+					showSnackbar: true,
+				};
 			} else {
-				// update ui
-				console.log(response);
+				newSnackbar = {
+					type: "success",
+					message: "Successfully Deleted Friend",
+					showSnackbar: true,
+				};
 			}
+			enqueueSnackbar(newSnackbar);
 			closeContextMenu();
 		} catch (error) {
 			console.log(error);
