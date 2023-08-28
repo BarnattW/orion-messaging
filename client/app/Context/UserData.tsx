@@ -28,8 +28,7 @@ export function UserData({
 		users,
 		setUsers,
 		setNotifications,
-		addFriends,
-		deleteFriends,
+		setToggleNotifications,
 	} = useUserStore((state) => ({
 		setUserId: state.setUserId,
 		setUsername: state.setUsername,
@@ -38,8 +37,7 @@ export function UserData({
 		users: state.users,
 		setUsers: state.setUsers,
 		setNotifications: state.setNotifications,
-		addFriends: state.addFriends,
-		deleteFriends: state.deleteFriends,
+		setToggleNotifications: state.setToggleNotifications,
 	}));
 	console.log(users);
 
@@ -182,6 +180,21 @@ export function UserData({
 		}
 		receiveUserConversationsUpdates();
 	}, [setConversations, setUsers]);
+
+	useEffect(() => {
+		function receiveUserNotificationSettings() {
+			try {
+				notificationSocket.emit("getPreferences", { userId });
+				notificationSocket.on("preferences", (toggleNotifications: boolean) => {
+					console.log("toggle notifications:", toggleNotifications);
+					setToggleNotifications(toggleNotifications);
+				});
+			} catch (error) {
+				console.log(error);
+			}
+		}
+		receiveUserNotificationSettings();
+	});
 
 	return <>{children}</>;
 }

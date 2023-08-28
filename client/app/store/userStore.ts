@@ -52,6 +52,8 @@ type UserState = {
 	notifications: Notification[];
 	setNotifications: (notifications: Notification[]) => void;
 	deleteNotifications: (notificationId: string) => void;
+	toggleNotifications: boolean;
+	setToggleNotifications: (toggleNotif: boolean) => void;
 };
 
 export const useUserStore = createWithEqualityFn<UserState>(
@@ -164,6 +166,9 @@ export const useUserStore = createWithEqualityFn<UserState>(
 				);
 				return { notifications: [...updatedNotifications] };
 			}),
+		toggleNotifications: true,
+		setToggleNotifications: (toogleNotif) =>
+			set(() => ({ toggleNotifications: toogleNotif })),
 	}),
 	shallow
 );
