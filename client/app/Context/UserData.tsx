@@ -184,7 +184,7 @@ export function UserData({
 	useEffect(() => {
 		function receiveUserNotificationSettings() {
 			try {
-				notificationSocket.emit("getPreferences", { userId });
+				notificationSocket.emit("getPreferences", userId);
 				notificationSocket.on("preferences", (toggleNotifications: boolean) => {
 					console.log("toggle notifications:", toggleNotifications);
 					setToggleNotifications(toggleNotifications);
