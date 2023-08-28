@@ -1,5 +1,6 @@
 import { useUserStore } from "@/app/store/userStore";
 import { RequestListItemProps } from "@/app/types/FriendRequests";
+import getUsername from "@/app/utils/getUsername";
 
 import Avatar from "../../Avatar/Avatar";
 
@@ -8,14 +9,14 @@ function ReceivedRequestListItem({
 	requestId,
 	username,
 }: RequestListItemProps) {
-	const { enqueueSnackbar, addFriends, deleteFriends, users } = useUserStore(
-		(state) => ({
+	const { enqueueSnackbar, addFriends, deleteFriends, users, setUsers } =
+		useUserStore((state) => ({
 			enqueueSnackbar: state.enqueueSnackbar,
 			addFriends: state.addFriends,
 			deleteFriends: state.deleteFriends,
 			users: state.users,
-		})
-	);
+			setUsers: state.setUsers,
+		}));
 
 	async function acceptRequest() {
 		try {
@@ -44,6 +45,8 @@ function ReceivedRequestListItem({
 					};
 				}
 				enqueueSnackbar(newSnackbar);
+				const username = await getUsername(requestId);
+				setUsers(requestId, username);
 				addFriends(requestId);
 			}
 
@@ -105,6 +108,7 @@ function ReceivedRequestListItem({
 					};
 				}
 				enqueueSnackbar(newSnackbar);
+				deleteFriends(requestId);
 			}
 			if (requestType === "group") {
 				const response = await fetch(

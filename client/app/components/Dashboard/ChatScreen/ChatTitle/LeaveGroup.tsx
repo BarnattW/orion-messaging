@@ -7,13 +7,17 @@ const iconClassNames =
 	"fill-gray-100 h-6 w-6 hover:cursor-pointer hover:fill-gray-400 stroke-neutral-100 hover:stroke-gray-400";
 
 function LeaveGroup() {
-	const { userId, activeConversation } = useUserStore((state) => ({
-		userId: state.userId,
-		activeConversation: state.activeConversation,
-	}));
+	const { userId, activeConversation, enqueueSnackbar } = useUserStore(
+		(state) => ({
+			userId: state.userId,
+			activeConversation: state.activeConversation,
+			enqueueSnackbar: state.enqueueSnackbar,
+		})
+	);
 
 	async function leaveGroup() {
 		try {
+			let newSnackbar;
 			const response = await fetch("/api/connect/leaveGroup", {
 				method: "PUT",
 				body: JSON.stringify({
@@ -26,12 +30,19 @@ function LeaveGroup() {
 			});
 
 			if (!response.ok) {
-				// update with common error handling
-				console.log(response);
+				newSnackbar = {
+					type: "error",
+					message: "Failed to Leave Group",
+					showSnackbar: true,
+				};
 			} else {
-				// update ui
-				console.log(response);
+				newSnackbar = {
+					type: "success",
+					message: "Successfully Left Group",
+					showSnackbar: true,
+				};
 			}
+			enqueueSnackbar(newSnackbar);
 		} catch (error) {
 			console.log(error);
 		}

@@ -67,7 +67,7 @@ function Notifications() {
 						}
 					}
 				);
-				console.log("adnaidaidaindai");
+
 				notificationSocket.on("friendrequest-accepted", async (friend) => {
 					console.log("socjejrqa");
 					const receiverId = friend.receiverId;
