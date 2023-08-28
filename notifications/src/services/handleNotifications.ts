@@ -5,11 +5,12 @@ import { sendNotification, sendSocketEvent } from './sendNotification';
 import { Notifications } from '../models/notifications';
 
 export async function handleNotifications() {
-	await consumer.connect();
-	await consumer.subscribe({ topic: "friends", fromBeginning: true });
-	await consumer.subscribe({ topic: "messages", fromBeginning: true });
-	await consumer.subscribe({ topic: "groups", fromBeginning: true });
-	await consumer.subscribe({ topic: "user-created", fromBeginning: true });
+
+    await consumer.connect();
+    await consumer.subscribe({ topic: 'friends', fromBeginning: true });
+    await consumer.subscribe({ topic: 'messages', fromBeginning: true });
+    await consumer.subscribe({ topic: 'groups', fromBeginning: true });
+    await consumer.subscribe({ topic: 'user-created', fromBeginning: true });
   
     await consumer.run({
       eachMessage: async ({ topic, partition, message }) => {
@@ -35,7 +36,11 @@ export async function handleNotifications() {
                 const receiver = await User.findOne({userId: receiverId});
                 console.log("friend request sent")
                 console.log(receiver);
-                console.log("-----", receiver?.receiveNotifications)
+                console.log("-----", receiver?.receiveNotifications);
+                const data = {
+                  receiverId: receiverId
+                }
+                await sendSocketEvent(receiverId, data, "freq-received");
                 if (receiver && receiver.receiveNotifications){
                     const notifi = new Notifications();
                     notifi.requestId = _id;
@@ -63,6 +68,10 @@ export async function handleNotifications() {
                     notifi.conversationName = groupName;
                     notifi.save();
                     console.log(notifi);
+                    const data = {
+                      receiverId: receiverId
+                    }
+                    await sendSocketEvent(receiverId, data, "greq-received");
                 if (receiver.onlineStatus){
                   await sendNotification(receiverId, notifi, "groupRequestReceived");
                 }
@@ -93,8 +102,7 @@ export async function handleNotifications() {
             }
             if (topic === "friends" && messageType === "request-accepted"){
               const{receiverId} = parseMessage;
-              const receiver = await User.findOne({ userId: receiverId });
-							console.log(receiver);
+              const receiver = await User.findOne({userId: receiverId});
               if (receiver){
                 const data = {
                   receiverId: receiverId
