@@ -1,14 +1,27 @@
-import { useState } from "react";
-
 import Switch from "@/app/components/Switch/Switch";
+import notificationSocket from "@/app/sockets/notificationSocket";
+import { useUserStore } from "@/app/store/userStore";
 
 export default function NotificationSettings() {
-	const [checked, setChecked] = useState(true);
+	const { toggleNotifications, userId, setToggleNotifications } = useUserStore(
+		(state) => ({
+			toggleNotifications: state.toggleNotifications,
+			userId: state.userId,
+			setToggleNotifications: state.setToggleNotifications,
+		})
+	);
 
 	function updateSettings() {
 		try {
 			console.log("updating notification settings");
-			setChecked((prevBool) => !prevBool);
+			notificationSocket.emit("toggleNotifications", {
+				userId,
+				bool: toggleNotifications,
+			});
+			notificationSocket.on("preferences", (toggleNotifications: boolean) => {
+				console.log("toggle notifications:", toggleNotifications);
+				setToggleNotifications(toggleNotifications);
+			});
 		} catch (error) {
 			console.log(error);
 		}
@@ -19,7 +32,10 @@ export default function NotificationSettings() {
 				<span className="flex justify-between">
 					Enable Notifications{" "}
 					<span>
-						<Switch checked={checked} updateSettings={updateSettings} />
+						<Switch
+							checked={toggleNotifications}
+							updateSettings={updateSettings}
+						/>
 					</span>
 				</span>
 				<span className="text-sm text-neutral-400">

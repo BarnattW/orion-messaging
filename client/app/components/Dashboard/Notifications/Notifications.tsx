@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import useComponentVisible from "@/app/custom-hooks/useComponentVisible";
 import notificationSocket from "@/app/sockets/notificationSocket";
 import { useUserStore } from "@/app/store/userStore";
-import { Notification } from "@/app/types/UserContextTypes";
 import getUsername from "@/app/utils/getUsername";
 
 import NotificationBellIcon from "../../Icons/NotificationBellIcon";
@@ -27,6 +26,7 @@ function Notifications() {
 		users,
 		addFriends,
 		deleteFriends,
+		toggleNotifications,
 	} = useUserStore((state) => ({
 		notifications: state.notifications,
 		setNotifications: state.setNotifications,
@@ -34,6 +34,7 @@ function Notifications() {
 		users: state.users,
 		addFriends: state.addFriends,
 		deleteFriends: state.deleteFriends,
+		toggleNotifications: state.toggleNotifications,
 	}));
 	console.log(notifications);
 	function handleNotificationToggle(event: React.MouseEvent<HTMLDivElement>) {
@@ -164,7 +165,7 @@ function Notifications() {
 					>
 						<NotificationHeading>Notifications</NotificationHeading>
 						<div className="flex flex-col-reverse">
-							{notifications.length > 0 ? (
+							{notifications.length > 0 && toggleNotifications ? (
 								notifications.map((notification) => {
 									console.log(notification);
 									return (
