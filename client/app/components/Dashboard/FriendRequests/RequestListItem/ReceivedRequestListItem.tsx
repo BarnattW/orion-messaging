@@ -10,14 +10,20 @@ function ReceivedRequestListItem({
 	requestId,
 	username,
 }: RequestListItemProps) {
-	const { enqueueSnackbar, addFriends, deleteFriends, users, setUsers } =
-		useUserStore((state) => ({
-			enqueueSnackbar: state.enqueueSnackbar,
-			addFriends: state.addFriends,
-			deleteFriends: state.deleteFriends,
-			users: state.users,
-			setUsers: state.setUsers,
-		}));
+	const {
+		enqueueSnackbar,
+		addFriends,
+		setUsers,
+		deleteReceivedFriendRequest,
+		deleteReceivedGroupRequests,
+	} = useUserStore((state) => ({
+		enqueueSnackbar: state.enqueueSnackbar,
+		addFriends: state.addFriends,
+		users: state.users,
+		setUsers: state.setUsers,
+		deleteReceivedFriendRequest: state.deleteReceivedFriendRequest,
+		deleteReceivedGroupRequests: state.deleteReceivedGroupRequest,
+	}));
 
 	async function acceptRequest() {
 		try {
@@ -49,6 +55,7 @@ function ReceivedRequestListItem({
 				const username = await getUsername(userId);
 				setUsers(userId, username);
 				addFriends(userId);
+				deleteReceivedFriendRequest(requestId);
 			}
 
 			if (requestType === "group") {
@@ -75,6 +82,7 @@ function ReceivedRequestListItem({
 					};
 				}
 				enqueueSnackbar(newSnackbar);
+				deleteReceivedGroupRequests(requestId);
 			}
 		} catch (error) {
 			console.log(error);
@@ -109,7 +117,7 @@ function ReceivedRequestListItem({
 					};
 				}
 				enqueueSnackbar(newSnackbar);
-				deleteFriends(requestId);
+				deleteReceivedFriendRequest(requestId);
 			}
 			if (requestType === "group") {
 				const response = await fetch(
@@ -136,6 +144,7 @@ function ReceivedRequestListItem({
 					};
 				}
 				enqueueSnackbar(newSnackbar);
+				deleteReceivedGroupRequests(requestId);
 			}
 		} catch (error) {
 			console.log(error);

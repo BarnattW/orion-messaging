@@ -6,7 +6,6 @@ import ListHeading from "../ListWrappers/ListHeading";
 
 function ReceivedGroupRequests({ receivedRequests }: ReceviedRequestsProps) {
 	const users = useUserStore((state) => state.users);
-	console.log(users);
 
 	if (!receivedRequests) {
 		return (
