@@ -14,10 +14,18 @@ export async function createConversation(
     let newChat: any = {};
     if (type == "friends") {
       console.log("Friend is being created");
+
       const { receiverId, senderId }: { receiverId: string; senderId: string } =
         data;
 
       const users = [receiverId, senderId];
+
+      const convoExist = await Conversation.find(
+        { users: users },
+        { conversationType: "friends"})
+    
+      if (convoExist) return; 
+
       newChat = {
         conversationType: type,
         users: users,
