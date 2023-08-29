@@ -91,7 +91,6 @@ const FriendContextMenu = forwardRef(function (
 			}
 			enqueueSnackbar(newSnackbar);
 			deleteFriends(friendId);
-			console.log(friends);
 			closeContextMenu();
 		} catch (error) {
 			console.log(error);

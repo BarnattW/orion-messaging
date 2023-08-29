@@ -11,13 +11,17 @@ function GroupRequestNotification({
 	_id,
 	senderId,
 }: RequestNotificationsProps) {
-	const { enqueueSnackbar, deleteNotifications, users } = useUserStore(
-		(state) => ({
-			enqueueSnackbar: state.enqueueSnackbar,
-			deleteNotifications: state.deleteNotifications,
-			users: state.users,
-		})
-	);
+	const {
+		enqueueSnackbar,
+		deleteNotifications,
+		users,
+		deleteReceivedGroupRequest,
+	} = useUserStore((state) => ({
+		enqueueSnackbar: state.enqueueSnackbar,
+		deleteNotifications: state.deleteNotifications,
+		users: state.users,
+		deleteReceivedGroupRequest: state.deleteReceivedGroupRequest,
+	}));
 
 	async function acceptRequest() {
 		try {
@@ -47,6 +51,7 @@ function GroupRequestNotification({
 
 				notificationSocket.emit("deleteNotification", _id);
 				deleteNotifications(_id);
+				deleteReceivedGroupRequest(_id);
 			}
 			enqueueSnackbar(newSnackbar);
 		} catch (error) {
@@ -81,6 +86,7 @@ function GroupRequestNotification({
 				};
 				notificationSocket.emit("deleteNotification", _id);
 				deleteNotifications(_id);
+				deleteReceivedGroupRequest(_id);
 			}
 
 			enqueueSnackbar(newSnackbar);

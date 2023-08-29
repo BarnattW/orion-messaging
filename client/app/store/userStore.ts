@@ -28,8 +28,12 @@ type UserState = {
 	deleteFriends: (receiverId: string) => void;
 	friendRequests: FriendRequests;
 	setFriendRequests: (friendRequests: FriendRequests) => void;
+	deleteReceivedFriendRequest: (receivedFriendRequestId: string) => void;
+	deleteSentFriendRequest: (sentFriendRequestId: string) => void;
 	groupRequests: GroupRequests;
 	setGroupRequests: (groupRequests: GroupRequests) => void;
+	deleteReceivedGroupRequest: (receivedGroupRequestId: string) => void;
+	deleteSentGroupRequest: (sentGroupRequestId: string) => void;
 	activeConversation: ActiveConversation | null;
 	setActiveConversation: (
 		updatedActiveConversation: ActiveConversationFields
@@ -90,9 +94,61 @@ export const useUserStore = createWithEqualityFn<UserState>(
 		friendRequests: { receivedRequests: [], sentRequests: [] },
 		setFriendRequests: (friendRequests) =>
 			set((state) => ({ friendRequests: friendRequests })),
+		deleteReceivedFriendRequest: (receivedFriendRequestId) =>
+			set((state) => {
+				const updatedReceivedFriendRequests =
+					state.friendRequests.receivedRequests?.filter(
+						(friendRequest) => friendRequest._id != receivedFriendRequestId
+					);
+				return {
+					friendRequests: {
+						...state.friendRequests,
+						receivedRequests: updatedReceivedFriendRequests,
+					},
+				};
+			}),
+		deleteSentFriendRequest: (sentFriendRequestId) =>
+			set((state) => {
+				const updatedSentFriendRequests =
+					state.friendRequests.sentRequests?.filter(
+						(friendRequest) => friendRequest._id != sentFriendRequestId
+					);
+				return {
+					friendRequests: {
+						...state.friendRequests,
+						sentRequests: updatedSentFriendRequests,
+					},
+				};
+			}),
 		groupRequests: { receivedRequests: [], sentRequests: [] },
 		setGroupRequests: (groupRequests) =>
 			set((state) => ({ groupRequests: groupRequests })),
+		deleteReceivedGroupRequest: (receivedGroupRequestId) =>
+			set((state) => {
+				const updatedReceivedGroupRequests =
+					state.groupRequests.receivedRequests?.filter(
+						(groupRequest) => groupRequest._id != receivedGroupRequestId
+					);
+				return {
+					groupRequests: {
+						...state.groupRequests,
+						receivedRequests: updatedReceivedGroupRequests,
+					},
+				};
+			}),
+		deleteSentGroupRequest: (sentGroupRequestId) =>
+			set((state) => {
+				const updatedSentGroupRequests =
+					state.groupRequests.sentRequests?.filter(
+						(groupRequest) => groupRequest._id != sentGroupRequestId
+					);
+				return {
+					groupRequests: {
+						...state.groupRequests,
+						sentRequests: updatedSentGroupRequests,
+					},
+				};
+			}),
 		activeConversation: null,
 		setActiveConversation: (updatedActiveConversation) =>
 			set((state) => ({

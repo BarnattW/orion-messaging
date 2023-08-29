@@ -3,16 +3,24 @@ import { RequestListItemProps } from "@/app/types/FriendRequests";
 
 import Avatar from "../../Avatar/Avatar";
 
-function SentRequestListItem(friendRequestListItemProps: RequestListItemProps) {
-	const { enqueueSnackbar } = useUserStore((state) => ({
-		enqueueSnackbar: state.enqueueSnackbar,
-	}));
+function SentRequestListItem({
+	userId,
+	requestType,
+	requestId,
+	username,
+}: RequestListItemProps) {
+	const { enqueueSnackbar, deleteSentFriendRequest, deleteSentGroupRequest } =
+		useUserStore((state) => ({
+			enqueueSnackbar: state.enqueueSnackbar,
+			deleteSentFriendRequest: state.deleteSentFriendRequest,
+			deleteSentGroupRequest: state.deleteSentGroupRequest,
+		}));
 	async function deleteRequest() {
 		try {
 			let newSnackbar;
-			if (friendRequestListItemProps.requestType === "friend") {
+			if (requestType === "friend") {
 				const response = await fetch(
-					`/api/connect/rejectFriendRequest/${friendRequestListItemProps.requestId}`,
+					`/api/connect/rejectFriendRequest/${requestId}`,
 					{
 						method: "PUT",
 						headers: {
@@ -33,11 +41,12 @@ function SentRequestListItem(friendRequestListItemProps: RequestListItemProps) {
 						message: "Deleted Friend Request Successfully",
 						showSnackbar: true,
 					};
+					deleteSentFriendRequest(requestId);
 				}
 			}
-			if (friendRequestListItemProps.requestType === "group") {
+			if (requestType === "group") {
 				const response = await fetch(
-					`/api/connect/rejectGroupRequest/${friendRequestListItemProps.requestId}`,
+					`/api/connect/rejectGroupRequest/${requestId}`,
 					{
 						method: "PUT",
 						headers: {
@@ -58,6 +67,7 @@ function SentRequestListItem(friendRequestListItemProps: RequestListItemProps) {
 						message: "Deleted Group Request Successfully",
 						showSnackbar: true,
 					};
+					deleteSentGroupRequest(requestId);
 				}
 			}
 			if (newSnackbar) enqueueSnackbar(newSnackbar);
@@ -72,13 +82,13 @@ function SentRequestListItem(friendRequestListItemProps: RequestListItemProps) {
 				<div className="relative z-0">
 					<Avatar
 						imageUrl="/friend-icon.svg"
-						altText={friendRequestListItemProps.username}
-						username={friendRequestListItemProps.username}
+						altText={username}
+						username={username}
 						type="default"
 					/>
 				</div>
 				<span className="flex-1 overflow-hidden">
-					<div className="truncate">{friendRequestListItemProps.username}</div>
+					<div className="truncate">{username}</div>
 				</span>
 				<div className="flex flex-shrink-0 justify-end gap-2">
 					<button
