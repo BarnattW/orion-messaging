@@ -1,6 +1,7 @@
 import notificationSocket from "@/app/sockets/notificationSocket";
 import { useUserStore } from "@/app/store/userStore";
 import { RequestNotificationsProps } from "@/app/types/Notifications";
+import getUsername from "@/app/utils/getUsername";
 
 function FriendRequestNotification({
 	timestamp,
@@ -16,11 +17,15 @@ function FriendRequestNotification({
 		deleteNotifications,
 		users,
 		deleteReceivedFriendRequest,
+		setUsers,
+		addFriends,
 	} = useUserStore((state) => ({
 		enqueueSnackbar: state.enqueueSnackbar,
 		deleteNotifications: state.deleteNotifications,
 		users: state.users,
 		deleteReceivedFriendRequest: state.deleteReceivedFriendRequest,
+		setUsers: state.setUsers,
+		addFriends: state.addFriends,
 	}));
 
 	async function acceptRequest() {
@@ -47,6 +52,10 @@ function FriendRequestNotification({
 					message: "Accepted Friend Request",
 					showSnackbar: true,
 				};
+				const username = await getUsername(senderId);
+				setUsers(senderId, username);
+				addFriends(senderId);
+
 				notificationSocket.emit("deleteNotification", _id);
 				deleteNotifications(_id);
 				deleteReceivedFriendRequest(_id);

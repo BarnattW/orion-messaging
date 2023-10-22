@@ -41,8 +41,8 @@ spec:
             - name: GITHUB_CLIENT_ID
               valueFrom:
                 secretKeyRef:
-                  name: facebook-client-secret
-                  key: FACEBOOK_CLIENT_SECRET
+                  name: github-client-id
+                  key: GITHUB_CLIENT_ID
             - name: GITHUB_CLIENT_SECRET
               valueFrom:
                 secretKeyRef:
