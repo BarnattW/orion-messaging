@@ -20,9 +20,10 @@ export async function createConversation(
 
       const users = [receiverId, senderId];
 
-      const convoExist = await Conversation.find(
-        { users: users },
-        { conversationType: "friends"})
+      const convoExist = await Conversation.findOne(
+				{ users: users },
+				{ conversationType: "friends" }
+			);
     
       if (convoExist) return; 
 

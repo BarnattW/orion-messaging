@@ -27,6 +27,7 @@ function Notifications() {
 		addFriends,
 		deleteFriends,
 		toggleNotifications,
+		addReceivedFriendRequest,
 	} = useUserStore((state) => ({
 		notifications: state.notifications,
 		setNotifications: state.setNotifications,
@@ -35,6 +36,7 @@ function Notifications() {
 		addFriends: state.addFriends,
 		deleteFriends: state.deleteFriends,
 		toggleNotifications: state.toggleNotifications,
+		addReceivedFriendRequest: state.addReceivedFriendRequest,
 	}));
 	console.log(notifications);
 	function handleNotificationToggle(event: React.MouseEvent<HTMLDivElement>) {
@@ -90,6 +92,16 @@ function Notifications() {
 						addFriends(receiverId);
 					}
 				);
+
+				// ui
+				await notificationSocket.on("freq-received", async (socketEvent) => {
+					if (!socketEvent) return;
+					console.log(socketEvent);
+					const { senderId } = socketEvent;
+					const username = await getUsername(senderId);
+					setUsers(senderId, username);
+					addReceivedFriendRequest(socketEvent);
+				});
 			} catch (error) {
 				console.log(error);
 			}
@@ -133,6 +145,12 @@ function Notifications() {
 			}
 		}
 		handleNotifications();
+
+		return () => {
+			notificationSocket.off("friendRequestReceived");
+			notificationSocket.off("messageReceived");
+			notificationSocket.off("groupRequestReceived");
+		};
 	}, [setNotifications, setUsers, addFriends, deleteFriends]);
 
 	return (

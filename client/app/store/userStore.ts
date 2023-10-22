@@ -1,7 +1,11 @@
 import { shallow } from "zustand/shallow";
 import { createWithEqualityFn } from "zustand/traditional";
 
-import { FriendRequests, GroupRequests } from "../types/FriendRequests";
+import {
+	FriendRequests,
+	GroupRequests,
+	Request,
+} from "../types/FriendRequests";
 import {
 	ActiveConversation,
 	ActiveConversationFields,
@@ -28,6 +32,7 @@ type UserState = {
 	deleteFriends: (receiverId: string) => void;
 	friendRequests: FriendRequests;
 	setFriendRequests: (friendRequests: FriendRequests) => void;
+	addReceivedFriendRequest: (receivedFriendRequest: Request) => void;
 	deleteReceivedFriendRequest: (receivedFriendRequestId: string) => void;
 	deleteSentFriendRequest: (sentFriendRequestId: string) => void;
 	groupRequests: GroupRequests;
@@ -94,6 +99,26 @@ export const useUserStore = createWithEqualityFn<UserState>(
 		friendRequests: { receivedRequests: [], sentRequests: [] },
 		setFriendRequests: (friendRequests) =>
 			set((state) => ({ friendRequests: friendRequests })),
+		addReceivedFriendRequest: (receivedFriendRequest) =>
+			set((state) => {
+				if (state.friendRequests.receivedRequests) {
+					return {
+						friendRequests: {
+							...state.friendRequests,
+							receivedRequests: [
+								...state.friendRequests.receivedRequests,
+								receivedFriendRequest,
+							],
+						},
+					};
+				} else
+					return {
+						friendRequests: {
+							...state.friendRequests,
+							receivedRequests: [receivedFriendRequest],
+						},
+					};
+			}),
 		deleteReceivedFriendRequest: (receivedFriendRequestId) =>
 			set((state) => {
 				const updatedReceivedFriendRequests =
